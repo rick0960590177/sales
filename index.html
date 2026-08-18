@@ -4,7 +4,258 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>業務訂單系統</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-color: #6f4e37;
+            --primary-hover: #5a3e2b;
+            --secondary-color: #f4ece1;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .nav-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        input, select, textarea {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .order-item {
+            background: var(--secondary-color);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-remove-item {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            align-self: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .summary {
+            background: #f1f1f1;
+            padding: 16px;
+            border-radius: 6px;
+            text-align: right;
+        }
+
+        .summary-row {
+            font-size: 1.1em;
+            margin-bottom: 4px;
+        }
+
+        .summary-row .amount {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .report-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .report-card {
+            background: var(--secondary-color);
+            padding: 16px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .report-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 8px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        .table th, .table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: var(--secondary-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .orders-grid, .customers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            background: #fff;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -73,33 +324,9 @@
                 <div class="form-section">
                     <h3>訂單商品</h3>
                     <div id="itemsContainer" class="items-container">
-                        <div class="order-item">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>商品 *</label>
-                                    <select class="product-select" required>
-                                        <option value="">請選擇商品</option>
-                                        <option value="咖啡豆">咖啡豆</option>
-                                        <option value="冷萃包">冷萃包</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>單價 (元) *</label>
-                                    <input type="number" class="product-price" required placeholder="0" step="0.01">
-                                </div>
-                                <div class="form-group">
-                                    <label>數量 *</label>
-                                    <input type="number" class="product-quantity" required placeholder="0" min="1">
-                                </div>
-                                <div class="form-group">
-                                    <label>小計 (元)</label>
-                                    <input type="number" class="product-subtotal" readonly>
-                                </div>
-                                <button type="button" class="btn-remove-item">🗑️</button>
-                            </div>
-                        </div>
+                        <!-- 商品動態卡片區 -->
                     </div>
-                    <button type="button" id="addItemBtn" class="btn-secondary">+ 新增商品</button>
+                    <button type="button" id="addItemBtn" class="btn-secondary" style="margin-bottom: 16px;">+ 新增商品</button>
                 </div>
 
                 <div class="form-group summary">
@@ -131,7 +358,6 @@
         <section id="customers" class="tab-content">
             <div class="section-header">
                 <h2>客戶管理</h2>
-                <button id="addCustomerBtn" class="btn-primary">+ 新增客戶</button>
             </div>
             <div id="customersList" class="customers-grid"></div>
         </section>
@@ -162,7 +388,7 @@
 
             <div class="report-section">
                 <h3>業務人員績效排名</h3>
-                <table id="performanceTable" class="table">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>業務人員</th>
@@ -171,88 +397,126 @@
                             <th>訂單數</th>
                         </tr>
                     </thead>
-                    <tbody id="performanceBody">
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="report-section">
-                <h3>訂單狀態統計</h3>
-                <table id="statusTable" class="table">
-                    <thead>
-                        <tr>
-                            <th>狀態</th>
-                            <th>訂單數</th>
-                            <th>銷售額</th>
-                        </tr>
-                    </thead>
-                    <tbody id="statusBody">
-                    </tbody>
+                    <tbody id="performanceBody"></tbody>
                 </table>
             </div>
         </section>
     </div>
 
-    <!-- 訂單詳情模態窗 -->
-    <div id="orderModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>訂單詳情</h2>
-            <div id="orderDetail" class="order-detail"></div>
-            <div class="modal-actions">
-                <button id="editOrderBtn" class="btn-secondary">編輯</button>
-                <button id="changeStatusBtn" class="btn-secondary">更改狀態</button>
-                <button id="sendEmailBtn" class="btn-primary">發送郵件</button>
-                <button id="deleteOrderBtn" class="btn-danger">刪除</button>
-            </div>
-        </div>
-    </div>
+    <!-- JavaScript 邏輯處理 -->
+    <script>
+        // 設定預設選項清單
+        const productOptions = [
+            "精品咖啡豆",
+            "冷萃浸泡包",
+            "義式濃縮豆",
+            "手沖濾掛包",
+            "周邊器具"
+        ];
 
-    <!-- 客戶編輯模態窗 -->
-    <div id="customerModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>客戶資訊</h2>
-            <form id="customerForm" class="customer-form">
-                <input type="hidden" id="customerId">
-                <div class="form-group">
-                    <label>客戶名稱 *</label>
-                    <input type="text" id="customerFormName" required>
-                </div>
-                <div class="form-group">
-                    <label>郵箱 *</label>
-                    <input type="email" id="customerFormEmail" required>
-                </div>
-                <div class="form-group">
-                    <label>電話 *</label>
-                    <input type="tel" id="customerFormPhone" required>
-                </div>
-                <div class="modal-actions">
-                    <button type="submit" class="btn-primary">保存</button>
-                    <button type="button" class="btn-danger" id="deleteCustomerBtn">刪除</button>
-                </div>
-            </form>
-        </div>
-    </div>
+        let orders = [];
 
-    <!-- 狀態變更模態窗 -->
-    <div id="statusModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>更改訂單狀態</h2>
-            <select id="newStatus">
-                <option value="待處理">待處理</option>
-                <option value="已確認">已確認</option>
-                <option value="已發貨">已發貨</option>
-                <option value="已完成">已完成</option>
-                <option value="已取消">已取消</option>
-            </select>
-            <div class="modal-actions">
-                <button id="confirmStatusBtn" class="btn-primary">確認</button>
-            </div>
-        </div>
-    </div>
+        // Tab 切換邏輯
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
 
-    <script src="app.js"></script>
+        // 動態生成商品選項 HTML
+        function getProductOptionsHTML() {
+            let options = '<option value="">請選擇商品</option>';
+            productOptions.forEach(prod => {
+                options += `<option value="${prod}">${prod}</option>`;
+            });
+            return options;
+        }
+
+        // 新增商品項目
+        function addOrderItem() {
+            const container = document.getElementById('itemsContainer');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'order-item';
+            itemDiv.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>商品 *</label>
+                        <select class="product-select" required>
+                            ${getProductOptionsHTML()}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>單價 (元) *</label>
+                        <input type="number" class="product-price" required placeholder="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>數量 *</label>
+                        <input type="number" class="product-quantity" required placeholder="0" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>小計 (元)</label>
+                        <input type="number" class="product-subtotal" readonly>
+                    </div>
+                    <button type="button" class="btn-remove-item">🗑️</button>
+                </div>
+            `;
+
+            // 綁定計算小計事件
+            const priceInput = itemDiv.querySelector('.product-price');
+            const qtyInput = itemDiv.querySelector('.product-quantity');
+            const subtotalInput = itemDiv.querySelector('.product-subtotal');
+            const removeBtn = itemDiv.querySelector('.btn-remove-item');
+
+            function calculateSubtotal() {
+                const p = parseFloat(priceInput.value) || 0;
+                const q = parseInt(qtyInput.value) || 0;
+                subtotalInput.value = (p * q).toFixed(2);
+                calculateTotal();
+            }
+
+            priceInput.addEventListener('input', calculateSubtotal);
+            qtyInput.addEventListener('input', calculateSubtotal);
+
+            removeBtn.addEventListener('click', () => {
+                itemDiv.remove();
+                calculateTotal();
+            });
+
+            container.appendChild(itemDiv);
+        }
+
+        // 計算總金額與佣金
+        function calculateTotal() {
+            let total = 0;
+            document.querySelectorAll('.product-subtotal').forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('commissionAmount').textContent = `$${(total * 0.1).toFixed(2)}`;
+        }
+
+        // 綁定「新增商品」按鈕事件
+        document.getElementById('addItemBtn').addEventListener('click', addOrderItem);
+
+        // 表單提交處理
+        document.getElementById('orderForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('訂單建立成功！');
+            // 此處可進行資料儲存或重置表單
+            e.target.reset();
+            document.getElementById('itemsContainer').innerHTML = '';
+            addOrderItem(); // 初始化一組商品列
+            calculateTotal();
+        });
+
+        // 初始化設定
+        document.getElementById('orderDate').valueAsDate = new Date();
+        addOrderItem(); // 頁面載入時預設產生一列商品選擇
+    </script>
 </body>
 </html>
