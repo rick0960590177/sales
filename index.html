@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>業務訂單系統</title>
     <style>
         :root {
@@ -14,6 +14,7 @@
             --text-color: #333333;
             --border-color: #e0e0e0;
             --danger-color: #dc3545;
+            --danger-hover: #bd2130;
             --success-color: #28a745;
         }
 
@@ -28,11 +29,13 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
-            padding: 20px;
+            padding: 16px;
         }
 
+        /* 自適應流體容器 */
         .container {
-            max-width: 1100px;
+            width: 95%;
+            max-width: 1400px;
             margin: 0 auto;
             background: var(--card-bg);
             border-radius: 8px;
@@ -49,6 +52,7 @@
         h1 {
             color: var(--primary-color);
             margin-bottom: 16px;
+            font-size: clamp(1.5rem, 4vw, 2rem);
         }
 
         .nav-tabs {
@@ -58,13 +62,18 @@
         }
 
         .nav-btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             border: 1px solid var(--border-color);
             background: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--secondary-color);
         }
 
         .nav-btn.active {
@@ -86,23 +95,46 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .filter-group {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .filter-group input {
+            flex: 2;
+            min-width: 180px;
+        }
+
+        .filter-group select {
+            flex: 1;
+            min-width: 120px;
         }
 
         input, select, textarea {
-            padding: 8px 12px;
+            padding: 10px 12px;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 6px;
             width: 100%;
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(111, 78, 55, 0.15);
         }
 
         .form-group {
             margin-bottom: 16px;
             flex: 1;
+            min-width: 200px;
         }
 
         .form-group label {
@@ -115,13 +147,19 @@
         .form-row {
             display: flex;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         .order-item {
             background: var(--secondary-color);
-            padding: 12px;
+            padding: 16px;
             border-radius: 6px;
             margin-bottom: 12px;
+            position: relative;
+        }
+
+        .order-item .form-row {
+            align-items: flex-end;
         }
 
         .btn-primary {
@@ -129,35 +167,63 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
         }
 
         .btn-secondary {
             background: #e0e0e0;
             color: #333;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 10px 16px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
         }
 
         .btn-danger {
             background: var(--danger-color);
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 8px 12px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
         }
 
         .btn-remove-item {
-            background: none;
-            border: none;
+            background: #ffebe9;
+            color: var(--danger-color);
+            border: 1px solid #ffc1c0;
+            padding: 8px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 1.2em;
-            align-self: flex-end;
-            margin-bottom: 20px;
+            font-size: 1em;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-remove-item:hover {
+            background: var(--danger-color);
+            color: white;
         }
 
         .summary {
@@ -165,6 +231,7 @@
             padding: 16px;
             border-radius: 6px;
             text-align: right;
+            margin-bottom: 16px;
         }
 
         .summary-row {
@@ -179,52 +246,69 @@
 
         .report-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
         }
 
         .report-card {
             background: var(--secondary-color);
-            padding: 16px;
-            border-radius: 6px;
+            padding: 20px;
+            border-radius: 8px;
             text-align: center;
         }
 
         .report-value {
-            font-size: 1.5em;
+            font-size: 1.6em;
             font-weight: bold;
             color: var(--primary-color);
             margin-top: 8px;
+            word-break: break-word;
+        }
+
+        /* 響應式表格容器 */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
         }
 
         .table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 12px;
+            min-width: 650px;
         }
 
         .table th, .table td {
-            border: 1px solid var(--border-color);
-            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px;
             text-align: left;
         }
 
         .table th {
             background-color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(244, 236, 225, 0.4);
         }
 
         .orders-grid, .customers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 16px;
         }
 
         .card {
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 16px;
             background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .card-header {
@@ -237,11 +321,12 @@
         }
 
         .status-badge {
-            padding: 2px 8px;
+            padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.85em;
             font-weight: bold;
             cursor: pointer;
+            user-select: none;
         }
 
         .status-completed {
@@ -256,8 +341,8 @@
 
         .product-manage-card {
             background: var(--secondary-color);
-            padding: 16px;
-            border-radius: 6px;
+            padding: 20px;
+            border-radius: 8px;
             margin-bottom: 20px;
         }
 
@@ -266,6 +351,51 @@
             color: #d9534f;
             display: none;
             margin-top: 4px;
+        }
+
+        /* 手機極小螢幕適應 */
+        @media (max-width: 576px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                width: 100%;
+                padding: 16px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-group {
+                width: 100%;
+            }
+
+            .nav-tabs {
+                width: 100%;
+            }
+
+            .nav-btn {
+                flex: 1 1 calc(50% - 8px);
+                text-align: center;
+                padding: 8px 4px;
+                font-size: 0.9rem;
+            }
+
+            .btn-remove-item {
+                width: 100%;
+                margin-top: 8px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -313,7 +443,7 @@
                         <label>訂單狀態 *</label>
                         <select id="orderStatus" required>
                             <option value="已完成">已完成</option>
-                            <option value="待處理">待處理</option>
+                            <option value="待處理" selected>待處理</option>
                         </select>
                     </div>
                 </div>
@@ -340,13 +470,13 @@
                     </div>
                 </div>
 
-                <div class="form-section">
+                <div class="form-section" style="margin-top: 16px;">
                     <h3>訂單商品</h3>
-                    <div id="itemsContainer" class="items-container"></div>
+                    <div id="itemsContainer" class="items-container" style="margin-top: 12px;"></div>
                     <button type="button" id="addItemBtn" class="btn-secondary" style="margin-bottom: 16px;">+ 新增商品</button>
                 </div>
 
-                <div class="form-group summary">
+                <div class="summary">
                     <div class="summary-row">
                         <span>訂單總金額：</span>
                         <span id="totalAmount" class="amount">0 VND</span>
@@ -360,11 +490,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>備註</label>
-                        <textarea id="notes" placeholder="請輸入訂單備註..."></textarea>
+                        <textarea id="notes" rows="3" placeholder="請輸入訂單備註..."></textarea>
                     </div>
                 </div>
 
-                <div class="form-actions" style="display: flex; gap: 12px;">
+                <div class="form-actions" style="display: flex; gap: 12px; margin-top: 12px;">
                     <button type="submit" class="btn-primary">建立訂單</button>
                     <button type="button" id="resetFormBtn" class="btn-secondary">清空表單</button>
                 </div>
@@ -406,28 +536,30 @@
                             <label>批發價 (VND) *</label>
                             <input type="number" id="newProductWholesale" min="0" required placeholder="125000">
                         </div>
-                        <div class="form-group" style="align-self: flex-end;">
-                            <button type="submit" class="btn-primary" style="width: 100%;">新增商品</button>
-                        </div>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <button type="submit" class="btn-primary">新增商品</button>
                     </div>
                 </form>
             </div>
 
             <div class="report-section">
                 <h3>現有商品列表</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>系列</th>
-                            <th>商品名稱 (越南文 / 中文)</th>
-                            <th>規格</th>
-                            <th>零售價 (VND)</th>
-                            <th>批發價 (VND)</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productTableBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>系列</th>
+                                <th>商品名稱 (越南文 / 中文)</th>
+                                <th>規格</th>
+                                <th>零售價 (VND)</th>
+                                <th>批發價 (VND)</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -465,17 +597,19 @@
 
             <div class="report-section">
                 <h3>業務人員績效排名</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>業務人員</th>
-                            <th>銷售額</th>
-                            <th>佣金</th>
-                            <th>訂單數</th>
-                        </tr>
-                    </thead>
-                    <tbody id="performanceBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>業務人員</th>
+                                <th>銷售額</th>
+                                <th>佣金</th>
+                                <th>訂單數</th>
+                            </tr>
+                        </thead>
+                        <tbody id="performanceBody"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </div>
@@ -569,7 +703,7 @@
             e.preventDefault();
 
             const newProduct = {
-                id: Date.now(),
+                id: Date.now() + Math.floor(Math.random() * 1000),
                 category: document.getElementById('newProductCategory').value.trim(),
                 nameVN: document.getElementById('newProductNameVN').value.trim(),
                 nameZH: document.getElementById('newProductNameZH').value.trim(),
@@ -627,7 +761,7 @@
                     <div class="form-group">
                         <label>單價 (VND) *</label>
                         <input type="number" class="product-price" required placeholder="0" min="0">
-                        <div class="price-hint">已套用 10+ 批發價</div>
+                        <div class="price-hint">已自動套用 10+ 批發價</div>
                     </div>
                     <div class="form-group">
                         <label>數量 *</label>
@@ -635,9 +769,11 @@
                     </div>
                     <div class="form-group">
                         <label>小計 (VND)</label>
-                        <input type="number" class="product-subtotal" readonly>
+                        <input type="number" class="product-subtotal" readonly placeholder="0">
                     </div>
-                    <button type="button" class="btn-remove-item">🗑️</button>
+                    <div style="margin-bottom: 16px;">
+                        <button type="button" class="btn-remove-item" title="移除此列">🗑️ 移除</button>
+                    </div>
                 </div>
             `;
 
@@ -648,7 +784,7 @@
             const priceHint = itemDiv.querySelector('.price-hint');
             const removeBtn = itemDiv.querySelector('.btn-remove-item');
 
-            // 自動根據數量設定價格（>=10 為批發價）
+            // 根據數量設定預設價格（>=10 為批發價）
             function autoUpdatePrice() {
                 const selectedOption = select.options[select.selectedIndex];
                 if (!selectedOption || !selectedOption.value) return;
@@ -811,7 +947,7 @@
                     <p><strong>客戶：</strong> ${o.customerName} (${o.customerPhone})</p>
                     <p><strong>業務：</strong> ${o.salesman}</p>
                     <p><strong>日期：</strong> ${o.date}</p>
-                    <p><strong>明細：</strong></p>
+                    <p style="margin-top: 4px;"><strong>明細：</strong></p>
                     <ul>${itemsHTML}</ul>
                     <p style="margin-top: 8px;"><strong>總額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(o.totalAmount)} VND</span></p>
                 `;
