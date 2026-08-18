@@ -54,6 +54,7 @@
         .nav-tabs {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
@@ -145,7 +146,7 @@
             background: var(--danger-color);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
         }
@@ -213,36 +214,6 @@
             background-color: var(--secondary-color);
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 24px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            right: 16px;
-            top: 16px;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-
         .orders-grid, .customers-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -255,6 +226,13 @@
             padding: 16px;
             background: #fff;
         }
+
+        .product-manage-card {
+            background: var(--secondary-color);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -264,6 +242,7 @@
             <nav class="nav-tabs">
                 <button class="nav-btn active" data-tab="orders">訂單管理</button>
                 <button class="nav-btn" data-tab="create">建立訂單</button>
+                <button class="nav-btn" data-tab="products">商品管理</button>
                 <button class="nav-btn" data-tab="customers">客戶管理</button>
                 <button class="nav-btn" data-tab="report">報表統計</button>
             </nav>
@@ -354,6 +333,45 @@
             </form>
         </section>
 
+        <!-- 商品項目管理頁面 -->
+        <section id="products" class="tab-content">
+            <div class="section-header">
+                <h2>商品項目管理</h2>
+            </div>
+            <div class="product-manage-card">
+                <h3>新增商品項目</h3>
+                <form id="addProductForm" style="margin-top: 12px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>商品名稱 *</label>
+                            <input type="text" id="newProductName" required placeholder="例如：阿拉比卡豆">
+                        </div>
+                        <div class="form-group">
+                            <label>預設單價 (元) *</label>
+                            <input type="number" id="newProductPrice" min="0" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="submit" class="btn-primary" style="width: 100%;">新增商品</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="report-section">
+                <h3>現有商品列表</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>商品名稱</th>
+                            <th>預設單價</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- 客戶管理頁面 -->
         <section id="customers" class="tab-content">
             <div class="section-header">
@@ -405,16 +423,14 @@
 
     <!-- JavaScript 邏輯處理 -->
     <script>
-        // 設定預設選項清單
-        const productOptions = [
-            "精品咖啡豆",
-            "冷萃浸泡包",
-            "義式濃縮豆",
-            "手沖濾掛包",
-            "周邊器具"
+        // 設定初始商品清單（包含預設單價）
+        let productsList = [
+            { id: 1, name: "精品咖啡豆", price: 450 },
+            { id: 2, name: "冷萃浸泡包", price: 280 },
+            { id: 3, name: "義式濃縮豆", price: 380 },
+            { id: 4, name: "手沖濾掛包", price: 320 },
+            { id: 5, name: "周邊器具", price: 600 }
         ];
-
-        let orders = [];
 
         // Tab 切換邏輯
         document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -427,16 +443,72 @@
             });
         });
 
-        // 動態生成商品選項 HTML
-        function getProductOptionsHTML() {
+        // 渲染「商品管理」列表
+        function renderProductTable() {
+            const tbody = document.getElementById('productTableBody');
+            tbody.innerHTML = '';
+
+            productsList.forEach((prod, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${prod.name}</td>
+                    <td>$${parseFloat(prod.price).toFixed(2)}</td>
+                    <td>
+                        <button class="btn-danger" onclick="deleteProduct(${prod.id})">刪除</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateAllProductSelects();
+        }
+
+        // 新增商品
+        document.getElementById('addProductForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('newProductName');
+            const priceInput = document.getElementById('newProductPrice');
+
+            const newProduct = {
+                id: Date.now(),
+                name: nameInput.value.trim(),
+                price: parseFloat(priceInput.value) || 0
+            };
+
+            productsList.push(newProduct);
+            renderProductTable();
+
+            nameInput.value = '';
+            priceInput.value = '';
+        });
+
+        // 刪除商品
+        function deleteProduct(id) {
+            if (confirm('確定要刪除此商品項目嗎？')) {
+                productsList = productsList.filter(p => p.id !== id);
+                renderProductTable();
+            }
+        }
+
+        // 動態生成選單中的商品 Option
+        function getProductOptionsHTML(selectedName = "") {
             let options = '<option value="">請選擇商品</option>';
-            productOptions.forEach(prod => {
-                options += `<option value="${prod}">${prod}</option>`;
+            productsList.forEach(prod => {
+                const isSelected = prod.name === selectedName ? 'selected' : '';
+                options += `<option value="${prod.name}" data-price="${prod.price}" ${isSelected}>${prod.name}</option>`;
             });
             return options;
         }
 
-        // 新增商品項目
+        // 更新現有訂單表單中所有下拉選單的選項
+        function updateAllProductSelects() {
+            document.querySelectorAll('.product-select').forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = getProductOptionsHTML(currentValue);
+            });
+        }
+
+        // 新增訂單商品列
         function addOrderItem() {
             const container = document.getElementById('itemsContainer');
             const itemDiv = document.createElement('div');
@@ -465,11 +537,21 @@
                 </div>
             `;
 
-            // 綁定計算小計事件
+            const select = itemDiv.querySelector('.product-select');
             const priceInput = itemDiv.querySelector('.product-price');
             const qtyInput = itemDiv.querySelector('.product-quantity');
             const subtotalInput = itemDiv.querySelector('.product-subtotal');
             const removeBtn = itemDiv.querySelector('.btn-remove-item');
+
+            // 選取商品時自動帶入預設單價
+            select.addEventListener('change', () => {
+                const selectedOption = select.options[select.selectedIndex];
+                const defaultPrice = selectedOption.getAttribute('data-price');
+                if (defaultPrice !== null && defaultPrice !== "") {
+                    priceInput.value = parseFloat(defaultPrice).toFixed(2);
+                }
+                calculateSubtotal();
+            });
 
             function calculateSubtotal() {
                 const p = parseFloat(priceInput.value) || 0;
@@ -489,7 +571,7 @@
             container.appendChild(itemDiv);
         }
 
-        // 計算總金額與佣金
+        // 計算訂單總金額與佣金
         function calculateTotal() {
             let total = 0;
             document.querySelectorAll('.product-subtotal').forEach(input => {
@@ -500,23 +582,23 @@
             document.getElementById('commissionAmount').textContent = `$${(total * 0.1).toFixed(2)}`;
         }
 
-        // 綁定「新增商品」按鈕事件
+        // 綁定「新增商品」按鈕
         document.getElementById('addItemBtn').addEventListener('click', addOrderItem);
 
         // 表單提交處理
         document.getElementById('orderForm').addEventListener('submit', (e) => {
             e.preventDefault();
             alert('訂單建立成功！');
-            // 此處可進行資料儲存或重置表單
             e.target.reset();
             document.getElementById('itemsContainer').innerHTML = '';
-            addOrderItem(); // 初始化一組商品列
+            addOrderItem();
             calculateTotal();
         });
 
         // 初始化設定
         document.getElementById('orderDate').valueAsDate = new Date();
-        addOrderItem(); // 頁面載入時預設產生一列商品選擇
+        renderProductTable();
+        addOrderItem();
     </script>
 </body>
 </html>
