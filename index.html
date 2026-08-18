@@ -32,7 +32,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             background: var(--card-bg);
             border-radius: 8px;
@@ -220,13 +220,6 @@
             gap: 16px;
         }
 
-        .card {
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            background: #fff;
-        }
-
         .product-manage-card {
             background: var(--secondary-color);
             padding: 16px;
@@ -311,11 +304,11 @@
                 <div class="form-group summary">
                     <div class="summary-row">
                         <span>訂單總金額：</span>
-                        <span id="totalAmount" class="amount">$0</span>
+                        <span id="totalAmount" class="amount">0 VND</span>
                     </div>
                     <div class="summary-row">
                         <span>佣金 (10%)：</span>
-                        <span id="commissionAmount" class="amount">$0</span>
+                        <span id="commissionAmount" class="amount">0 VND</span>
                     </div>
                 </div>
 
@@ -343,12 +336,30 @@
                 <form id="addProductForm" style="margin-top: 12px;">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>商品名稱 *</label>
-                            <input type="text" id="newProductName" required placeholder="例如：阿拉比卡豆">
+                            <label>系列 / 類別 *</label>
+                            <input type="text" id="newProductCategory" required placeholder="例如：Arabica 系列">
                         </div>
                         <div class="form-group">
-                            <label>預設單價 (元) *</label>
-                            <input type="number" id="newProductPrice" min="0" step="0.01" required placeholder="0.00">
+                            <label>商品名稱 (越南文) *</label>
+                            <input type="text" id="newProductNameVN" required placeholder="例如：Cà phê hạt Arabica 100%">
+                        </div>
+                        <div class="form-group">
+                            <label>中文翻譯 *</label>
+                            <input type="text" id="newProductNameZH" required placeholder="例如：Arabica 100% 咖啡豆">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>規格 *</label>
+                            <input type="text" id="newProductSpec" required placeholder="例如：250g / 10 包/袋">
+                        </div>
+                        <div class="form-group">
+                            <label>零售價 (VND) *</label>
+                            <input type="number" id="newProductRetail" min="0" required placeholder="145000">
+                        </div>
+                        <div class="form-group">
+                            <label>批發價 (VND) *</label>
+                            <input type="number" id="newProductWholesale" min="0" required placeholder="125000">
                         </div>
                         <div class="form-group" style="align-self: flex-end;">
                             <button type="submit" class="btn-primary" style="width: 100%;">新增商品</button>
@@ -362,8 +373,11 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>商品名稱</th>
-                            <th>預設單價</th>
+                            <th>系列</th>
+                            <th>商品名稱 (越南文 / 中文)</th>
+                            <th>規格</th>
+                            <th>零售價 (VND)</th>
+                            <th>批發價 (VND)</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -388,11 +402,11 @@
             <div class="report-container">
                 <div class="report-card">
                     <h3>總銷售額</h3>
-                    <div class="report-value" id="totalSales">$0</div>
+                    <div class="report-value" id="totalSales">0 VND</div>
                 </div>
                 <div class="report-card">
                     <h3>總佣金</h3>
-                    <div class="report-value" id="totalCommission">$0</div>
+                    <div class="report-value" id="totalCommission">0 VND</div>
                 </div>
                 <div class="report-card">
                     <h3>訂單總數</h3>
@@ -423,14 +437,43 @@
 
     <!-- JavaScript 邏輯處理 -->
     <script>
-        // 設定初始商品清單（包含預設單價）
+        // 設定初始完整商品清單
         let productsList = [
-            { id: 1, name: "精品咖啡豆", price: 450 },
-            { id: 2, name: "冷萃浸泡包", price: 280 },
-            { id: 3, name: "義式濃縮豆", price: 380 },
-            { id: 4, name: "手沖濾掛包", price: 320 },
-            { id: 5, name: "周邊器具", price: 600 }
+            // 1. 阿拉比卡 (Arabica 系列)
+            { id: 1, category: "Arabica 系列", nameVN: "Cà phê hạt Arabica 100%", nameZH: "Arabica 100% 咖啡豆", spec: "250g", retailPrice: 145000, wholesalePrice: 125000 },
+            { id: 2, category: "Arabica 系列", nameVN: "Cà phê hạt Arabica 100%", nameZH: "Arabica 100% 咖啡豆", spec: "500g", retailPrice: 280000, wholesalePrice: 240000 },
+            { id: 3, category: "Arabica 系列", nameVN: "Cà phê ủ lạnh Arabica 100%", nameZH: "Arabica 100% 冷萃包", spec: "10 包/袋", retailPrice: 125000, wholesalePrice: 105000 },
+            { id: 4, category: "Arabica 系列", nameVN: "Cà phê ủ lạnh Arabica 100%", nameZH: "Arabica 100% 冷萃包", spec: "30 包/袋", retailPrice: 350000, wholesalePrice: 295000 },
+            { id: 5, category: "Arabica 系列", nameVN: "Cà phê hạt Arabica Honey chế biến mật", nameZH: "Arabica Honey 蜜處理咖啡豆", spec: "250g", retailPrice: 160000, wholesalePrice: 138000 },
+            { id: 6, category: "Arabica 系列", nameVN: "Cà phê hạt Arabica Honey chế biến mật", nameZH: "Arabica Honey 蜜處理咖啡豆", spec: "500g", retailPrice: 310000, wholesalePrice: 265000 },
+            { id: 7, category: "Arabica 系列", nameVN: "Cà phê ủ lạnh Arabica Honey", nameZH: "Arabica Honey 蜜處理冷萃包", spec: "10 包/袋", retailPrice: 140000, wholesalePrice: 118000 },
+            { id: 8, category: "Arabica 系列", nameVN: "Cà phê ủ lạnh Arabica Honey", nameZH: "Arabica Honey 蜜處理冷萃包", spec: "30 包/袋", retailPrice: 390000, wholesalePrice: 330000 },
+
+            // 2. 羅布斯塔 (Robusta 系列)
+            { id: 9, category: "Robusta 系列", nameVN: "Cà phê hạt Robusta 100%", nameZH: "Robusta 100% 咖啡豆", spec: "250g", retailPrice: 91000, wholesalePrice: 78000 },
+            { id: 10, category: "Robusta 系列", nameVN: "Cà phê hạt Robusta 100%", nameZH: "Robusta 100% 咖啡豆", spec: "500g", retailPrice: 172000, wholesalePrice: 148000 },
+            { id: 11, category: "Robusta 系列", nameVN: "Cà phê ủ lạnh Robusta 100%", nameZH: "Robusta 100% 冷萃包", spec: "10 包/袋", retailPrice: 80000, wholesalePrice: 70000 },
+            { id: 12, category: "Robusta 系列", nameVN: "Cà phê ủ lạnh Robusta 100%", nameZH: "Robusta 100% 冷萃包", spec: "30 包/袋", retailPrice: 230000, wholesalePrice: 200000 },
+            { id: 13, category: "Robusta 系列", nameVN: "Cà phê ủ lạnh Robusta - Hương hoa nhài", nameZH: "Robusta 冷萃包 - 茉莉花風味", spec: "10 包/袋", retailPrice: 100000, wholesalePrice: 88000 },
+            { id: 14, category: "Robusta 系列", nameVN: "Cà phê ủ lạnh Robusta - Hương hoa nhài", nameZH: "Robusta 冷萃包 - 茉莉花風味", spec: "30 包/袋", retailPrice: 250000, wholesalePrice: 220000 },
+            { id: 15, category: "Robusta 系列", nameVN: "Cà phê hạt Robusta Honey chế biến mật", nameZH: "Robusta Honey 蜜處理咖啡豆", spec: "250g", retailPrice: 105000, wholesalePrice: 90000 },
+            { id: 16, category: "Robusta 系列", nameVN: "Cà phê hạt Robusta Honey chế biến mật", nameZH: "Robusta Honey 蜜處理咖啡豆", spec: "500g", retailPrice: 200000, wholesalePrice: 170000 },
+            { id: 17, category: "Robusta 系列", nameVN: "Cà phê ủ lạnh Robusta Honey", nameZH: "Robusta Honey 蜜處理冷萃包", spec: "10 包/袋", retailPrice: 95000, wholesalePrice: 82000 },
+            { id: 18, category: "Robusta 系列", nameVN: "Cà phê ủ lạnh Robusta Honey", nameZH: "Robusta Honey 蜜處理冷萃包", spec: "30 包/袋", retailPrice: 270000, wholesalePrice: 230000 },
+
+            // 3. 拼配咖啡 (Blend 系列)
+            { id: 19, category: "Blend 系列", nameVN: "Cà phê phối trộn Blend 80/20 Espresso", nameZH: "經典精品義式拼配 80/20", spec: "250g", retailPrice: 135000, wholesalePrice: 115000 },
+            { id: 20, category: "Blend 系列", nameVN: "Cà phê phối trộn Blend 80/20 Espresso", nameZH: "經典精品義式拼配 80/20", spec: "500g", retailPrice: 260000, wholesalePrice: 220000 },
+            { id: 21, category: "Blend 系列", nameVN: "Cà phê phối trộn Blend 70/30 Thương mại", nameZH: "商業義式平衡拼配 70/30", spec: "250g", retailPrice: 128000, wholesalePrice: 110000 },
+            { id: 22, category: "Blend 系列", nameVN: "Cà phê phối trộn Blend 70/30 Thương mại", nameZH: "商業義式平衡拼配 70/30", spec: "500g", retailPrice: 245000, wholesalePrice: 210000 },
+            { id: 23, category: "Blend 系列", nameVN: "Cà phê phối trộn Blend 50/50 Phong cách Nam Ý", nameZH: "南義風格醇厚拼配 50/50", spec: "250g", retailPrice: 118000, wholesalePrice: 100000 },
+            { id: 24, category: "Blend 系列", nameVN: "Cà phê phối trộn Blend 50/50 Phong cách Nam Ý", nameZH: "南義風格醇厚拼配 50/50", spec: "500g", retailPrice: 225000, wholesalePrice: 190000 }
         ];
+
+        // 格式化數字為千分位
+        function formatNumber(num) {
+            return Number(num).toLocaleString('zh-TW');
+        }
 
         // Tab 切換邏輯
         document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -448,11 +491,14 @@
             const tbody = document.getElementById('productTableBody');
             tbody.innerHTML = '';
 
-            productsList.forEach((prod, index) => {
+            productsList.forEach(prod => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${prod.name}</td>
-                    <td>$${parseFloat(prod.price).toFixed(2)}</td>
+                    <td><strong>${prod.category}</strong></td>
+                    <td>${prod.nameVN}<br><small style="color: #666;">${prod.nameZH}</small></td>
+                    <td>${prod.spec}</td>
+                    <td>${formatNumber(prod.retailPrice)} VND</td>
+                    <td>${formatNumber(prod.wholesalePrice)} VND</td>
                     <td>
                         <button class="btn-danger" onclick="deleteProduct(${prod.id})">刪除</button>
                     </td>
@@ -466,20 +512,20 @@
         // 新增商品
         document.getElementById('addProductForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const nameInput = document.getElementById('newProductName');
-            const priceInput = document.getElementById('newProductPrice');
 
             const newProduct = {
                 id: Date.now(),
-                name: nameInput.value.trim(),
-                price: parseFloat(priceInput.value) || 0
+                category: document.getElementById('newProductCategory').value.trim(),
+                nameVN: document.getElementById('newProductNameVN').value.trim(),
+                nameZH: document.getElementById('newProductNameZH').value.trim(),
+                spec: document.getElementById('newProductSpec').value.trim(),
+                retailPrice: parseFloat(document.getElementById('newProductRetail').value) || 0,
+                wholesalePrice: parseFloat(document.getElementById('newProductWholesale').value) || 0
             };
 
             productsList.push(newProduct);
             renderProductTable();
-
-            nameInput.value = '';
-            priceInput.value = '';
+            e.target.reset();
         });
 
         // 刪除商品
@@ -491,11 +537,12 @@
         }
 
         // 動態生成選單中的商品 Option
-        function getProductOptionsHTML(selectedName = "") {
+        function getProductOptionsHTML(selectedId = "") {
             let options = '<option value="">請選擇商品</option>';
             productsList.forEach(prod => {
-                const isSelected = prod.name === selectedName ? 'selected' : '';
-                options += `<option value="${prod.name}" data-price="${prod.price}" ${isSelected}>${prod.name}</option>`;
+                const isSelected = prod.id == selectedId ? 'selected' : '';
+                const displayName = `[${prod.category}] ${prod.nameZH} (${prod.spec})`;
+                options += `<option value="${prod.id}" data-price="${prod.retailPrice}" ${isSelected}>${displayName}</option>`;
             });
             return options;
         }
@@ -515,22 +562,22 @@
             itemDiv.className = 'order-item';
             itemDiv.innerHTML = `
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 2;">
                         <label>商品 *</label>
                         <select class="product-select" required>
                             ${getProductOptionsHTML()}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>單價 (元) *</label>
-                        <input type="number" class="product-price" required placeholder="0" min="0" step="0.01">
+                        <label>單價 (VND) *</label>
+                        <input type="number" class="product-price" required placeholder="0" min="0">
                     </div>
                     <div class="form-group">
                         <label>數量 *</label>
                         <input type="number" class="product-quantity" required placeholder="0" min="1">
                     </div>
                     <div class="form-group">
-                        <label>小計 (元)</label>
+                        <label>小計 (VND)</label>
                         <input type="number" class="product-subtotal" readonly>
                     </div>
                     <button type="button" class="btn-remove-item">🗑️</button>
@@ -543,12 +590,12 @@
             const subtotalInput = itemDiv.querySelector('.product-subtotal');
             const removeBtn = itemDiv.querySelector('.btn-remove-item');
 
-            // 選取商品時自動帶入預設單價
+            // 選取商品時自動帶入零售單價
             select.addEventListener('change', () => {
                 const selectedOption = select.options[select.selectedIndex];
                 const defaultPrice = selectedOption.getAttribute('data-price');
                 if (defaultPrice !== null && defaultPrice !== "") {
-                    priceInput.value = parseFloat(defaultPrice).toFixed(2);
+                    priceInput.value = defaultPrice;
                 }
                 calculateSubtotal();
             });
@@ -556,7 +603,7 @@
             function calculateSubtotal() {
                 const p = parseFloat(priceInput.value) || 0;
                 const q = parseInt(qtyInput.value) || 0;
-                subtotalInput.value = (p * q).toFixed(2);
+                subtotalInput.value = p * q;
                 calculateTotal();
             }
 
@@ -578,8 +625,8 @@
                 total += parseFloat(input.value) || 0;
             });
 
-            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
-            document.getElementById('commissionAmount').textContent = `$${(total * 0.1).toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `${formatNumber(total)} VND`;
+            document.getElementById('commissionAmount').textContent = `${formatNumber(total * 0.1)} VND`;
         }
 
         // 綁定「新增商品」按鈕
