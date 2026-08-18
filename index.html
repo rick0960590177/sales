@@ -216,8 +216,33 @@
 
         .orders-grid, .customers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 16px;
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .status-badge {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
         }
 
         .product-manage-card {
@@ -225,6 +250,13 @@
             padding: 16px;
             border-radius: 6px;
             margin-bottom: 20px;
+        }
+
+        .price-hint {
+            font-size: 0.8em;
+            color: #d9534f;
+            display: none;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -249,11 +281,8 @@
                     <input type="text" id="searchInput" placeholder="搜尋客戶名稱或訂單ID...">
                     <select id="statusFilter">
                         <option value="">全部狀態</option>
-                        <option value="待處理">待處理</option>
-                        <option value="已確認">已確認</option>
-                        <option value="已發貨">已發貨</option>
                         <option value="已完成">已完成</option>
-                        <option value="已取消">已取消</option>
+                        <option value="待處理">待處理</option>
                     </select>
                 </div>
             </div>
@@ -437,7 +466,7 @@
 
     <!-- JavaScript 邏輯處理 -->
     <script>
-        // 設定初始完整商品清單
+        // 全局資料儲存
         let productsList = [
             // 1. 阿拉比卡 (Arabica 系列)
             { id: 1, category: "Arabica 系列", nameVN: "Cà phê hạt Arabica 100%", nameZH: "Arabica 100% 咖啡豆", spec: "250g", retailPrice: 145000, wholesalePrice: 125000 },
@@ -470,9 +499,11 @@
             { id: 24, category: "Blend 系列", nameVN: "Cà phê phối trộn Blend 50/50 Phong cách Nam Ý", nameZH: "南義風格醇厚拼配 50/50", spec: "500g", retailPrice: 225000, wholesalePrice: 190000 }
         ];
 
+        let ordersList = [];
+
         // 格式化數字為千分位
         function formatNumber(num) {
-            return Number(num).toLocaleString('zh-TW');
+            return Number(num || 0).toLocaleString('zh-TW');
         }
 
         // Tab 切換邏輯
@@ -542,7 +573,7 @@
             productsList.forEach(prod => {
                 const isSelected = prod.id == selectedId ? 'selected' : '';
                 const displayName = `[${prod.category}] ${prod.nameZH} (${prod.spec})`;
-                options += `<option value="${prod.id}" data-price="${prod.retailPrice}" ${isSelected}>${displayName}</option>`;
+                options += `<option value="${prod.id}" data-retail="${prod.retailPrice}" data-wholesale="${prod.wholesalePrice}" ${isSelected}>${displayName}</option>`;
             });
             return options;
         }
@@ -571,10 +602,11 @@
                     <div class="form-group">
                         <label>單價 (VND) *</label>
                         <input type="number" class="product-price" required placeholder="0" min="0">
+                        <div class="price-hint">已自動套用 10+ 批發價</div>
                     </div>
                     <div class="form-group">
                         <label>數量 *</label>
-                        <input type="number" class="product-quantity" required placeholder="0" min="1">
+                        <input type="number" class="product-quantity" required placeholder="0" min="1" value="1">
                     </div>
                     <div class="form-group">
                         <label>小計 (VND)</label>
@@ -588,15 +620,31 @@
             const priceInput = itemDiv.querySelector('.product-price');
             const qtyInput = itemDiv.querySelector('.product-quantity');
             const subtotalInput = itemDiv.querySelector('.product-subtotal');
+            const priceHint = itemDiv.querySelector('.price-hint');
             const removeBtn = itemDiv.querySelector('.btn-remove-item');
 
-            // 選取商品時自動帶入零售單價
-            select.addEventListener('change', () => {
+            // 自動根據數量設定價格（>=10 為批發價）
+            function autoUpdatePrice() {
                 const selectedOption = select.options[select.selectedIndex];
-                const defaultPrice = selectedOption.getAttribute('data-price');
-                if (defaultPrice !== null && defaultPrice !== "") {
-                    priceInput.value = defaultPrice;
+                if (!selectedOption || !selectedOption.value) return;
+
+                const retail = parseFloat(selectedOption.getAttribute('data-retail')) || 0;
+                const wholesale = parseFloat(selectedOption.getAttribute('data-wholesale')) || 0;
+                const qty = parseInt(qtyInput.value) || 0;
+
+                if (qty >= 10 && wholesale > 0) {
+                    priceInput.value = wholesale;
+                    priceHint.style.display = 'block';
+                } else {
+                    priceInput.value = retail;
+                    priceHint.style.display = 'none';
                 }
+                calculateSubtotal();
+            }
+
+            select.addEventListener('change', autoUpdatePrice);
+            qtyInput.addEventListener('input', () => {
+                autoUpdatePrice();
                 calculateSubtotal();
             });
 
@@ -608,7 +656,6 @@
             }
 
             priceInput.addEventListener('input', calculateSubtotal);
-            qtyInput.addEventListener('input', calculateSubtotal);
 
             removeBtn.addEventListener('click', () => {
                 itemDiv.remove();
@@ -627,25 +674,189 @@
 
             document.getElementById('totalAmount').textContent = `${formatNumber(total)} VND`;
             document.getElementById('commissionAmount').textContent = `${formatNumber(total * 0.1)} VND`;
+            return total;
         }
 
         // 綁定「新增商品」按鈕
         document.getElementById('addItemBtn').addEventListener('click', addOrderItem);
 
-        // 表單提交處理
+        // 表單提交處理 - 建立新訂單
         document.getElementById('orderForm').addEventListener('submit', (e) => {
             e.preventDefault();
+
+            const total = calculateTotal();
+            const items = [];
+
+            document.querySelectorAll('.order-item').forEach(item => {
+                const select = item.querySelector('.product-select');
+                const pId = select.value;
+                const product = productsList.find(p => p.id == pId);
+
+                items.push({
+                    productName: product ? `${product.nameZH} (${product.spec})` : "自訂商品",
+                    price: parseFloat(item.querySelector('.product-price').value) || 0,
+                    quantity: parseInt(item.querySelector('.product-quantity').value) || 0,
+                    subtotal: parseFloat(item.querySelector('.product-subtotal').value) || 0
+                });
+            });
+
+            const newOrder = {
+                id: 'ORD' + Date.now().toString().slice(-6),
+                salesman: document.getElementById('salesmanName').value.trim(),
+                customerName: document.getElementById('customerName').value.trim(),
+                customerEmail: document.getElementById('customerEmail').value.trim(),
+                customerPhone: document.getElementById('customerPhone').value.trim(),
+                date: document.getElementById('orderDate').value,
+                items: items,
+                totalAmount: total,
+                commission: total * 0.1,
+                notes: document.getElementById('notes').value.trim(),
+                status: '已完成'
+            };
+
+            ordersList.unshift(newOrder);
             alert('訂單建立成功！');
+
             e.target.reset();
             document.getElementById('itemsContainer').innerHTML = '';
             addOrderItem();
             calculateTotal();
+
+            // 更新畫面
+            renderOrdersList();
+            renderReport();
+            renderCustomersList();
         });
 
-        // 初始化設定
+        // 渲染訂單列表
+        function renderOrdersList() {
+            const listContainer = document.getElementById('ordersList');
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            listContainer.innerHTML = '';
+
+            const filteredOrders = ordersList.filter(o => {
+                const matchKeyword = o.customerName.toLowerCase().includes(keyword) || o.id.toLowerCase().includes(keyword);
+                const matchStatus = !statusFilter || o.status === statusFilter;
+                return matchKeyword && matchStatus;
+            });
+
+            if (filteredOrders.length === 0) {
+                listContainer.innerHTML = '<p style="color:#666;">尚無訂單資料</p>';
+                return;
+            }
+
+            filteredOrders.forEach(o => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <strong>${o.id}</strong>
+                        <span class="status-badge">${o.status}</span>
+                    </div>
+                    <p><strong>客戶：</strong> ${o.customerName} (${o.customerPhone})</p>
+                    <p><strong>業務：</strong> ${o.salesman}</p>
+                    <p><strong>日期：</strong> ${o.date}</p>
+                    <p><strong>金額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(o.totalAmount)} VND</span></p>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        // 搜尋與篩選事件
+        document.getElementById('searchInput').addEventListener('input', renderOrdersList);
+        document.getElementById('statusFilter').addEventListener('change', renderOrdersList);
+
+        // 渲染客戶管理
+        function renderCustomersList() {
+            const container = document.getElementById('customersList');
+            container.innerHTML = '';
+
+            // 取得不重複的客戶
+            const customersMap = {};
+            ordersList.forEach(o => {
+                if (!customersMap[o.customerName]) {
+                    customersMap[o.customerName] = {
+                        name: o.customerName,
+                        email: o.customerEmail,
+                        phone: o.customerPhone,
+                        orderCount: 1,
+                        totalSpent: o.totalAmount
+                    };
+                } else {
+                    customersMap[o.customerName].orderCount += 1;
+                    customersMap[o.customerName].totalSpent += o.totalAmount;
+                }
+            });
+
+            const customers = Object.values(customersMap);
+
+            if (customers.length === 0) {
+                container.innerHTML = '<p style="color:#666;">尚無客戶資料</p>';
+                return;
+            }
+
+            customers.forEach(c => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <h3>${c.name}</h3>
+                    <p><strong>電話：</strong> ${c.phone}</p>
+                    <p><strong>郵箱：</strong> ${c.email}</p>
+                    <p><strong>累積訂單：</strong> ${c.orderCount} 筆</p>
+                    <p><strong>累積消費：</strong> ${formatNumber(c.totalSpent)} VND</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 渲染報表統計
+        function renderReport() {
+            let totalSales = 0;
+            let totalCommission = 0;
+            const salesmanStats = {};
+
+            ordersList.forEach(o => {
+                totalSales += o.totalAmount;
+                totalCommission += o.commission;
+
+                if (!salesmanStats[o.salesman]) {
+                    salesmanStats[o.salesman] = { sales: o.totalAmount, commission: o.commission, count: 1 };
+                } else {
+                    salesmanStats[o.salesman].sales += o.totalAmount;
+                    salesmanStats[o.salesman].commission += o.commission;
+                    salesmanStats[o.salesman].count += 1;
+                }
+            });
+
+            document.getElementById('totalSales').textContent = `${formatNumber(totalSales)} VND`;
+            document.getElementById('totalCommission').textContent = `${formatNumber(totalCommission)} VND`;
+            document.getElementById('totalOrders').textContent = ordersList.length;
+            document.getElementById('completedOrders').textContent = ordersList.length;
+
+            const tbody = document.getElementById('performanceBody');
+            tbody.innerHTML = '';
+
+            Object.entries(salesmanStats).forEach(([name, stat]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${name}</td>
+                    <td>${formatNumber(stat.sales)} VND</td>
+                    <td>${formatNumber(stat.commission)} VND</td>
+                    <td>${stat.count}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 初始化頁面
         document.getElementById('orderDate').valueAsDate = new Date();
         renderProductTable();
         addOrderItem();
+        renderOrdersList();
+        renderCustomersList();
+        renderReport();
     </script>
 </body>
 </html>
