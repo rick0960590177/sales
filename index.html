@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>業務訂單系統</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>☕ 業務訂單系統</h1>
+            <nav class="nav-tabs">
+                <button class="nav-btn active" data-tab="orders">訂單管理</button>
+                <button class="nav-btn" data-tab="create">建立訂單</button>
+                <button class="nav-btn" data-tab="customers">客戶管理</button>
+                <button class="nav-btn" data-tab="report">報表統計</button>
+            </nav>
+        </header>
+
+        <!-- 訂單列表頁面 -->
+        <section id="orders" class="tab-content active">
+            <div class="section-header">
+                <h2>訂單列表</h2>
+                <div class="filter-group">
+                    <input type="text" id="searchInput" placeholder="搜尋客戶名稱或訂單ID...">
+                    <select id="statusFilter">
+                        <option value="">全部狀態</option>
+                        <option value="待處理">待處理</option>
+                        <option value="已確認">已確認</option>
+                        <option value="已發貨">已發貨</option>
+                        <option value="已完成">已完成</option>
+                        <option value="已取消">已取消</option>
+                    </select>
+                </div>
+            </div>
+            <div id="ordersList" class="orders-grid"></div>
+        </section>
+
+        <!-- 建立訂單頁面 -->
+        <section id="create" class="tab-content">
+            <div class="section-header">
+                <h2>建立新訂單</h2>
+            </div>
+            <form id="orderForm" class="order-form">
+                <div class="form-group">
+                    <label>業務人員名稱 *</label>
+                    <input type="text" id="salesmanName" required placeholder="請輸入業務人員名稱">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>客戶名稱 *</label>
+                        <input type="text" id="customerName" required placeholder="請輸入客戶名稱">
+                    </div>
+                    <div class="form-group">
+                        <label>客戶郵箱 *</label>
+                        <input type="email" id="customerEmail" required placeholder="請輸入郵箱">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>客戶電話 *</label>
+                        <input type="tel" id="customerPhone" required placeholder="請輸入電話號碼">
+                    </div>
+                    <div class="form-group">
+                        <label>訂單日期 *</label>
+                        <input type="date" id="orderDate" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>訂單商品</h3>
+                    <div id="itemsContainer" class="items-container">
+                        <div class="order-item">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>商品 *</label>
+                                    <select class="product-select" required>
+                                        <option value="">請選擇商品</option>
+                                        <option value="咖啡豆">咖啡豆</option>
+                                        <option value="冷萃包">冷萃包</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>單價 (元) *</label>
+                                    <input type="number" class="product-price" required placeholder="0" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label>數量 *</label>
+                                    <input type="number" class="product-quantity" required placeholder="0" min="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>小計 (元)</label>
+                                    <input type="number" class="product-subtotal" readonly>
+                                </div>
+                                <button type="button" class="btn-remove-item">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="addItemBtn" class="btn-secondary">+ 新增商品</button>
+                </div>
+
+                <div class="form-group summary">
+                    <div class="summary-row">
+                        <span>訂單總金額：</span>
+                        <span id="totalAmount" class="amount">$0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>佣金 (10%)：</span>
+                        <span id="commissionAmount" class="amount">$0</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>備註</label>
+                        <textarea id="notes" placeholder="請輸入訂單備註..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">建立訂單</button>
+                    <button type="reset" class="btn-secondary">清空</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 客戶管理頁面 -->
+        <section id="customers" class="tab-content">
+            <div class="section-header">
+                <h2>客戶管理</h2>
+                <button id="addCustomerBtn" class="btn-primary">+ 新增客戶</button>
+            </div>
+            <div id="customersList" class="customers-grid"></div>
+        </section>
+
+        <!-- 報表統計頁面 -->
+        <section id="report" class="tab-content">
+            <div class="section-header">
+                <h2>報表統計</h2>
+            </div>
+            <div class="report-container">
+                <div class="report-card">
+                    <h3>總銷售額</h3>
+                    <div class="report-value" id="totalSales">$0</div>
+                </div>
+                <div class="report-card">
+                    <h3>總佣金</h3>
+                    <div class="report-value" id="totalCommission">$0</div>
+                </div>
+                <div class="report-card">
+                    <h3>訂單總數</h3>
+                    <div class="report-value" id="totalOrders">0</div>
+                </div>
+                <div class="report-card">
+                    <h3>已完成訂單</h3>
+                    <div class="report-value" id="completedOrders">0</div>
+                </div>
+            </div>
+
+            <div class="report-section">
+                <h3>業務人員績效排名</h3>
+                <table id="performanceTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>業務人員</th>
+                            <th>銷售額</th>
+                            <th>佣金</th>
+                            <th>訂單數</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="report-section">
+                <h3>訂單狀態統計</h3>
+                <table id="statusTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>狀態</th>
+                            <th>訂單數</th>
+                            <th>銷售額</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statusBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- 訂單詳情模態窗 -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>訂單詳情</h2>
+            <div id="orderDetail" class="order-detail"></div>
+            <div class="modal-actions">
+                <button id="editOrderBtn" class="btn-secondary">編輯</button>
+                <button id="changeStatusBtn" class="btn-secondary">更改狀態</button>
+                <button id="sendEmailBtn" class="btn-primary">發送郵件</button>
+                <button id="deleteOrderBtn" class="btn-danger">刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 客戶編輯模態窗 -->
+    <div id="customerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>客戶資訊</h2>
+            <form id="customerForm" class="customer-form">
+                <input type="hidden" id="customerId">
+                <div class="form-group">
+                    <label>客戶名稱 *</label>
+                    <input type="text" id="customerFormName" required>
+                </div>
+                <div class="form-group">
+                    <label>郵箱 *</label>
+                    <input type="email" id="customerFormEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>電話 *</label>
+                    <input type="tel" id="customerFormPhone" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">保存</button>
+                    <button type="button" class="btn-danger" id="deleteCustomerBtn">刪除</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 狀態變更模態窗 -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>更改訂單狀態</h2>
+            <select id="newStatus">
+                <option value="待處理">待處理</option>
+                <option value="已確認">已確認</option>
+                <option value="已發貨">已發貨</option>
+                <option value="已完成">已完成</option>
+                <option value="已取消">已取消</option>
+            </select>
+            <div class="modal-actions">
+                <button id="confirmStatusBtn" class="btn-primary">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
