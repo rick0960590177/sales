@@ -212,6 +212,22 @@
             background: var(--danger-hover);
         }
 
+        .btn-print {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-right: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-print:hover {
+            background: #138496;
+        }
+
         .btn-remove-item {
             background: #ffebe9;
             color: var(--danger-color);
@@ -510,7 +526,7 @@
                 </div>
 
                 <div class="form-actions" style="display: flex; gap: 12px; margin-top: 12px;">
-                    <button type="submit" id="submitOrderBtn" class="btn-primary">建立訂單</button>
+                    <button type="submit" id="submitOrderBtn" class="btn-primary">建立訂單並列印/下載訂購單</button>
                     <button type="button" id="resetFormBtn" class="btn-secondary">清空表單</button>
                 </div>
             </form>
@@ -607,7 +623,7 @@
             </div>
 
             <div class="report-section">
-                <h3>業務人員績效排名</h3>
+                <h3>業務人員績效排名(僅計已完成)</h3>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -627,6 +643,17 @@
 
     <!-- JavaScript 邏輯處理 -->
     <script>
+        // 跳脫字元防禦 XSS 攻擊
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         // 全局商品資料（僅使用中文名稱）
         let productsList = [
             // 1. Arabica 系列
@@ -727,9 +754,9 @@
             productsList.forEach(prod => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${prod.category}</strong></td>
-                    <td>${prod.name}</td>
-                    <td>${prod.spec}</td>
+                    <td><strong>${escapeHTML(prod.category)}</strong></td>
+                    <td>${escapeHTML(prod.name)}</td>
+                    <td>${escapeHTML(prod.spec)}</td>
                     <td>${formatNumber(prod.retailPrice)} VND</td>
                     <td>${formatNumber(prod.wholesalePrice)} VND</td>
                     <td>
@@ -782,7 +809,7 @@
             let options = '<option value="">請選擇商品</option>';
             productsList.forEach(prod => {
                 const isSelected = String(prod.id) === String(selectedId) ? 'selected' : '';
-                const displayName = `[${prod.category}] ${prod.name} (${prod.spec})`;
+                const displayName = `[${escapeHTML(prod.category)}] ${escapeHTML(prod.name)} (${escapeHTML(prod.spec)})`;
                 options += `<option value="${prod.id}" data-retail="${prod.retailPrice}" data-wholesale="${prod.wholesalePrice}" ${isSelected}>${displayName}</option>`;
             });
             return options;
@@ -858,7 +885,13 @@
 
             function autoUpdatePrice() {
                 const selectedOption = select.options[select.selectedIndex];
-                if (!selectedOption || !selectedOption.value) return;
+                
+                if (!selectedOption || !selectedOption.value) {
+                    priceInput.value = '';
+                    priceHint.style.display = 'none';
+                    calculateSubtotal();
+                    return;
+                }
 
                 const retail = parseFloat(selectedOption.getAttribute('data-retail')) || 0;
                 const wholesale = parseFloat(selectedOption.getAttribute('data-wholesale')) || 0;
@@ -919,6 +952,119 @@
 
         document.getElementById('resetFormBtn').addEventListener('click', resetOrderForm);
 
+        // 生成並自動列印/下載訂購單 PDF 頁面
+        function printInvoice(order) {
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                alert('請允許瀏覽器彈出視窗以自動下載/列印訂購單！');
+                return;
+            }
+
+            const itemsRows = order.items.map((item, index) => `
+                <tr>
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td>${escapeHTML(item.productName)}</td>
+                    <td style="text-align: right;">${formatNumber(item.price)} VND</td>
+                    <td style="text-align: center;">${item.quantity}</td>
+                    <td style="text-align: right;">${formatNumber(item.subtotal)} VND</td>
+                </tr>
+            `).join('');
+
+            const invoiceHTML = `
+                <!DOCTYPE html>
+                <html lang="zh-TW">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>訂購單_${order.id}</title>
+                    <style>
+                        body { font-family: sans-serif; padding: 20px; color: #333; line-height: 1.5; }
+                        .header { text-align: center; border-bottom: 2px solid #6f4e37; padding-bottom: 12px; margin-bottom: 20px; }
+                        .header h1 { margin: 0; color: #6f4e37; font-size: 24px; }
+                        .info-grid { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
+                        .info-box { width: 48%; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+                        th, td { border: 1px solid #ccc; padding: 8px 12px; }
+                        th { background-color: #f4ece1; color: #333; text-align: left; }
+                        .total-section { text-align: right; margin-top: 20px; font-size: 16px; }
+                        .total-amount { font-size: 18px; font-weight: bold; color: #6f4e37; }
+                        .notes-section { margin-top: 20px; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; font-size: 13px; }
+                        .footer-sign { margin-top: 40px; display: flex; justify-content: space-between; text-align: center; font-size: 14px; }
+                        .sign-box { width: 200px; border-top: 1px dashed #666; padding-top: 5px; }
+                        @media print {
+                            body { padding: 0; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>☕ 正式商品訂購單</h1>
+                        <p style="font-size: 12px; color: #666; margin-top: 4px;">訂單編號：${escapeHTML(order.id)} | 日期：${escapeHTML(order.date)}</p>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <p><strong>客戶資訊：</strong></p>
+                            <p>客戶名稱：${escapeHTML(order.customerName)}</p>
+                            <p>電話：${escapeHTML(order.customerPhone)}</p>
+                            <p>Email：${escapeHTML(order.customerEmail)}</p>
+                        </div>
+                        <div class="info-box" style="text-align: right;">
+                            <p><strong>賣方 / 業務資訊：</strong></p>
+                            <p>負責業務：${escapeHTML(order.salesman)}</p>
+                            <p>訂單狀態：${escapeHTML(order.status)}</p>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px; text-align: center;">#</th>
+                                <th>商品項目</th>
+                                <th style="width: 120px; text-align: right;">單價 (VND)</th>
+                                <th style="width: 70px; text-align: center;">數量</th>
+                                <th style="width: 130px; text-align: right;">小計 (VND)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsRows}
+                        </tbody>
+                    </table>
+
+                    <div class="total-section">
+                        <p>訂單總計： <span class="total-amount">${formatNumber(order.totalAmount)} VND</span></p>
+                    </div>
+
+                    ${order.notes ? `
+                    <div class="notes-section">
+                        <strong>訂單備註：</strong> ${escapeHTML(order.notes)}
+                    </div>` : ''}
+
+                    <div class="footer-sign">
+                        <div>
+                            <p style="height: 40px;"></p>
+                            <div class="sign-box">客戶簽章</div>
+                        </div>
+                        <div>
+                            <p style="height: 40px;"></p>
+                            <div class="sign-box">業務專員簽章</div>
+                        </div>
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `;
+
+            printWindow.document.open();
+            printWindow.document.write(invoiceHTML);
+            printWindow.document.close();
+        }
+
         // 表單提交處理 - 建立新訂單
         document.getElementById('orderForm').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -971,7 +1117,10 @@
             };
 
             ordersList.unshift(newOrder);
-            alert('訂單建立成功！');
+            alert('訂單建立成功！即將為您生成訂購單...');
+
+            // 自動觸發訂購單頁面與下載列印
+            printInvoice(newOrder);
 
             resetOrderForm();
             submitBtn.disabled = false;
@@ -989,6 +1138,7 @@
                 order.status = order.status === '已完成' ? '待處理' : '已完成';
                 renderOrdersList();
                 renderReport();
+                renderCustomersList(); 
             }
         }
 
@@ -999,6 +1149,14 @@
                 renderOrdersList();
                 renderReport();
                 renderCustomersList();
+            }
+        }
+
+        // 重新列印已存在的訂單
+        function printOrderById(orderId) {
+            const order = ordersList.find(o => o.id === orderId);
+            if (order) {
+                printInvoice(order);
             }
         }
 
@@ -1028,23 +1186,24 @@
                 const card = document.createElement('div');
                 card.className = 'card';
 
-                let itemsHTML = o.items.map(i => `<li style="margin-left: 20px; font-size: 0.9em; color:#555;">${i.productName} x ${i.quantity}</li>`).join('');
+                let itemsHTML = o.items.map(i => `<li style="margin-left: 20px; font-size: 0.9em; color:#555;">${escapeHTML(i.productName)} x ${i.quantity}</li>`).join('');
 
                 card.innerHTML = `
                     <div>
                         <div class="card-header">
-                            <strong>${o.id}</strong>
-                            <span class="status-badge ${badgeClass}" onclick="toggleOrderStatus('${o.id}')" title="點擊切換狀態">${o.status}</span>
+                            <strong>${escapeHTML(o.id)}</strong>
+                            <span class="status-badge ${badgeClass}" onclick="toggleOrderStatus('${escapeHTML(o.id)}')" title="點擊切換狀態">${escapeHTML(o.status)}</span>
                         </div>
-                        <p><strong>客戶：</strong> ${o.customerName} (${o.customerPhone})</p>
-                        <p><strong>業務：</strong> ${o.salesman}</p>
-                        <p><strong>日期：</strong> ${o.date}</p>
+                        <p><strong>客戶：</strong> ${escapeHTML(o.customerName)} (${escapeHTML(o.customerPhone)})</p>
+                        <p><strong>業務：</strong> ${escapeHTML(o.salesman)}</p>
+                        <p><strong>日期：</strong> ${escapeHTML(o.date)}</p>
                         <p style="margin-top: 4px;"><strong>明細：</strong></p>
                         <ul>${itemsHTML}</ul>
                         <p style="margin-top: 8px;"><strong>總額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(o.totalAmount)} VND</span></p>
                     </div>
                     <div class="card-footer">
-                        <button class="btn-danger" onclick="deleteOrder('${o.id}')">刪除訂單</button>
+                        <button class="btn-print" onclick="printOrderById('${escapeHTML(o.id)}')">📄 下載訂購單</button>
+                        <button class="btn-danger" onclick="deleteOrder('${escapeHTML(o.id)}')">刪除訂單</button>
                     </div>
                 `;
                 listContainer.appendChild(card);
@@ -1062,17 +1221,19 @@
 
             const customersMap = {};
             ordersList.forEach(o => {
-                if (!customersMap[o.customerName]) {
-                    customersMap[o.customerName] = {
+                const customerKey = o.customerPhone; 
+                
+                if (!customersMap[customerKey]) {
+                    customersMap[customerKey] = {
                         name: o.customerName,
                         email: o.customerEmail,
                         phone: o.customerPhone,
                         orderCount: 1,
-                        totalSpent: o.totalAmount
+                        totalSpent: o.totalAmount 
                     };
                 } else {
-                    customersMap[o.customerName].orderCount += 1;
-                    customersMap[o.customerName].totalSpent += o.totalAmount;
+                    customersMap[customerKey].orderCount += 1;
+                    customersMap[customerKey].totalSpent += o.totalAmount;
                 }
             });
 
@@ -1088,9 +1249,9 @@
                 card.className = 'card';
                 card.innerHTML = `
                     <div>
-                        <h3>${c.name}</h3>
-                        <p style="margin-top: 8px;"><strong>電話：</strong> ${c.phone}</p>
-                        <p><strong>郵箱：</strong> ${c.email}</p>
+                        <h3>${escapeHTML(c.name)}</h3>
+                        <p style="margin-top: 8px;"><strong>電話：</strong> ${escapeHTML(c.phone)}</p>
+                        <p><strong>郵箱：</strong> ${escapeHTML(c.email)}</p>
                         <p><strong>累積訂單：</strong> ${c.orderCount} 筆</p>
                         <p><strong>累積消費：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(c.totalSpent)} VND</span></p>
                     </div>
@@ -1107,16 +1268,18 @@
             const salesmanStats = {};
 
             ordersList.forEach(o => {
-                totalSales += o.totalAmount;
-                totalCommission += o.commission;
-                if (o.status === '已完成') completedCount++;
+                if (o.status === '已完成') {
+                    totalSales += o.totalAmount;
+                    totalCommission += o.commission;
+                    completedCount++;
 
-                if (!salesmanStats[o.salesman]) {
-                    salesmanStats[o.salesman] = { sales: o.totalAmount, commission: o.commission, count: 1 };
-                } else {
-                    salesmanStats[o.salesman].sales += o.totalAmount;
-                    salesmanStats[o.salesman].commission += o.commission;
-                    salesmanStats[o.salesman].count += 1;
+                    if (!salesmanStats[o.salesman]) {
+                        salesmanStats[o.salesman] = { sales: o.totalAmount, commission: o.commission, count: 1 };
+                    } else {
+                        salesmanStats[o.salesman].sales += o.totalAmount;
+                        salesmanStats[o.salesman].commission += o.commission;
+                        salesmanStats[o.salesman].count += 1;
+                    }
                 }
             });
 
@@ -1131,7 +1294,7 @@
             Object.entries(salesmanStats).forEach(([name, stat]) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${name}</strong></td>
+                    <td><strong>${escapeHTML(name)}</strong></td>
                     <td>${formatNumber(stat.sales)} VND</td>
                     <td>${formatNumber(stat.commission)} VND</td>
                     <td>${stat.count}</td>
