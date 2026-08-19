@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>業務訂單系統</title>
+    <title>專業級業務訂單與 ERP 管理系統</title>
     <style>
         :root {
             --primary-color: #6f4e37;
@@ -11,18 +11,21 @@
             --secondary-color: #f4ece1;
             --bg-color: #f8f9fa;
             --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #e0e0e0;
-            --danger-color: #dc3545;
-            --danger-hover: #bd2130;
-            --success-color: #28a745;
+            --text-color: #2b2b2b;
+            --border-color: #e2e8f0;
+            --danger-color: #e53e3e;
+            --danger-hover: #c53030;
+            --success-color: #38a169;
+            --info-color: #3182ce;
+            --radius: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         body {
@@ -32,14 +35,13 @@
             padding: 16px;
         }
 
-        /* 自適應流體容器 */
         .container {
             width: 95%;
             max-width: 1400px;
             margin: 0 auto;
             background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             padding: 24px;
         }
 
@@ -47,48 +49,54 @@
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 16px;
             margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         h1 {
             color: var(--primary-color);
-            margin-bottom: 16px;
             font-size: clamp(1.5rem, 4vw, 2rem);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
         }
 
         .nav-tabs {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            width: 100%;
+            margin-top: 12px;
         }
 
         .nav-btn {
             padding: 10px 18px;
             border: 1px solid var(--border-color);
             background: none;
-            border-radius: 6px;
+            border-radius: var(--radius);
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             color: var(--text-color);
             transition: all 0.2s ease;
         }
 
-        .nav-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
+        .nav-btn:hover { background-color: var(--secondary-color); }
         .nav-btn.active {
             background: var(--primary-color);
             color: #fff;
             border-color: var(--primary-color);
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         .section-header {
             display: flex;
@@ -104,31 +112,25 @@
             gap: 8px;
             flex-wrap: wrap;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
         }
 
-        .filter-group input {
-            flex: 2;
-            min-width: 180px;
-        }
-
-        .filter-group select {
-            flex: 1;
-            min-width: 120px;
-        }
+        .filter-group input { flex: 2; min-width: 180px; }
+        .filter-group select { flex: 1; min-width: 120px; }
 
         input, select, textarea {
             padding: 10px 12px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: var(--radius);
             width: 100%;
             font-size: 0.95rem;
+            background-color: #fff;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(111, 78, 55, 0.15);
+            box-shadow: 0 0 0 3px rgba(111, 78, 55, 0.15);
         }
 
         .form-group {
@@ -140,7 +142,7 @@
         .form-group label {
             display: block;
             margin-bottom: 6px;
-            font-weight: bold;
+            font-weight: 600;
             font-size: 0.9em;
         }
 
@@ -153,122 +155,49 @@
         .order-item {
             background: var(--secondary-color);
             padding: 16px;
-            border-radius: 6px;
+            border-radius: var(--radius);
             margin-bottom: 12px;
-            position: relative;
+            border: 1px solid rgba(111, 78, 55, 0.1);
         }
 
-        .order-item .form-row {
-            align-items: flex-end;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
+        .btn-primary, .btn-secondary, .btn-danger, .btn-info {
+            padding: 10px 18px;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            border-radius: var(--radius);
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-        }
-
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: #e0e0e0;
-            color: #333;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-
-        .btn-secondary:hover {
-            background: #d0d0d0;
-        }
-
-        .btn-danger {
-            background: var(--danger-color);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: background 0.2s;
-        }
-
-        .btn-danger:hover {
-            background: var(--danger-hover);
-        }
-
-        .btn-print {
-            background: #17a2b8;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
-            margin-right: 8px;
-            transition: background 0.2s;
-        }
-
-        .btn-print:hover {
-            background: #138496;
-        }
-
-        .btn-remove-item {
-            background: #ffebe9;
-            color: var(--danger-color);
-            border: 1px solid #ffc1c0;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            height: 42px;
-            display: flex;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            gap: 6px;
         }
 
-        .btn-remove-item:hover {
-            background: var(--danger-color);
-            color: white;
-        }
+        .btn-primary { background: var(--primary-color); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: #e2e8f0; color: #4a5568; }
+        .btn-secondary:hover { background: #cbd5e0; }
+        .btn-danger { background: var(--danger-color); color: #fff; }
+        .btn-danger:hover { background: var(--danger-hover); }
+        .btn-info { background: var(--info-color); color: #fff; }
+
+        .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
 
         .summary {
-            background: #f1f1f1;
+            background: #f7fafc;
             padding: 16px;
-            border-radius: 6px;
+            border-radius: var(--radius);
+            border: 1px dashed var(--border-color);
             text-align: right;
             margin-bottom: 16px;
         }
 
-        .summary-row {
-            font-size: 1.1em;
-            margin-bottom: 4px;
-        }
-
-        .summary-row .amount {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
+        .summary-row { font-size: 1.05em; margin-bottom: 4px; }
+        .summary-row .amount { font-weight: 700; color: var(--primary-color); }
 
         .report-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
         }
@@ -276,31 +205,29 @@
         .report-card {
             background: var(--secondary-color);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: var(--radius);
             text-align: center;
         }
 
         .report-value {
             font-size: 1.6em;
-            font-weight: bold;
+            font-weight: 700;
             color: var(--primary-color);
             margin-top: 8px;
-            word-break: break-word;
         }
 
         .table-responsive {
             width: 100%;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
             margin-top: 12px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: var(--radius);
         }
 
         .table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 650px;
+            min-width: 700px;
         }
 
         .table th, .table td {
@@ -309,27 +236,21 @@
             text-align: left;
         }
 
-        .table th {
-            background-color: var(--secondary-color);
-            font-weight: bold;
-        }
-
-        .table tbody tr:hover {
-            background-color: rgba(244, 236, 225, 0.4);
-        }
+        .table th { background-color: var(--secondary-color); font-weight: 600; }
+        .table tbody tr:hover { background-color: rgba(244, 236, 225, 0.3); }
 
         .orders-grid, .customers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 16px;
         }
 
         .card {
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: var(--radius);
             padding: 16px;
             background: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -347,93 +268,63 @@
         .status-badge {
             padding: 4px 10px;
             border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .status-completed {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .product-manage-card {
-            background: var(--secondary-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .price-hint {
             font-size: 0.8em;
-            color: #d9534f;
-            display: none;
-            margin-top: 4px;
+            font-weight: 700;
+            cursor: pointer;
         }
 
-        .card-footer {
-            margin-top: 12px;
-            padding-top: 8px;
-            border-top: 1px dashed var(--border-color);
+        .status-completed { background: #c6f6d5; color: #22543d; }
+        .status-pending { background: #feebc8; color: #744210; }
+
+        .price-hint { font-size: 0.8em; color: var(--danger-color); display: none; margin-top: 4px; }
+
+        /* Toast 訊息通知元件 */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
             display: flex;
-            justify-content: flex-end;
+            flex-direction: column;
+            gap: 10px;
         }
+
+        .toast {
+            min-width: 250px;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
+        }
+
+        .toast-success { background-color: var(--success-color); }
+        .toast-error { background-color: var(--danger-color); }
+        .toast-info { background-color: var(--info-color); }
+
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
 
         @media (max-width: 576px) {
-            body {
-                padding: 8px;
-            }
-
-            .container {
-                width: 100%;
-                padding: 16px;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-
-            .form-group {
-                width: 100%;
-            }
-
-            .nav-tabs {
-                width: 100%;
-            }
-
-            .nav-btn {
-                flex: 1 1 calc(50% - 8px);
-                text-align: center;
-                padding: 8px 4px;
-                font-size: 0.9rem;
-            }
-
-            .btn-remove-item {
-                width: 100%;
-                margin-top: 8px;
-            }
-
-            .form-actions {
-                flex-direction: column;
-            }
-
-            .form-actions button {
-                width: 100%;
-            }
+            body { padding: 8px; }
+            .container { padding: 12px; }
+            .nav-btn { flex: 1 1 calc(50% - 8px); text-align: center; }
+            .form-row { flex-direction: column; gap: 0; }
         }
     </style>
 </head>
 <body>
+    <div id="toast-container"></div>
+
     <div class="container">
         <header>
-            <h1>☕ 業務訂單系統</h1>
+            <h1>☕ 業務訂單 ERP 系統</h1>
+            <div class="header-actions">
+                <button class="btn-secondary btn-sm" id="exportDataBtn">📥 匯出資料</button>
+                <button class="btn-secondary btn-sm" id="importDataBtn">📤 匯入資料</button>
+                <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            </div>
             <nav class="nav-tabs">
                 <button class="nav-btn active" data-tab="orders">訂單管理</button>
                 <button class="nav-btn" data-tab="create">建立訂單</button>
@@ -443,12 +334,12 @@
             </nav>
         </header>
 
-        <!-- 訂單列表頁面 -->
+        <!-- 訂單列表 -->
         <section id="orders" class="tab-content active">
             <div class="section-header">
-                <h2>訂單列表</h2>
+                <h2>訂單總覽</h2>
                 <div class="filter-group">
-                    <input type="text" id="searchInput" placeholder="搜尋客戶名稱、業務或訂單ID...">
+                    <input type="text" id="searchInput" placeholder="搜尋客戶名稱、業務或訂單號...">
                     <select id="statusFilter">
                         <option value="">全部狀態</option>
                         <option value="已完成">已完成</option>
@@ -459,16 +350,16 @@
             <div id="ordersList" class="orders-grid"></div>
         </section>
 
-        <!-- 建立訂單頁面 -->
+        <!-- 建立訂單 -->
         <section id="create" class="tab-content">
             <div class="section-header">
                 <h2>建立新訂單</h2>
             </div>
-            <form id="orderForm" class="order-form">
+            <form id="orderForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label>業務人員名稱 *</label>
-                        <input type="text" id="salesmanName" required placeholder="請輸入業務人員名稱">
+                        <label>業務人員 *</label>
+                        <input type="text" id="salesmanName" required placeholder="請輸入姓名">
                     </div>
                     <div class="form-group">
                         <label>訂單狀態 *</label>
@@ -482,11 +373,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>客戶名稱 *</label>
-                        <input type="text" id="customerName" required placeholder="請輸入客戶名稱">
+                        <input type="text" id="customerName" required placeholder="請輸入公司或客戶名">
                     </div>
                     <div class="form-group">
                         <label>客戶郵箱 *</label>
-                        <input type="email" id="customerEmail" required placeholder="請輸入郵箱">
+                        <input type="email" id="customerEmail" required placeholder="name@domain.com">
                     </div>
                 </div>
 
@@ -501,10 +392,10 @@
                     </div>
                 </div>
 
-                <div class="form-section" style="margin-top: 16px;">
-                    <h3>訂單商品</h3>
-                    <div id="itemsContainer" class="items-container" style="margin-top: 12px;"></div>
-                    <button type="button" id="addItemBtn" class="btn-secondary" style="margin-bottom: 16px;">+ 新增商品</button>
+                <div class="form-section">
+                    <h3>訂單品項</h3>
+                    <div id="itemsContainer" style="margin-top: 12px;"></div>
+                    <button type="button" id="addItemBtn" class="btn-secondary btn-sm" style="margin-bottom: 16px;">+ 新增商品</button>
                 </div>
 
                 <div class="summary">
@@ -513,107 +404,103 @@
                         <span id="totalAmount" class="amount">0 VND</span>
                     </div>
                     <div class="summary-row">
-                        <span>佣金 (10%)：</span>
+                        <span>預估佣金 (10%)：</span>
                         <span id="commissionAmount" class="amount">0 VND</span>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>備註</label>
-                        <textarea id="notes" rows="3" placeholder="請輸入訂單備註..."></textarea>
+                        <label>備註事項</label>
+                        <textarea id="notes" rows="3" placeholder="特殊需求或配送說明..."></textarea>
                     </div>
                 </div>
 
-                <div class="form-actions" style="display: flex; gap: 12px; margin-top: 12px;">
-                    <button type="submit" id="submitOrderBtn" class="btn-primary">建立訂單並列印/下載訂購單</button>
-                    <button type="button" id="resetFormBtn" class="btn-secondary">清空表單</button>
+                <div style="display: flex; gap: 12px; margin-top: 12px;">
+                    <button type="submit" id="submitOrderBtn" class="btn-primary">儲存並列印訂購單</button>
+                    <button type="button" id="resetFormBtn" class="btn-secondary">重置表單</button>
                 </div>
             </form>
         </section>
 
-        <!-- 商品項目管理頁面 -->
+        <!-- 商品管理 -->
         <section id="products" class="tab-content">
             <div class="section-header">
                 <h2>商品項目管理</h2>
             </div>
-            <div class="product-manage-card">
-                <h3>新增商品項目</h3>
+            <div class="card" style="margin-bottom: 20px;">
+                <h3>新增商品品項</h3>
                 <form id="addProductForm" style="margin-top: 12px;">
                     <div class="form-row">
                         <div class="form-group">
                             <label>系列 / 類別 *</label>
-                            <input type="text" id="newProductCategory" required placeholder="例如：Arabica 系列">
+                            <input type="text" id="newProductCategory" required placeholder="如：Arabica 系列">
                         </div>
                         <div class="form-group">
                             <label>商品名稱 *</label>
-                            <input type="text" id="newProductName" required placeholder="例如：Arabica 100% 咖啡豆">
+                            <input type="text" id="newProductName" required placeholder="如：Arabica 100% 咖啡豆">
                         </div>
                         <div class="form-group">
                             <label>規格 *</label>
-                            <input type="text" id="newProductSpec" required placeholder="例如：250g / 10 包/袋">
+                            <input type="text" id="newProductSpec" required placeholder="如：250g / 包">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>零售價 (VND) *</label>
-                            <input type="number" id="newProductRetail" min="0" step="1" required placeholder="145000">
+                            <input type="number" id="newProductRetail" min="0" required placeholder="0">
                         </div>
                         <div class="form-group">
                             <label>批發價 (VND) *</label>
-                            <input type="number" id="newProductWholesale" min="0" step="1" required placeholder="125000">
+                            <input type="number" id="newProductWholesale" min="0" required placeholder="0">
                         </div>
                     </div>
-                    <div style="margin-top: 8px;">
-                        <button type="submit" class="btn-primary">新增商品</button>
-                    </div>
+                    <button type="submit" class="btn-primary btn-sm">建立商品</button>
                 </form>
             </div>
 
-            <div class="report-section">
-                <h3>現有商品列表</h3>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>系列</th>
-                                <th>商品名稱</th>
-                                <th>規格</th>
-                                <th>零售價 (VND)</th>
-                                <th>批發價 (VND)</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productTableBody"></tbody>
-                    </table>
-                </div>
+            <h3>現有商品清單</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>類別</th>
+                            <th>品名</th>
+                            <th>規格</th>
+                            <th>零售價 (VND)</th>
+                            <th>批發價 (VND)</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
             </div>
         </section>
 
-        <!-- 客戶管理頁面 -->
+        <!-- 客戶管理 -->
         <section id="customers" class="tab-content">
             <div class="section-header">
-                <h2>客戶管理</h2>
+                <h2>客戶資料庫</h2>
             </div>
             <div id="customersList" class="customers-grid"></div>
         </section>
 
-        <!-- 報表統計頁面 -->
+        <!-- 報表統計 -->
         <section id="report" class="tab-content">
             <div class="section-header">
-                <h2>報表統計</h2>
+                <h2>營運報表統計</h2>
             </div>
             <div class="report-container">
                 <div class="report-card">
-                    <h3>總銷售額</h3>
+                    <h3>累積總銷售額</h3>
                     <div class="report-value" id="totalSales">0 VND</div>
                 </div>
                 <div class="report-card">
-                    <h3>總佣金</h3>
+                    <h3>累積撥發佣金</h3>
                     <div class="report-value" id="totalCommission">0 VND</div>
                 </div>
                 <div class="report-card">
-                    <h3>訂單總數</h3>
+                    <h3>總訂單數</h3>
                     <div class="report-value" id="totalOrders">0</div>
                 </div>
                 <div class="report-card">
@@ -622,73 +509,38 @@
                 </div>
             </div>
 
-            <div class="report-section">
-                <h3>業務人員績效排名(僅計已完成)</h3>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>業務人員</th>
-                                <th>銷售額</th>
-                                <th>佣金</th>
-                                <th>訂單數</th>
-                            </tr>
-                        </thead>
-                        <tbody id="performanceBody"></tbody>
-                    </table>
-                </div>
+            <h3>業務績效統計 (僅結算已完成訂單)</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>業務人員</th>
+                            <th>總銷售額</th>
+                            <th>佣金總額</th>
+                            <th>成交筆數</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceBody"></tbody>
+                </table>
             </div>
         </section>
     </div>
 
-    <!-- JavaScript 邏輯處理 -->
     <script>
-        // 跳脫字元防禦 XSS 攻擊
-        function escapeHTML(str) {
-            if (!str) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
+        /**
+         * 核心應用程式狀態與資料持久化層
+         */
+        const STORAGE_KEY_PRODUCTS = 'ERP_PRODUCTS_V1';
+        const STORAGE_KEY_ORDERS = 'ERP_ORDERS_V1';
 
-        // 全局商品資料（僅使用中文名稱）
-        let productsList = [
-            // 1. Arabica 系列
+        const defaultProducts = [
             { id: 1, category: "Arabica 系列", name: "Arabica 100% 咖啡豆", spec: "250g", retailPrice: 145000, wholesalePrice: 125000 },
             { id: 2, category: "Arabica 系列", name: "Arabica 100% 咖啡豆", spec: "500g", retailPrice: 280000, wholesalePrice: 240000 },
-            { id: 3, category: "Arabica 系列", name: "Arabica 100% 冷萃包", spec: "10 包/袋", retailPrice: 125000, wholesalePrice: 105000 },
-            { id: 4, category: "Arabica 系列", name: "Arabica 100% 冷萃包", spec: "30 包/袋", retailPrice: 350000, wholesalePrice: 295000 },
-            { id: 5, category: "Arabica 系列", name: "Arabica Honey 蜜處理咖啡豆", spec: "250g", retailPrice: 160000, wholesalePrice: 138000 },
-            { id: 6, category: "Arabica 系列", name: "Arabica Honey 蜜處理咖啡豆", spec: "500g", retailPrice: 310000, wholesalePrice: 265000 },
-            { id: 7, category: "Arabica 系列", name: "Arabica Honey 蜜處理冷萃包", spec: "10 包/袋", retailPrice: 140000, wholesalePrice: 118000 },
-            { id: 8, category: "Arabica 系列", name: "Arabica Honey 蜜處理冷萃包", spec: "30 包/袋", retailPrice: 390000, wholesalePrice: 330000 },
-
-            // 2. Robusta 系列
-            { id: 9, category: "Robusta 系列", name: "Robusta 100% 咖啡豆", spec: "250g", retailPrice: 91000, wholesalePrice: 78000 },
-            { id: 10, category: "Robusta 系列", name: "Robusta 100% 咖啡豆", spec: "500g", retailPrice: 172000, wholesalePrice: 148000 },
-            { id: 11, category: "Robusta 系列", name: "Robusta 100% 冷萃包", spec: "10 包/袋", retailPrice: 80000, wholesalePrice: 70000 },
-            { id: 12, category: "Robusta 系列", name: "Robusta 100% 冷萃包", spec: "30 包/袋", retailPrice: 230000, wholesalePrice: 200000 },
-            { id: 13, category: "Robusta 系列", name: "Robusta 冷萃包 - 茉莉花風味", spec: "10 包/袋", retailPrice: 100000, wholesalePrice: 88000 },
-            { id: 14, category: "Robusta 系列", name: "Robusta 冷萃包 - 茉莉花風味", spec: "30 包/袋", retailPrice: 250000, wholesalePrice: 220000 },
-            { id: 15, category: "Robusta 系列", name: "Robusta Honey 蜜處理咖啡豆", spec: "250g", retailPrice: 105000, wholesalePrice: 90000 },
-            { id: 16, category: "Robusta 系列", name: "Robusta Honey 蜜處理咖啡豆", spec: "500g", retailPrice: 200000, wholesalePrice: 170000 },
-            { id: 17, category: "Robusta 系列", name: "Robusta Honey 蜜處理冷萃包", spec: "10 包/袋", retailPrice: 95000, wholesalePrice: 82000 },
-            { id: 18, category: "Robusta 系列", name: "Robusta Honey 蜜處理冷萃包", spec: "30 包/袋", retailPrice: 270000, wholesalePrice: 230000 },
-
-            // 3. Blend 系列
-            { id: 19, category: "Blend 系列", name: "經典精品義式拼配 80/20", spec: "250g", retailPrice: 135000, wholesalePrice: 115000 },
-            { id: 20, category: "Blend 系列", name: "經典精品義式拼配 80/20", spec: "500g", retailPrice: 260000, wholesalePrice: 220000 },
-            { id: 21, category: "Blend 系列", name: "商業義式平衡拼配 70/30", spec: "250g", retailPrice: 128000, wholesalePrice: 110000 },
-            { id: 22, category: "Blend 系列", name: "商業義式平衡拼配 70/30", spec: "500g", retailPrice: 245000, wholesalePrice: 210000 },
-            { id: 23, category: "Blend 系列", name: "南義風格醇厚拼配 50/50", spec: "250g", retailPrice: 118000, wholesalePrice: 100000 },
-            { id: 24, category: "Blend 系列", name: "南義風格醇厚拼配 50/50", spec: "500g", retailPrice: 225000, wholesalePrice: 190000 }
+            { id: 3, category: "Robusta 系列", name: "Robusta 100% 咖啡豆", spec: "250g", retailPrice: 91000, wholesalePrice: 78000 },
+            { id: 4, category: "Blend 系列", name: "經典精品義式拼配 80/20", spec: "250g", retailPrice: 135000, wholesalePrice: 115000 }
         ];
 
-        // 預設示範訂單資料
-        let ordersList = [
+        const defaultOrders = [
             {
                 id: 'ORD883921',
                 salesman: '張業務',
@@ -696,161 +548,150 @@
                 customerEmail: 'coffee@example.com',
                 customerPhone: '0901234567',
                 date: '2026-08-15',
-                items: [
-                    { productName: 'Arabica 100% 咖啡豆 (500g)', price: 240000, quantity: 12, subtotal: 2880000 }
-                ],
+                items: [{ productName: 'Arabica 100% 咖啡豆 (500g)', price: 240000, quantity: 12, subtotal: 2880000 }],
                 totalAmount: 2880000,
                 commission: 288000,
-                notes: '固定每週送貨',
+                notes: '每週定期配送',
                 status: '已完成'
-            },
-            {
-                id: 'ORD741029',
-                salesman: '李業務',
-                customerName: '烘焙工坊',
-                customerEmail: 'bakery@example.com',
-                customerPhone: '0988765432',
-                date: '2026-08-18',
-                items: [
-                    { productName: 'Robusta 100% 咖啡豆 (500g)', price: 172000, quantity: 5, subtotal: 860000 }
-                ],
-                totalAmount: 860000,
-                commission: 86000,
-                notes: '急件，需當天出貨',
-                status: '待處理'
             }
         ];
 
-        // 取得本地日期格式 YYYY-MM-DD
-        function getLocalDateString() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+        let productsList = JSON.parse(localStorage.getItem(STORAGE_KEY_PRODUCTS)) || defaultProducts;
+        let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || defaultOrders;
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(productsList));
+            localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(ordersList));
         }
 
-        // 格式化數字為千分位
+        // 工具函式
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, match => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+            }[match]));
+        }
+
         function formatNumber(num) {
             return Number(num || 0).toLocaleString('zh-TW');
         }
 
-        // Tab 切換邏輯
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function getLocalDateString() {
+            const today = new Date();
+            return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        }
+
+        // 頁籤切換處理
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
                 btn.classList.add('active');
                 document.getElementById(btn.dataset.tab).classList.add('active');
             });
         });
 
-        // 渲染「商品管理」列表
+        // 商品管理邏輯
         function renderProductTable() {
             const tbody = document.getElementById('productTableBody');
-            tbody.innerHTML = '';
-
-            productsList.forEach(prod => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${escapeHTML(prod.category)}</strong></td>
-                    <td>${escapeHTML(prod.name)}</td>
-                    <td>${escapeHTML(prod.spec)}</td>
-                    <td>${formatNumber(prod.retailPrice)} VND</td>
-                    <td>${formatNumber(prod.wholesalePrice)} VND</td>
-                    <td>
-                        <button class="btn-danger" onclick="deleteProduct(${prod.id})">刪除</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
+            tbody.innerHTML = productsList.map(p => `
+                <tr>
+                    <td><strong>${escapeHTML(p.category)}</strong></td>
+                    <td>${escapeHTML(p.name)}</td>
+                    <td>${escapeHTML(p.spec)}</td>
+                    <td>${formatNumber(p.retailPrice)} VND</td>
+                    <td>${formatNumber(p.wholesalePrice)} VND</td>
+                    <td><button class="btn-danger btn-sm" onclick="deleteProduct(${p.id})">刪除</button></td>
+                </tr>
+            `).join('');
             updateAllProductSelects();
         }
 
-        // 新增商品
         document.getElementById('addProductForm').addEventListener('submit', (e) => {
             e.preventDefault();
+            const retail = parseFloat(document.getElementById('newProductRetail').value);
+            const wholesale = parseFloat(document.getElementById('newProductWholesale').value);
 
-            const retailPrice = parseFloat(document.getElementById('newProductRetail').value);
-            const wholesalePrice = parseFloat(document.getElementById('newProductWholesale').value);
-
-            if (isNaN(retailPrice) || retailPrice < 0 || isNaN(wholesalePrice) || wholesalePrice < 0) {
-                alert('請輸入有效的金額！');
+            if (retail < 0 || wholesale < 0) {
+                showToast('價格不得為負數！', 'error');
                 return;
             }
 
-            const newProduct = {
-                id: Date.now() + Math.floor(Math.random() * 1000),
+            productsList.push({
+                id: Date.now(),
                 category: document.getElementById('newProductCategory').value.trim(),
                 name: document.getElementById('newProductName').value.trim(),
                 spec: document.getElementById('newProductSpec').value.trim(),
-                retailPrice: retailPrice,
-                wholesalePrice: wholesalePrice
-            };
+                retailPrice: retail,
+                wholesalePrice: wholesale
+            });
 
-            productsList.push(newProduct);
+            saveData();
             renderProductTable();
             e.target.reset();
-            alert('商品新增成功！');
+            showToast('商品新增成功！');
         });
 
-        // 刪除商品
         function deleteProduct(id) {
-            if (confirm('確定要刪除此商品項目嗎？')) {
+            if (confirm('確定要刪除此商品嗎？')) {
                 productsList = productsList.filter(p => p.id !== id);
+                saveData();
                 renderProductTable();
+                showToast('商品已移除', 'info');
             }
         }
 
-        // 動態生成選單中的商品 Option
         function getProductOptionsHTML(selectedId = "") {
             let options = '<option value="">請選擇商品</option>';
-            productsList.forEach(prod => {
-                const isSelected = String(prod.id) === String(selectedId) ? 'selected' : '';
-                const displayName = `[${escapeHTML(prod.category)}] ${escapeHTML(prod.name)} (${escapeHTML(prod.spec)})`;
-                options += `<option value="${prod.id}" data-retail="${prod.retailPrice}" data-wholesale="${prod.wholesalePrice}" ${isSelected}>${displayName}</option>`;
+            productsList.forEach(p => {
+                const selected = String(p.id) === String(selectedId) ? 'selected' : '';
+                options += `<option value="${p.id}" data-retail="${p.retailPrice}" data-wholesale="${p.wholesalePrice}" ${selected}>[${escapeHTML(p.category)}] ${escapeHTML(p.name)} (${escapeHTML(p.spec)})</option>`;
             });
             return options;
         }
 
-        // 更新現有訂單表單中所有下拉選單的選項
         function updateAllProductSelects() {
-            document.querySelectorAll('.product-select').forEach(select => {
-                const currentValue = select.value;
-                select.innerHTML = getProductOptionsHTML(currentValue);
+            document.querySelectorAll('.product-select').forEach(sel => {
+                const current = sel.value;
+                sel.innerHTML = getProductOptionsHTML(current);
             });
         }
 
-        // 新增訂單商品列
+        // 動態新增訂單商品列
         function addOrderItem() {
             const container = document.getElementById('itemsContainer');
             const itemDiv = document.createElement('div');
             itemDiv.className = 'order-item';
             itemDiv.innerHTML = `
-                <div class="form-row">
+                <div class="form-row" style="align-items: flex-end;">
                     <div class="form-group" style="flex: 2;">
-                        <label>商品 *</label>
-                        <select class="product-select" required>
-                            ${getProductOptionsHTML()}
-                        </select>
+                        <label>商品品項 *</label>
+                        <select class="product-select" required>${getProductOptionsHTML()}</select>
                     </div>
                     <div class="form-group">
                         <label>單價 (VND) *</label>
-                        <input type="number" class="product-price" required placeholder="0" min="0" step="1">
-                        <div class="price-hint">已自動套用 10+ 批發價</div>
+                        <input type="number" class="product-price" required min="0">
+                        <div class="price-hint">已自動套用批發價 (10+)</div>
                     </div>
                     <div class="form-group">
                         <label>數量 *</label>
-                        <input type="number" class="product-quantity" required placeholder="0" min="1" value="1">
+                        <input type="number" class="product-quantity" required min="1" value="1">
                     </div>
                     <div class="form-group">
                         <label>小計 (VND)</label>
                         <input type="number" class="product-subtotal" readonly placeholder="0">
                     </div>
                     <div style="margin-bottom: 16px;">
-                        <button type="button" class="btn-remove-item" title="移除此列">🗑️ 移除</button>
+                        <button type="button" class="btn-danger btn-sm btn-remove" style="height: 42px;">🗑️</button>
                     </div>
                 </div>
             `;
@@ -860,41 +701,19 @@
             const qtyInput = itemDiv.querySelector('.product-quantity');
             const subtotalInput = itemDiv.querySelector('.product-subtotal');
             const priceHint = itemDiv.querySelector('.price-hint');
-            const removeBtn = itemDiv.querySelector('.btn-remove-item');
 
-            // 標記使用者是否手動修改過單價
-            priceInput.addEventListener('input', () => {
-                priceInput.dataset.userModified = "true";
-                calculateSubtotal();
-            });
-
-            // 當切換商品時，重置手動修改標記並帶入預設價格
-            select.addEventListener('change', () => {
-                delete priceInput.dataset.userModified;
-                autoUpdatePrice();
-            });
-
-            // 當修改數量時，若使用者未手動改過單價，則進行自動帶價
-            qtyInput.addEventListener('input', () => {
-                if (!priceInput.dataset.userModified) {
-                    autoUpdatePrice();
-                } else {
-                    calculateSubtotal();
-                }
-            });
+            function updateCalculations() {
+                const p = parseFloat(priceInput.value) || 0;
+                const q = parseInt(qtyInput.value) || 0;
+                subtotalInput.value = p * q;
+                calculateTotal();
+            }
 
             function autoUpdatePrice() {
-                const selectedOption = select.options[select.selectedIndex];
-                
-                if (!selectedOption || !selectedOption.value) {
-                    priceInput.value = '';
-                    priceHint.style.display = 'none';
-                    calculateSubtotal();
-                    return;
-                }
-
-                const retail = parseFloat(selectedOption.getAttribute('data-retail')) || 0;
-                const wholesale = parseFloat(selectedOption.getAttribute('data-wholesale')) || 0;
+                const opt = select.options[select.selectedIndex];
+                if (!opt || !opt.value) return;
+                const retail = parseFloat(opt.dataset.retail) || 0;
+                const wholesale = parseFloat(opt.dataset.wholesale) || 0;
                 const qty = parseInt(qtyInput.value) || 0;
 
                 if (qty >= 10 && wholesale > 0) {
@@ -904,44 +723,37 @@
                     priceInput.value = retail;
                     priceHint.style.display = 'none';
                 }
-                calculateSubtotal();
+                updateCalculations();
             }
 
-            function calculateSubtotal() {
-                const p = parseFloat(priceInput.value) || 0;
-                const q = parseInt(qtyInput.value) || 0;
-                subtotalInput.value = p * q;
-                calculateTotal();
-            }
+            select.addEventListener('change', autoUpdatePrice);
+            qtyInput.addEventListener('input', autoUpdatePrice);
+            priceInput.addEventListener('input', updateCalculations);
 
-            removeBtn.addEventListener('click', () => {
+            itemDiv.querySelector('.btn-remove').addEventListener('click', () => {
                 if (document.querySelectorAll('.order-item').length > 1) {
                     itemDiv.remove();
                     calculateTotal();
                 } else {
-                    alert('訂單必須包含至少一項商品！');
+                    showToast('訂單至少需包含一項商品！', 'error');
                 }
             });
 
             container.appendChild(itemDiv);
         }
 
-        // 計算訂單總金額與佣金
         function calculateTotal() {
             let total = 0;
-            document.querySelectorAll('.product-subtotal').forEach(input => {
-                total += parseFloat(input.value) || 0;
+            document.querySelectorAll('.product-subtotal').forEach(inp => {
+                total += parseFloat(inp.value) || 0;
             });
-
             document.getElementById('totalAmount').textContent = `${formatNumber(total)} VND`;
             document.getElementById('commissionAmount').textContent = `${formatNumber(total * 0.1)} VND`;
             return total;
         }
 
-        // 綁定「新增商品」按鈕
         document.getElementById('addItemBtn').addEventListener('click', addOrderItem);
 
-        // 重置訂單表單
         function resetOrderForm() {
             document.getElementById('orderForm').reset();
             document.getElementById('itemsContainer').innerHTML = '';
@@ -952,156 +764,81 @@
 
         document.getElementById('resetFormBtn').addEventListener('click', resetOrderForm);
 
-        // 生成並自動列印/下載訂購單 PDF 頁面
+        // 訂單列印列印邏輯
         function printInvoice(order) {
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                alert('請允許瀏覽器彈出視窗以自動下載/列印訂購單！');
-                return;
-            }
+            const printWin = window.open('', '_blank');
+            if (!printWin) return showToast('請解鎖彈出視窗以下載訂購單！', 'error');
 
-            const itemsRows = order.items.map((item, index) => `
+            const rows = order.items.map((item, idx) => `
                 <tr>
-                    <td style="text-align: center;">${index + 1}</td>
+                    <td style="text-align:center;">${idx + 1}</td>
                     <td>${escapeHTML(item.productName)}</td>
-                    <td style="text-align: right;">${formatNumber(item.price)} VND</td>
-                    <td style="text-align: center;">${item.quantity}</td>
-                    <td style="text-align: right;">${formatNumber(item.subtotal)} VND</td>
+                    <td style="text-align:right;">${formatNumber(item.price)} VND</td>
+                    <td style="text-align:center;">${item.quantity}</td>
+                    <td style="text-align:right;">${formatNumber(item.subtotal)} VND</td>
                 </tr>
             `).join('');
 
-            const invoiceHTML = `
+            printWin.document.write(`
                 <!DOCTYPE html>
-                <html lang="zh-TW">
+                <html>
                 <head>
-                    <meta charset="UTF-8">
                     <title>訂購單_${order.id}</title>
                     <style>
-                        body { font-family: sans-serif; padding: 20px; color: #333; line-height: 1.5; }
-                        .header { text-align: center; border-bottom: 2px solid #6f4e37; padding-bottom: 12px; margin-bottom: 20px; }
-                        .header h1 { margin: 0; color: #6f4e37; font-size: 24px; }
-                        .info-grid { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
-                        .info-box { width: 48%; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-                        th, td { border: 1px solid #ccc; padding: 8px 12px; }
-                        th { background-color: #f4ece1; color: #333; text-align: left; }
-                        .total-section { text-align: right; margin-top: 20px; font-size: 16px; }
-                        .total-amount { font-size: 18px; font-weight: bold; color: #6f4e37; }
-                        .notes-section { margin-top: 20px; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; font-size: 13px; }
-                        .footer-sign { margin-top: 40px; display: flex; justify-content: space-between; text-align: center; font-size: 14px; }
-                        .sign-box { width: 200px; border-top: 1px dashed #666; padding-top: 5px; }
-                        @media print {
-                            body { padding: 0; }
-                            .no-print { display: none; }
-                        }
+                        body { font-family: sans-serif; padding: 20px; color: #333; }
+                        .header { text-align: center; border-bottom: 2px solid #6f4e37; padding-bottom: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; font-size: 14px; }
+                        th { background: #f4ece1; }
+                        .total { text-align: right; margin-top: 15px; font-size: 16px; font-weight: bold; }
                     </style>
                 </head>
                 <body>
                     <div class="header">
-                        <h1>☕ 正式商品訂購單</h1>
-                        <p style="font-size: 12px; color: #666; margin-top: 4px;">訂單編號：${escapeHTML(order.id)} | 日期：${escapeHTML(order.date)}</p>
+                        <h2>☕ 銷售訂購單</h2>
+                        <p>單號：${escapeHTML(order.id)} | 日期：${escapeHTML(order.date)}</p>
                     </div>
-
-                    <div class="info-grid">
-                        <div class="info-box">
-                            <p><strong>客戶資訊：</strong></p>
-                            <p>客戶名稱：${escapeHTML(order.customerName)}</p>
-                            <p>電話：${escapeHTML(order.customerPhone)}</p>
-                            <p>Email：${escapeHTML(order.customerEmail)}</p>
-                        </div>
-                        <div class="info-box" style="text-align: right;">
-                            <p><strong>賣方 / 業務資訊：</strong></p>
-                            <p>負責業務：${escapeHTML(order.salesman)}</p>
-                            <p>訂單狀態：${escapeHTML(order.status)}</p>
-                        </div>
-                    </div>
-
+                    <p><strong>客戶：</strong> ${escapeHTML(order.customerName)} (${escapeHTML(order.customerPhone)})</p>
+                    <p><strong>業務：</strong> ${escapeHTML(order.salesman)}</p>
                     <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 50px; text-align: center;">#</th>
-                                <th>商品項目</th>
-                                <th style="width: 120px; text-align: right;">單價 (VND)</th>
-                                <th style="width: 70px; text-align: center;">數量</th>
-                                <th style="width: 130px; text-align: right;">小計 (VND)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${itemsRows}
-                        </tbody>
+                        <thead><tr><th>#</th><th>品名</th><th>單價</th><th>數量</th><th>小計</th></tr></thead>
+                        <tbody>${rows}</tbody>
                     </table>
-
-                    <div class="total-section">
-                        <p>訂單總計： <span class="total-amount">${formatNumber(order.totalAmount)} VND</span></p>
-                    </div>
-
-                    ${order.notes ? `
-                    <div class="notes-section">
-                        <strong>訂單備註：</strong> ${escapeHTML(order.notes)}
-                    </div>` : ''}
-
-                    <div class="footer-sign">
-                        <div>
-                            <p style="height: 40px;"></p>
-                            <div class="sign-box">客戶簽章</div>
-                        </div>
-                        <div>
-                            <p style="height: 40px;"></p>
-                            <div class="sign-box">業務專員簽章</div>
-                        </div>
-                    </div>
-
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                        };
-                    <\/script>
+                    <div class="total">總計：${formatNumber(order.totalAmount)} VND</div>
+                    <script>window.onload = () => window.print();<\/script>
                 </body>
                 </html>
-            `;
-
-            printWindow.document.open();
-            printWindow.document.write(invoiceHTML);
-            printWindow.document.close();
+            `);
+            printWin.document.close();
         }
 
-        // 表單提交處理 - 建立新訂單
+        // 建立訂單事件
         document.getElementById('orderForm').addEventListener('submit', (e) => {
             e.preventDefault();
-
-            const submitBtn = document.getElementById('submitOrderBtn');
-            submitBtn.disabled = true;
-
             const items = [];
             let isValid = true;
 
             document.querySelectorAll('.order-item').forEach(item => {
                 const select = item.querySelector('.product-select');
-                const pId = select.value;
                 const price = parseFloat(item.querySelector('.product-price').value) || 0;
-                const quantity = parseInt(item.querySelector('.product-quantity').value) || 0;
+                const qty = parseInt(item.querySelector('.product-quantity').value) || 0;
 
-                if (!pId || quantity <= 0) {
-                    isValid = false;
-                }
+                if (!select.value || qty <= 0) isValid = false;
 
-                const product = productsList.find(p => String(p.id) === String(pId));
+                const product = productsList.find(p => String(p.id) === String(select.value));
                 items.push({
-                    productName: product ? `${product.name} (${product.spec})` : "未知商品",
+                    productName: product ? `${product.name} (${product.spec})` : '未知商品',
                     price: price,
-                    quantity: quantity,
-                    subtotal: price * quantity
+                    quantity: qty,
+                    subtotal: price * qty
                 });
             });
 
             if (!isValid || items.length === 0) {
-                alert('請完整選擇商品並填寫正確的數量！');
-                submitBtn.disabled = false;
-                return;
+                return showToast('請正確選擇商品並填寫數量！', 'error');
             }
 
             const total = calculateTotal();
-
             const newOrder = {
                 id: 'ORD' + Date.now().toString().slice(-6),
                 salesman: document.getElementById('salesmanName').value.trim(),
@@ -1117,193 +854,192 @@
             };
 
             ordersList.unshift(newOrder);
-            alert('訂單建立成功！即將為您生成訂購單...');
-
-            // 自動觸發訂購單頁面與下載列印
+            saveData();
+            showToast('訂單建立成功！');
             printInvoice(newOrder);
-
             resetOrderForm();
-            submitBtn.disabled = false;
-
-            // 更新所有視圖
             renderOrdersList();
             renderReport();
             renderCustomersList();
         });
 
-        // 切換訂單狀態
-        function toggleOrderStatus(orderId) {
-            const order = ordersList.find(o => o.id === orderId);
-            if (order) {
-                order.status = order.status === '已完成' ? '待處理' : '已完成';
-                renderOrdersList();
-                renderReport();
-                renderCustomersList(); 
-            }
-        }
-
-        // 刪除訂單
-        function deleteOrder(orderId) {
-            if (confirm(`確定要刪除訂單 ${orderId} 嗎？此操作不可復原。`)) {
-                ordersList = ordersList.filter(o => o.id !== orderId);
-                renderOrdersList();
-                renderReport();
-                renderCustomersList();
-            }
-        }
-
-        // 重新列印已存在的訂單
-        function printOrderById(orderId) {
-            const order = ordersList.find(o => o.id === orderId);
-            if (order) {
-                printInvoice(order);
-            }
-        }
-
-        // 渲染訂單列表
+        // 列表渲染邏輯
         function renderOrdersList() {
-            const listContainer = document.getElementById('ordersList');
-            const keyword = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
+            const container = document.getElementById('ordersList');
+            const kw = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
 
-            listContainer.innerHTML = '';
-
-            const filteredOrders = ordersList.filter(o => {
-                const matchKeyword = o.customerName.toLowerCase().includes(keyword) || 
-                                     o.id.toLowerCase().includes(keyword) ||
-                                     o.salesman.toLowerCase().includes(keyword);
-                const matchStatus = !statusFilter || o.status === statusFilter;
-                return matchKeyword && matchStatus;
+            const filtered = ordersList.filter(o => {
+                const matchKw = o.customerName.toLowerCase().includes(kw) || o.id.toLowerCase().includes(kw) || o.salesman.toLowerCase().includes(kw);
+                const matchStatus = !status || o.status === status;
+                return matchKw && matchStatus;
             });
 
-            if (filteredOrders.length === 0) {
-                listContainer.innerHTML = '<p style="color:#666; grid-column: 1/-1;">查無符合條件的訂單資料</p>';
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="color:#718096; grid-column:1/-1;">查無符合條件的訂單</p>';
                 return;
             }
 
-            filteredOrders.forEach(o => {
-                const badgeClass = o.status === '已完成' ? 'status-completed' : 'status-pending';
-                const card = document.createElement('div');
-                card.className = 'card';
-
-                let itemsHTML = o.items.map(i => `<li style="margin-left: 20px; font-size: 0.9em; color:#555;">${escapeHTML(i.productName)} x ${i.quantity}</li>`).join('');
-
-                card.innerHTML = `
+            container.innerHTML = filtered.map(o => `
+                <div class="card">
                     <div>
                         <div class="card-header">
                             <strong>${escapeHTML(o.id)}</strong>
-                            <span class="status-badge ${badgeClass}" onclick="toggleOrderStatus('${escapeHTML(o.id)}')" title="點擊切換狀態">${escapeHTML(o.status)}</span>
+                            <span class="status-badge ${o.status === '已完成' ? 'status-completed' : 'status-pending'}" onclick="toggleOrderStatus('${o.id}')">${escapeHTML(o.status)}</span>
                         </div>
                         <p><strong>客戶：</strong> ${escapeHTML(o.customerName)} (${escapeHTML(o.customerPhone)})</p>
                         <p><strong>業務：</strong> ${escapeHTML(o.salesman)}</p>
                         <p><strong>日期：</strong> ${escapeHTML(o.date)}</p>
-                        <p style="margin-top: 4px;"><strong>明細：</strong></p>
-                        <ul>${itemsHTML}</ul>
-                        <p style="margin-top: 8px;"><strong>總額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(o.totalAmount)} VND</span></p>
+                        <p style="margin-top:6px;"><strong>金額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(o.totalAmount)} VND</span></p>
                     </div>
-                    <div class="card-footer">
-                        <button class="btn-print" onclick="printOrderById('${escapeHTML(o.id)}')">📄 下載訂購單</button>
-                        <button class="btn-danger" onclick="deleteOrder('${escapeHTML(o.id)}')">刪除訂單</button>
+                    <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
+                        <button class="btn-info btn-sm" onclick="printOrderById('${o.id}')">📄 列印</button>
+                        <button class="btn-danger btn-sm" onclick="deleteOrder('${o.id}')">刪除</button>
                     </div>
-                `;
-                listContainer.appendChild(card);
-            });
+                </div>
+            `).join('');
         }
 
-        // 搜尋與篩選事件處理
+        function toggleOrderStatus(id) {
+            const order = ordersList.find(o => o.id === id);
+            if (order) {
+                order.status = order.status === '已完成' ? '待處理' : '已完成';
+                saveData();
+                renderOrdersList();
+                renderReport();
+                showToast('訂單狀態已更新');
+            }
+        }
+
+        function deleteOrder(id) {
+            if (confirm(`確定要刪除訂單 ${id} 嗎？`)) {
+                ordersList = ordersList.filter(o => o.id !== id);
+                saveData();
+                renderOrdersList();
+                renderReport();
+                renderCustomersList();
+                showToast('訂單已刪除', 'info');
+            }
+        }
+
+        function printOrderById(id) {
+            const order = ordersList.find(o => o.id === id);
+            if (order) printInvoice(order);
+        }
+
         document.getElementById('searchInput').addEventListener('input', renderOrdersList);
         document.getElementById('statusFilter').addEventListener('change', renderOrdersList);
 
-        // 渲染客戶管理頁面
+        // 客戶列表渲染
         function renderCustomersList() {
             const container = document.getElementById('customersList');
-            container.innerHTML = '';
+            const map = {};
 
-            const customersMap = {};
             ordersList.forEach(o => {
-                const customerKey = o.customerPhone; 
-                
-                if (!customersMap[customerKey]) {
-                    customersMap[customerKey] = {
-                        name: o.customerName,
-                        email: o.customerEmail,
-                        phone: o.customerPhone,
-                        orderCount: 1,
-                        totalSpent: o.totalAmount 
-                    };
+                if (!map[o.customerPhone]) {
+                    map[o.customerPhone] = { name: o.customerName, email: o.customerEmail, phone: o.customerPhone, count: 1, total: o.totalAmount };
                 } else {
-                    customersMap[customerKey].orderCount += 1;
-                    customersMap[customerKey].totalSpent += o.totalAmount;
+                    map[o.customerPhone].count += 1;
+                    map[o.customerPhone].total += o.totalAmount;
                 }
             });
 
-            const customers = Object.values(customersMap);
-
-            if (customers.length === 0) {
-                container.innerHTML = '<p style="color:#666; grid-column: 1/-1;">尚無客戶資料</p>';
+            const list = Object.values(map);
+            if (list.length === 0) {
+                container.innerHTML = '<p style="color:#718096; grid-column:1/-1;">尚無客戶資料</p>';
                 return;
             }
 
-            customers.forEach(c => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div>
-                        <h3>${escapeHTML(c.name)}</h3>
-                        <p style="margin-top: 8px;"><strong>電話：</strong> ${escapeHTML(c.phone)}</p>
-                        <p><strong>郵箱：</strong> ${escapeHTML(c.email)}</p>
-                        <p><strong>累積訂單：</strong> ${c.orderCount} 筆</p>
-                        <p><strong>累積消費：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(c.totalSpent)} VND</span></p>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
+            container.innerHTML = list.map(c => `
+                <div class="card">
+                    <h3>${escapeHTML(c.name)}</h3>
+                    <p style="margin-top:8px;"><strong>電話：</strong> ${escapeHTML(c.phone)}</p>
+                    <p><strong>郵箱：</strong> ${escapeHTML(c.email)}</p>
+                    <p><strong>累積訂單：</strong> ${c.count} 筆</p>
+                    <p><strong>總消費額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(c.total)} VND</span></p>
+                </div>
+            `).join('');
         }
 
-        // 渲染報表統計頁面
+        // 報表計算與渲染
         function renderReport() {
-            let totalSales = 0;
-            let totalCommission = 0;
-            let completedCount = 0;
-            const salesmanStats = {};
+            let sales = 0, comm = 0, completed = 0;
+            const stats = {};
 
             ordersList.forEach(o => {
                 if (o.status === '已完成') {
-                    totalSales += o.totalAmount;
-                    totalCommission += o.commission;
-                    completedCount++;
+                    sales += o.totalAmount;
+                    comm += o.commission;
+                    completed++;
 
-                    if (!salesmanStats[o.salesman]) {
-                        salesmanStats[o.salesman] = { sales: o.totalAmount, commission: o.commission, count: 1 };
+                    if (!stats[o.salesman]) {
+                        stats[o.salesman] = { sales: o.totalAmount, comm: o.commission, count: 1 };
                     } else {
-                        salesmanStats[o.salesman].sales += o.totalAmount;
-                        salesmanStats[o.salesman].commission += o.commission;
-                        salesmanStats[o.salesman].count += 1;
+                        stats[o.salesman].sales += o.totalAmount;
+                        stats[o.salesman].comm += o.commission;
+                        stats[o.salesman].count += 1;
                     }
                 }
             });
 
-            document.getElementById('totalSales').textContent = `${formatNumber(totalSales)} VND`;
-            document.getElementById('totalCommission').textContent = `${formatNumber(totalCommission)} VND`;
+            document.getElementById('totalSales').textContent = `${formatNumber(sales)} VND`;
+            document.getElementById('totalCommission').textContent = `${formatNumber(comm)} VND`;
             document.getElementById('totalOrders').textContent = ordersList.length;
-            document.getElementById('completedOrders').textContent = completedCount;
+            document.getElementById('completedOrders').textContent = completed;
 
-            const tbody = document.getElementById('performanceBody');
-            tbody.innerHTML = '';
-
-            Object.entries(salesmanStats).forEach(([name, stat]) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
+            document.getElementById('performanceBody').innerHTML = Object.entries(stats).map(([name, s]) => `
+                <tr>
                     <td><strong>${escapeHTML(name)}</strong></td>
-                    <td>${formatNumber(stat.sales)} VND</td>
-                    <td>${formatNumber(stat.commission)} VND</td>
-                    <td>${stat.count}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+                    <td>${formatNumber(s.sales)} VND</td>
+                    <td>${formatNumber(s.comm)} VND</td>
+                    <td>${s.count}</td>
+                </tr>
+            `).join('');
         }
 
-        // 頁面初始化
+        // 資料匯出與匯入功能
+        document.getElementById('exportDataBtn').addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ products: productsList, orders: ordersList }));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `ERP_Backup_${getLocalDateString()}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast('資料備份匯出成功！');
+        });
+
+        document.getElementById('importDataBtn').addEventListener('click', () => {
+            document.getElementById('importFileInput').click();
+        });
+
+        document.getElementById('importFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    if (parsed.products && parsed.orders) {
+                        productsList = parsed.products;
+                        ordersList = parsed.orders;
+                        saveData();
+                        renderProductTable();
+                        renderOrdersList();
+                        renderCustomersList();
+                        renderReport();
+                        showToast('資料備份匯入成功！');
+                    } else {
+                        showToast('檔案格式不相容！', 'error');
+                    }
+                } catch (err) {
+                    showToast('匯入失敗，請確認檔案類型！', 'error');
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // 系統初始化
         document.getElementById('orderDate').value = getLocalDateString();
         renderProductTable();
         addOrderItem();
