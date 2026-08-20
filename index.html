@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>咖啡豆與冷萃包業務訂單 ERP 系統</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,6 +14,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         .sidebar-item-active {
             background-color: #1e293b;
@@ -22,8 +23,8 @@
         }
         /* 自訂滾動條 */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
         }
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
@@ -37,47 +38,54 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col overflow-x-hidden">
 
-    <div class="flex h-screen overflow-hidden">
+    <!-- 行動裝置側邊欄遮罩 Overlay -->
+    <div id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/60 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+
+    <div class="flex h-screen overflow-hidden w-full relative">
         <!-- 側邊選單 Sidebar -->
-        <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 z-20">
+        <aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-64 bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
             <!-- 標誌區 -->
             <div class="h-16 flex items-center justify-between px-6 bg-slate-950 font-bold text-lg text-white border-b border-slate-800">
                 <div class="flex items-center space-x-2">
                     <i data-lucide="coffee" class="text-amber-500"></i>
-                    <span>CoffeeERP 訂單系統</span>
+                    <span class="truncate">CoffeeERP 訂單系統</span>
                 </div>
+                <!-- 手機版關閉按鈕 -->
+                <button onclick="toggleMobileSidebar()" class="lg:hidden text-slate-400 hover:text-white p-1">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
             </div>
 
             <!-- 導覽連結 -->
             <nav class="flex-1 py-4 overflow-y-auto space-y-1">
                 <a href="#" onclick="switchTab('dashboard'); return false;" id="nav-dashboard" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 flex-shrink-0"></i>
                     <span>主控台 (Dashboard)</span>
                 </a>
                 <a href="#" onclick="switchTab('orders'); return false;" id="nav-orders" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    <i data-lucide="shopping-cart" class="w-5 h-5 flex-shrink-0"></i>
                     <span>訂單管理</span>
                 </a>
                 <a href="#" onclick="switchTab('create-order'); return false;" id="nav-create-order" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <i data-lucide="plus-circle" class="w-5 h-5 flex-shrink-0"></i>
                     <span>新增訂單</span>
                 </a>
                 <a href="#" onclick="switchTab('products'); return false;" id="nav-products" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
-                    <i data-lucide="package" class="w-5 h-5"></i>
+                    <i data-lucide="package" class="w-5 h-5 flex-shrink-0"></i>
                     <span>商品管理</span>
                 </a>
                 <a href="#" onclick="switchTab('customers'); return false;" id="nav-customers" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
-                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <i data-lucide="users" class="w-5 h-5 flex-shrink-0"></i>
                     <span>客戶管理</span>
                 </a>
                 <a href="#" onclick="switchTab('reports'); return false;" id="nav-reports" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
-                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <i data-lucide="bar-chart-3" class="w-5 h-5 flex-shrink-0"></i>
                     <span>報表統計</span>
                 </a>
                 <a href="#" onclick="switchTab('data-io'); return false;" id="nav-data-io" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
-                    <i data-lucide="database" class="w-5 h-5"></i>
+                    <i data-lucide="database" class="w-5 h-5 flex-shrink-0"></i>
                     <span>資料匯入/匯出</span>
                 </a>
             </nav>
@@ -95,91 +103,100 @@
         </aside>
 
         <!-- 主內容區域 -->
-        <main class="flex-1 flex flex-col overflow-y-auto bg-slate-100">
-            <!-- 頁頭資訊列 -->
-            <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-8 sticky top-0 z-10">
-                <h1 id="page-title" class="text-xl font-bold text-slate-800">主控台</h1>
-                <div class="flex items-center space-x-4">
-                    <span id="current-time" class="text-sm font-medium text-slate-500"></span>
-                    <button onclick="resetSystemData()" class="text-xs text-rose-600 hover:text-rose-800 font-medium px-3 py-1.5 rounded border border-rose-200 hover:bg-rose-50 transition">
-                        重置預設咖啡數據
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-100 w-full">
+            <!-- 頁頭資訊列 (適應手機排版) -->
+            <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-10 flex-shrink-0">
+                <div class="flex items-center space-x-3">
+                    <!-- 手機選單漢堡按鈕 -->
+                    <button onclick="toggleMobileSidebar()" class="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    <h1 id="page-title" class="text-lg sm:text-xl font-bold text-slate-800 truncate">主控台</h1>
+                </div>
+
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <span id="current-time" class="hidden sm:inline text-xs sm:text-sm font-medium text-slate-500"></span>
+                    <button onclick="resetSystemData()" class="text-xs text-rose-600 hover:text-rose-800 font-medium px-2.5 py-1.5 rounded border border-rose-200 hover:bg-rose-50 transition whitespace-nowrap">
+                        重置資料
                     </button>
                 </div>
             </header>
 
             <!-- 內容容器 -->
-            <div class="p-8 flex-1">
+            <div class="p-4 sm:p-6 lg:p-8 flex-1 max-w-7xl w-full mx-auto">
                 
                 <!-- Toast 訊息通知區 -->
-                <div id="toast-container" class="fixed top-20 right-8 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+                <div id="toast-container" class="fixed top-16 sm:top-20 right-4 sm:right-8 z-50 flex flex-col space-y-2 pointer-events-none max-w-xs sm:max-w-md w-full"></div>
 
                 <!-- 區塊：主控台 -->
                 <section id="section-dashboard" class="space-y-6">
-                    <!-- KPI 指標卡片 -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <!-- KPI 指標卡片 (動態適應 1/2/4 欄) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-500">總銷售額</p>
-                                <p id="kpi-revenue" class="text-2xl font-bold text-slate-800 mt-1">0 VND</p>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500">總銷售額</p>
+                                <p id="kpi-revenue" class="text-xl sm:text-2xl font-bold text-slate-800 mt-1">0 VND</p>
                             </div>
-                            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
-                                <i data-lucide="dollar-sign" class="w-6 h-6"></i>
+                            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg flex-shrink-0">
+                                <i data-lucide="dollar-sign" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-500">訂單總數量</p>
-                                <p id="kpi-orders" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500">訂單總數量</p>
+                                <p id="kpi-orders" class="text-xl sm:text-2xl font-bold text-slate-800 mt-1">0</p>
                             </div>
-                            <div class="p-3 bg-sky-50 text-sky-600 rounded-lg">
-                                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                            <div class="p-3 bg-sky-50 text-sky-600 rounded-lg flex-shrink-0">
+                                <i data-lucide="shopping-bag" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-500">客戶數量</p>
-                                <p id="kpi-customers" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500">客戶數量</p>
+                                <p id="kpi-customers" class="text-xl sm:text-2xl font-bold text-slate-800 mt-1">0</p>
                             </div>
-                            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
-                                <i data-lucide="users" class="w-6 h-6"></i>
+                            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg flex-shrink-0">
+                                <i data-lucide="users" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-500">咖啡商品數</p>
-                                <p id="kpi-products" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500">咖啡商品數</p>
+                                <p id="kpi-products" class="text-xl sm:text-2xl font-bold text-slate-800 mt-1">0</p>
                             </div>
-                            <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
-                                <i data-lucide="coffee" class="w-6 h-6"></i>
+                            <div class="p-3 bg-amber-50 text-amber-600 rounded-lg flex-shrink-0">
+                                <i data-lucide="coffee" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                             </div>
                         </div>
                     </div>
 
                     <!-- 近期訂單與快捷操作 -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="lg:col-span-2 bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
                             <h3 class="font-semibold text-slate-800 mb-4 flex items-center justify-between">
                                 <span>最新訂單動態</span>
                                 <button onclick="switchTab('orders')" class="text-sm text-sky-600 hover:text-sky-700 font-medium">查看全部</button>
                             </h3>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm text-slate-600">
-                                    <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
-                                        <tr>
-                                            <th class="py-3 px-4">訂單編號</th>
-                                            <th class="py-3 px-4">客戶名稱</th>
-                                            <th class="py-3 px-4">金額</th>
-                                            <th class="py-3 px-4">狀態</th>
-                                            <th class="py-3 px-4">日期</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="dashboard-recent-orders" class="divide-y divide-slate-100">
-                                        <!-- 動態注入內容 -->
-                                    </tbody>
-                                </table>
+                            <div class="overflow-x-auto -mx-5 sm:mx-0">
+                                <div class="inline-block min-w-full align-middle px-5 sm:px-0">
+                                    <table class="min-w-full text-left text-sm text-slate-600">
+                                        <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
+                                            <tr>
+                                                <th class="py-3 px-3 sm:px-4">訂單編號</th>
+                                                <th class="py-3 px-3 sm:px-4">客戶名稱</th>
+                                                <th class="py-3 px-3 sm:px-4">金額</th>
+                                                <th class="py-3 px-3 sm:px-4">狀態</th>
+                                                <th class="py-3 px-3 sm:px-4">日期</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dashboard-recent-orders" class="divide-y divide-slate-100">
+                                            <!-- 動態注入內容 -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
                             <div>
                                 <h3 class="font-semibold text-slate-800 mb-4">快捷操作</h3>
                                 <div class="space-y-3">
@@ -207,10 +224,10 @@
 
                 <!-- 區塊：訂單管理 -->
                 <section id="section-orders" class="space-y-6 hidden">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
                         <!-- 搜尋與篩選列 -->
-                        <div class="flex flex-col md:flex-row gap-4 justify-between mb-6">
-                            <div class="flex flex-1 gap-4">
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between mb-6">
+                            <div class="flex flex-col sm:flex-row flex-1 gap-3 sm:gap-4">
                                 <div class="relative flex-1">
                                     <i data-lucide="search" class="absolute left-3 top-3 w-4 h-4 text-slate-400"></i>
                                     <input type="text" id="order-search" placeholder="搜尋訂單編號或客戶名稱..." class="pl-9 pr-4 py-2 w-full border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
@@ -223,45 +240,47 @@
                                     <option value="已取消">已取消</option>
                                 </select>
                             </div>
-                            <button onclick="switchTab('create-order')" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition">
+                            <button onclick="switchTab('create-order')" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition">
                                 <i data-lucide="plus" class="w-4 h-4"></i>
                                 <span>新增訂單</span>
                             </button>
                         </div>
 
-                        <!-- 訂單表格 -->
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm text-slate-600">
-                                <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
-                                    <tr>
-                                        <th class="py-3 px-4">訂單編號</th>
-                                        <th class="py-3 px-4">客戶名稱</th>
-                                        <th class="py-3 px-4">價格類型</th>
-                                        <th class="py-3 px-4">訂購項目數</th>
-                                        <th class="py-3 px-4">總金額 (VND)</th>
-                                        <th class="py-3 px-4">訂單狀態</th>
-                                        <th class="py-3 px-4">建立日期</th>
-                                        <th class="py-3 px-4 text-center">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="orders-table-body" class="divide-y divide-slate-100">
-                                    <!-- 動態注入內容 -->
-                                </tbody>
-                            </table>
+                        <!-- 訂單表格 (支援水平滾動) -->
+                        <div class="overflow-x-auto -mx-5 sm:mx-0">
+                            <div class="inline-block min-w-full align-middle px-5 sm:px-0">
+                                <table class="min-w-full text-left text-sm text-slate-600">
+                                    <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
+                                        <tr>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">訂單編號</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">客戶名稱</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">價格類型</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">項目數</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">總金額 (VND)</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">訂單狀態</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">建立日期</th>
+                                            <th class="py-3 px-3 sm:px-4 text-center whitespace-nowrap">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orders-table-body" class="divide-y divide-slate-100">
+                                        <!-- 動態注入內容 -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- 區塊：新增訂單 -->
                 <section id="section-create-order" class="space-y-6 hidden">
-                    <form id="order-form" onsubmit="handleCreateOrder(event)" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
+                    <form id="order-form" onsubmit="handleCreateOrder(event)" class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
                         <div class="border-b border-slate-200 pb-4">
                             <h2 class="text-lg font-bold text-slate-800">建立新咖啡業務訂單</h2>
-                            <p class="text-sm text-slate-500">請選擇客戶、選擇定價體系（零售價 / 批發價）並加入訂購產品項目。</p>
+                            <p class="text-xs sm:text-sm text-slate-500">請選擇客戶、選擇定價體系（零售價 / 批發價）並加入訂購產品項目。</p>
                         </div>
 
                         <!-- 客戶與定價類型選擇區 -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-2">選擇客戶 <span class="text-rose-500">*</span></label>
                                 <select id="order-customer-select" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -275,7 +294,7 @@
                                     <option value="wholesale">批發價 (Wholesale Price)</option>
                                 </select>
                             </div>
-                            <div>
+                            <div class="sm:col-span-2 lg:col-span-1">
                                 <label class="block text-sm font-medium text-slate-700 mb-2">訂單備註</label>
                                 <input type="text" id="order-remark" placeholder="例如：研磨成細粉、附發票..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
                             </div>
@@ -291,34 +310,36 @@
                                 </button>
                             </div>
 
-                            <div class="border rounded-lg overflow-hidden border-slate-200">
-                                <table class="w-full text-left text-sm">
-                                    <thead class="bg-slate-50 text-slate-700 font-semibold text-xs border-b">
-                                        <tr>
-                                            <th class="p-3 w-5/12">商品名稱</th>
-                                            <th class="p-3 w-2/12">單價 (VND)</th>
-                                            <th class="p-3 w-2/12">數量</th>
-                                            <th class="p-3 w-2/12">小計 (VND)</th>
-                                            <th class="p-3 text-center">刪除</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="order-items-table-body" class="divide-y divide-slate-100">
-                                        <!-- 動態資料列 -->
-                                    </tbody>
-                                </table>
+                            <div class="border rounded-lg overflow-x-auto border-slate-200 -mx-5 sm:mx-0">
+                                <div class="inline-block min-w-full align-middle">
+                                    <table class="min-w-full text-left text-sm">
+                                        <thead class="bg-slate-50 text-slate-700 font-semibold text-xs border-b">
+                                            <tr>
+                                                <th class="p-3 min-w-[200px]">商品名稱</th>
+                                                <th class="p-3 min-w-[100px]">單價 (VND)</th>
+                                                <th class="p-3 min-w-[80px]">數量</th>
+                                                <th class="p-3 min-w-[120px]">小計 (VND)</th>
+                                                <th class="p-3 text-center w-12">刪除</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="order-items-table-body" class="divide-y divide-slate-100">
+                                            <!-- 動態資料列 -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
 
                         <!-- 金額總計與操作按鈕 -->
-                        <div class="flex flex-col md:flex-row justify-between items-center pt-4 border-t border-slate-200">
-                            <div class="text-xl font-bold text-slate-800 mb-4 md:mb-0">
+                        <div class="flex flex-col sm:flex-row justify-between items-center pt-4 border-t border-slate-200 gap-4">
+                            <div class="text-lg sm:text-xl font-bold text-slate-800 w-full sm:w-auto text-center sm:text-left">
                                 總計金額: <span id="order-total-amount" class="text-amber-600">0 VND</span>
                             </div>
-                            <div class="flex space-x-3">
-                                <button type="button" onclick="switchTab('orders')" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium">取消</button>
-                                <button type="submit" class="px-5 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium shadow-sm flex items-center space-x-2">
+                            <div class="flex space-x-3 w-full sm:w-auto justify-end">
+                                <button type="button" onclick="switchTab('orders')" class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium">取消</button>
+                                <button type="submit" class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium shadow-sm flex items-center justify-center space-x-2">
                                     <i data-lucide="check" class="w-4 h-4"></i>
-                                    <span>提交並建立訂單</span>
+                                    <span>提交訂單</span>
                                 </button>
                             </div>
                         </div>
@@ -327,81 +348,85 @@
 
                 <!-- 區塊：商品管理 -->
                 <section id="section-products" class="space-y-6 hidden">
-                    <div class="flex justify-between items-center">
-                        <input type="text" id="product-search" placeholder="搜尋商品名稱或類別..." class="px-4 py-2 border border-slate-300 rounded-lg text-sm w-72 focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                        <button onclick="openProductModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2">
+                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+                        <input type="text" id="product-search" placeholder="搜尋商品名稱或類別..." class="px-4 py-2 border border-slate-300 rounded-lg text-sm w-full sm:w-72 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <button onclick="openProductModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2">
                             <i data-lucide="plus" class="w-4 h-4"></i>
                             <span>新增咖啡商品</span>
                         </button>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                        <table class="w-full text-left text-sm text-slate-600">
-                            <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
-                                <tr>
-                                    <th class="py-3 px-4">商品編號</th>
-                                    <th class="py-3 px-4">商品名稱</th>
-                                    <th class="py-3 px-4">分類</th>
-                                    <th class="py-3 px-4">零售價 (VND)</th>
-                                    <th class="py-3 px-4">批發價 (VND)</th>
-                                    <th class="py-3 px-4">目前庫存</th>
-                                    <th class="py-3 px-4 text-center">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="products-table-body" class="divide-y divide-slate-100">
-                                <!-- 動態注入內容 -->
-                            </tbody>
-                        </table>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto -mx-5 sm:mx-0">
+                        <div class="inline-block min-w-full align-middle px-5 sm:px-0">
+                            <table class="min-w-full text-left text-sm text-slate-600">
+                                <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
+                                    <tr>
+                                        <th class="py-3 px-4 whitespace-nowrap">商品編號</th>
+                                        <th class="py-3 px-4 whitespace-nowrap min-w-[200px]">商品名稱</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">分類</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">零售價 (VND)</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">批發價 (VND)</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">庫存</th>
+                                        <th class="py-3 px-4 text-center whitespace-nowrap">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-table-body" class="divide-y divide-slate-100">
+                                    <!-- 動態注入內容 -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
 
                 <!-- 區塊：客戶管理 -->
                 <section id="section-customers" class="space-y-6 hidden">
-                    <div class="flex justify-between items-center">
-                        <input type="text" id="customer-search" placeholder="搜尋客戶名稱、電話或 Email..." class="px-4 py-2 border border-slate-300 rounded-lg text-sm w-64 focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                        <button onclick="openCustomerModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2">
+                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+                        <input type="text" id="customer-search" placeholder="搜尋客戶名稱、電話..." class="px-4 py-2 border border-slate-300 rounded-lg text-sm w-full sm:w-64 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <button onclick="openCustomerModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2">
                             <i data-lucide="user-plus" class="w-4 h-4"></i>
                             <span>新增客戶</span>
                         </button>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                        <table class="w-full text-left text-sm text-slate-600">
-                            <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
-                                <tr>
-                                    <th class="py-3 px-4">客戶編號</th>
-                                    <th class="py-3 px-4">客戶名稱</th>
-                                    <th class="py-3 px-4">聯絡電話</th>
-                                    <th class="py-3 px-4">電子郵件</th>
-                                    <th class="py-3 px-4">地址</th>
-                                    <th class="py-3 px-4 text-center">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="customers-table-body" class="divide-y divide-slate-100">
-                                <!-- 動態注入內容 -->
-                            </tbody>
-                        </table>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto -mx-5 sm:mx-0">
+                        <div class="inline-block min-w-full align-middle px-5 sm:px-0">
+                            <table class="min-w-full text-left text-sm text-slate-600">
+                                <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
+                                    <tr>
+                                        <th class="py-3 px-4 whitespace-nowrap">客戶編號</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">客戶名稱</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">聯絡電話</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">電子郵件</th>
+                                        <th class="py-3 px-4 whitespace-nowrap">地址</th>
+                                        <th class="py-3 px-4 text-center whitespace-nowrap">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customers-table-body" class="divide-y divide-slate-100">
+                                    <!-- 動態注入內容 -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
 
-                <!-- 區塊：報表統計 -->
+                <!-- 區塊：報表統計 (自動響應佈局) -->
                 <section id="section-reports" class="space-y-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
                             <h3 class="font-bold text-slate-800 mb-4 flex items-center space-x-2">
                                 <i data-lucide="trending-up" class="w-5 h-5 text-amber-600"></i>
                                 <span>熱銷咖啡商品 TOP 5 (銷售總包數)</span>
                             </h3>
-                            <div class="h-64 relative" id="container-chart-top-products">
+                            <div class="h-64 sm:h-72 relative" id="container-chart-top-products">
                                 <canvas id="chart-top-products"></canvas>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
                             <h3 class="font-bold text-slate-800 mb-4 flex items-center space-x-2">
                                 <i data-lucide="pie-chart" class="w-5 h-5 text-amber-600"></i>
                                 <span>訂單狀態佔比</span>
                             </h3>
-                            <div class="h-64 flex justify-center relative" id="container-chart-order-status">
+                            <div class="h-64 sm:h-72 flex justify-center relative" id="container-chart-order-status">
                                 <canvas id="chart-order-status"></canvas>
                             </div>
                         </div>
@@ -412,9 +437,9 @@
                 <section id="section-data-io" class="space-y-6 hidden">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- 匯出卡片 -->
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
                             <div class="flex items-center space-x-3 text-amber-600">
-                                <i data-lucide="download-cloud" class="w-8 h-8"></i>
+                                <i data-lucide="download-cloud" class="w-8 h-8 flex-shrink-0"></i>
                                 <h3 class="text-lg font-bold text-slate-800">匯出系統資料</h3>
                             </div>
                             <p class="text-sm text-slate-500">將系統目前的訂單、咖啡商品及客戶數據匯出備份，或匯出成 CSV 檔以便於 Excel 分析。</p>
@@ -436,9 +461,9 @@
                         </div>
 
                         <!-- 匯入卡片 -->
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
                             <div class="flex items-center space-x-3 text-emerald-600">
-                                <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+                                <i data-lucide="upload-cloud" class="w-8 h-8 flex-shrink-0"></i>
                                 <h3 class="text-lg font-bold text-slate-800">匯入系統資料</h3>
                             </div>
                             <p class="text-sm text-slate-500">選擇先前匯出的 JSON 備份檔案，還原系統所有資料（將會覆蓋目前資料）。</p>
@@ -460,33 +485,33 @@
     </div>
 
     <!-- 彈窗：訂單詳情 -->
-    <div id="modal-order-detail" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-2xl w-full mx-4 overflow-hidden">
-            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold text-lg text-slate-800" id="order-modal-title">訂單詳情</h3>
-                <button onclick="closeModal('modal-order-detail')" class="text-slate-400 hover:text-slate-600">
+    <div id="modal-order-detail" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50 flex-shrink-0">
+                <h3 class="font-bold text-base sm:text-lg text-slate-800" id="order-modal-title">訂單詳情</h3>
+                <button onclick="closeModal('modal-order-detail')" class="text-slate-400 hover:text-slate-600 p-1">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto" id="order-modal-body">
+            <div class="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1" id="order-modal-body">
                 <!-- 動態注入內容 -->
             </div>
-            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end flex-shrink-0">
                 <button onclick="closeModal('modal-order-detail')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-medium">關閉</button>
             </div>
         </div>
     </div>
 
     <!-- 彈窗：新增/編輯商品 -->
-    <div id="modal-product" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full mx-4 overflow-hidden">
-            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold text-lg text-slate-800" id="product-modal-title">新增/編輯商品</h3>
-                <button onclick="closeModal('modal-product')" class="text-slate-400 hover:text-slate-600">
+    <div id="modal-product" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50 flex-shrink-0">
+                <h3 class="font-bold text-base sm:text-lg text-slate-800" id="product-modal-title">新增/編輯商品</h3>
+                <button onclick="closeModal('modal-product')" class="text-slate-400 hover:text-slate-600 p-1">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <form onsubmit="saveProduct(event)" class="p-6 space-y-4">
+            <form onsubmit="saveProduct(event)" class="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
                 <input type="hidden" id="prod-id">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">商品名稱</label>
@@ -519,15 +544,15 @@
     </div>
 
     <!-- 彈窗：新增/編輯客戶 -->
-    <div id="modal-customer" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full mx-4 overflow-hidden">
-            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold text-lg text-slate-800" id="customer-modal-title">新增/編輯客戶</h3>
-                <button onclick="closeModal('modal-customer')" class="text-slate-400 hover:text-slate-600">
+    <div id="modal-customer" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50 flex-shrink-0">
+                <h3 class="font-bold text-base sm:text-lg text-slate-800" id="customer-modal-title">新增/編輯客戶</h3>
+                <button onclick="closeModal('modal-customer')" class="text-slate-400 hover:text-slate-600 p-1">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <form onsubmit="saveCustomer(event)" class="p-6 space-y-4">
+            <form onsubmit="saveCustomer(event)" class="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
                 <input type="hidden" id="cust-id">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">客戶/公司名稱</label>
@@ -658,6 +683,20 @@
             document.getElementById('customer-search').addEventListener('input', renderCustomersTable);
         };
 
+        // 開啟/關閉行動裝置選單
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('app-sidebar');
+            const backdrop = document.getElementById('mobile-sidebar-backdrop');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
         function updateCurrentTime() {
             const now = new Date();
             document.getElementById('current-time').innerText = now.toLocaleString('zh-TW', { hour12: false });
@@ -715,6 +754,14 @@
 
         // --- 切換分頁選單 ---
         function switchTab(tabId) {
+            // 在行動裝置切換 Tab 時自動關閉 Sidebar
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('app-sidebar');
+                const backdrop = document.getElementById('mobile-sidebar-backdrop');
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+
             const sections = ['dashboard', 'orders', 'create-order', 'products', 'customers', 'reports', 'data-io'];
             sections.forEach(id => {
                 const sec = document.getElementById(`section-${id}`);
@@ -776,11 +823,11 @@
             recent.forEach(order => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-semibold text-sky-600">${escapeHtml(order.id)}</td>
-                    <td class="py-3 px-4">${escapeHtml(order.customerName)}</td>
-                    <td class="py-3 px-4 font-medium text-amber-700">${formatVND(order.totalAmount)}</td>
-                    <td class="py-3 px-4">${getStatusBadge(order.status)}</td>
-                    <td class="py-3 px-4 text-xs text-slate-400">${escapeHtml(order.date)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-semibold text-sky-600 whitespace-nowrap">${escapeHtml(order.id)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-medium whitespace-nowrap">${escapeHtml(order.customerName)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-medium text-amber-700 whitespace-nowrap">${formatVND(order.totalAmount)}</td>
+                    <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${getStatusBadge(order.status)}</td>
+                    <td class="py-3 px-3 sm:px-4 text-xs text-slate-400 whitespace-nowrap">${escapeHtml(order.date)}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -816,19 +863,19 @@
             }
 
             [...filtered].reverse().forEach(order => {
-                const priceTypeLabel = order.priceType === 'wholesale' ? '<span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200">批發價</span>' : '<span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">零售價</span>';
+                const priceTypeLabel = order.priceType === 'wholesale' ? '<span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 whitespace-nowrap">批發價</span>' : '<span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded whitespace-nowrap">零售價</span>';
                 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-medium text-sky-600">${escapeHtml(order.id)}</td>
-                    <td class="py-3 px-4 font-medium text-slate-800">${escapeHtml(order.customerName)}</td>
-                    <td class="py-3 px-4">${priceTypeLabel}</td>
-                    <td class="py-3 px-4">${order.items ? order.items.length : 0} 項</td>
-                    <td class="py-3 px-4 font-bold text-amber-700">${formatVND(order.totalAmount)}</td>
-                    <td class="py-3 px-4">${getStatusBadge(order.status)}</td>
-                    <td class="py-3 px-4 text-xs text-slate-400">${escapeHtml(order.date)}</td>
-                    <td class="py-3 px-4 text-center space-x-2">
+                    <td class="py-3 px-3 sm:px-4 font-medium text-sky-600 whitespace-nowrap">${escapeHtml(order.id)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-medium text-slate-800 whitespace-nowrap">${escapeHtml(order.customerName)}</td>
+                    <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${priceTypeLabel}</td>
+                    <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${order.items ? order.items.length : 0} 項</td>
+                    <td class="py-3 px-3 sm:px-4 font-bold text-amber-700 whitespace-nowrap">${formatVND(order.totalAmount)}</td>
+                    <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${getStatusBadge(order.status)}</td>
+                    <td class="py-3 px-3 sm:px-4 text-xs text-slate-400 whitespace-nowrap">${escapeHtml(order.date)}</td>
+                    <td class="py-3 px-3 sm:px-4 text-center space-x-1 sm:space-x-2 whitespace-nowrap">
                         <button onclick="viewOrderDetail('${order.id}')" class="text-sky-600 hover:text-sky-800 font-medium text-xs">查看</button>
                         <select onchange="changeOrderStatus('${order.id}', this.value)" class="text-xs border rounded px-1 py-1 bg-white text-slate-600 focus:outline-none">
                             <option value="待處理" ${order.status === '待處理' ? 'selected' : ''}>待處理</option>
@@ -870,35 +917,37 @@
             let itemsHtml = (order.items || []).map(item => `
                 <tr class="border-b border-slate-100">
                     <td class="py-2.5 font-medium text-slate-800">${escapeHtml(item.productName)}</td>
-                    <td class="py-2.5 text-right">${formatVND(item.price)}</td>
-                    <td class="py-2.5 text-right font-semibold">${item.qty} 包</td>
-                    <td class="py-2.5 text-right font-bold text-amber-700">${formatVND(item.subtotal)}</td>
+                    <td class="py-2.5 text-right whitespace-nowrap">${formatVND(item.price)}</td>
+                    <td class="py-2.5 text-right font-semibold whitespace-nowrap">${item.qty} 包</td>
+                    <td class="py-2.5 text-right font-bold text-amber-700 whitespace-nowrap">${formatVND(item.subtotal)}</td>
                 </tr>
             `).join('');
 
             body.innerHTML = `
-                <div class="grid grid-cols-2 gap-4 text-sm bg-slate-50 p-4 rounded-lg">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm bg-slate-50 p-3 sm:p-4 rounded-lg">
                     <div><span class="text-slate-500">客戶名稱：</span><span class="font-medium text-slate-800">${escapeHtml(order.customerName)}</span></div>
                     <div><span class="text-slate-500">訂單日期：</span><span class="font-medium text-slate-800">${escapeHtml(order.date)}</span></div>
                     <div><span class="text-slate-500">價格計費：</span><span class="font-semibold text-slate-700">${order.priceType === 'wholesale' ? '批發價 (Wholesale)' : '零售價 (Retail)'}</span></div>
                     <div><span class="text-slate-500">訂單狀態：</span>${getStatusBadge(order.status)}</div>
-                    <div class="col-span-2"><span class="text-slate-500">備註：</span><span class="font-medium text-slate-800">${escapeHtml(order.remark || '無')}</span></div>
+                    <div class="sm:col-span-2"><span class="text-slate-500">備註：</span><span class="font-medium text-slate-800">${escapeHtml(order.remark || '無')}</span></div>
                 </div>
 
                 <h4 class="font-bold text-slate-800 mt-4 mb-2 text-sm">訂購咖啡品項</h4>
-                <table class="w-full text-left text-sm">
-                    <thead class="text-xs text-slate-400 border-b">
-                        <tr>
-                            <th class="py-2">商品名稱</th>
-                            <th class="py-2 text-right">單價</th>
-                            <th class="py-2 text-right">數量</th>
-                            <th class="py-2 text-right">小計</th>
-                        </tr>
-                    </thead>
-                    <tbody>${itemsHtml}</tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm min-w-[300px]">
+                        <thead class="text-xs text-slate-400 border-b">
+                            <tr>
+                                <th class="py-2">商品名稱</th>
+                                <th class="py-2 text-right">單價</th>
+                                <th class="py-2 text-right">數量</th>
+                                <th class="py-2 text-right">小計</th>
+                            </tr>
+                        </thead>
+                        <tbody>${itemsHtml}</tbody>
+                    </table>
+                </div>
 
-                <div class="text-right font-bold text-lg text-slate-800 pt-3 border-t">
+                <div class="text-right font-bold text-base sm:text-lg text-slate-800 pt-3 border-t">
                     總計金額：<span class="text-amber-600">${formatVND(order.totalAmount)}</span>
                 </div>
             `;
@@ -943,19 +992,19 @@
             tr.id = `item-row-${rowId}`;
             tr.innerHTML = `
                 <td class="p-2">
-                    <select onchange="updateRowPrice(${rowId})" id="prod-select-${rowId}" required class="w-full border rounded p-1.5 text-sm focus:ring-1 focus:ring-sky-500">
+                    <select onchange="updateRowPrice(${rowId})" id="prod-select-${rowId}" required class="w-full border rounded p-1.5 text-sm focus:ring-1 focus:ring-sky-500 min-w-[180px]">
                         ${optionsHtml}
                     </select>
                 </td>
                 <td class="p-2">
-                    <input type="number" id="prod-price-${rowId}" readonly class="w-full border rounded p-1.5 text-sm bg-slate-50 text-slate-600 font-medium" value="0">
+                    <input type="number" id="prod-price-${rowId}" readonly class="w-full border rounded p-1.5 text-sm bg-slate-50 text-slate-600 font-medium min-w-[90px]" value="0">
                 </td>
                 <td class="p-2">
-                    <input type="number" id="prod-qty-${rowId}" oninput="updateRowSubtotal(${rowId})" min="1" value="1" required class="w-full border rounded p-1.5 text-sm">
+                    <input type="number" id="prod-qty-${rowId}" oninput="updateRowSubtotal(${rowId})" min="1" value="1" required class="w-full border rounded p-1.5 text-sm min-w-[60px]">
                 </td>
-                <td class="p-2 font-bold text-amber-700" id="prod-subtotal-${rowId}">0 VND</td>
+                <td class="p-2 font-bold text-amber-700 whitespace-nowrap min-w-[100px]" id="prod-subtotal-${rowId}">0 VND</td>
                 <td class="p-2 text-center">
-                    <button type="button" onclick="removeOrderItemRow(${rowId})" class="text-rose-500 hover:text-rose-700">
+                    <button type="button" onclick="removeOrderItemRow(${rowId})" class="text-rose-500 hover:text-rose-700 p-1">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </td>
@@ -1109,15 +1158,15 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-medium text-slate-500">${escapeHtml(p.id)}</td>
+                    <td class="py-3 px-4 font-medium text-slate-500 whitespace-nowrap">${escapeHtml(p.id)}</td>
                     <td class="py-3 px-4 font-semibold text-slate-800">${escapeHtml(p.name)}</td>
-                    <td class="py-3 px-4 text-xs"><span class="bg-amber-100 text-amber-800 px-2 py-1 rounded font-medium">${escapeHtml(p.category)}</span></td>
-                    <td class="py-3 px-4 font-bold text-slate-700">${formatVND(p.retailPrice)}</td>
-                    <td class="py-3 px-4 font-bold text-indigo-600">${formatVND(p.wholesalePrice)}</td>
-                    <td class="py-3 px-4">
+                    <td class="py-3 px-4 text-xs whitespace-nowrap"><span class="bg-amber-100 text-amber-800 px-2 py-1 rounded font-medium">${escapeHtml(p.category)}</span></td>
+                    <td class="py-3 px-4 font-bold text-slate-700 whitespace-nowrap">${formatVND(p.retailPrice)}</td>
+                    <td class="py-3 px-4 font-bold text-indigo-600 whitespace-nowrap">${formatVND(p.wholesalePrice)}</td>
+                    <td class="py-3 px-4 whitespace-nowrap">
                         <span class="${p.stock < 20 ? 'text-rose-600 font-bold' : 'text-slate-600'}">${p.stock} 包</span>
                     </td>
-                    <td class="py-3 px-4 text-center space-x-2">
+                    <td class="py-3 px-4 text-center space-x-2 whitespace-nowrap">
                         <button onclick="openProductModal('${p.id}')" class="text-sky-600 hover:text-sky-800 text-xs font-medium">編輯</button>
                         <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700 text-xs font-medium">刪除</button>
                     </td>
@@ -1213,12 +1262,12 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-medium text-slate-500">${escapeHtml(c.id)}</td>
-                    <td class="py-3 px-4 font-semibold text-slate-800">${escapeHtml(c.name)}</td>
-                    <td class="py-3 px-4 text-slate-600">${escapeHtml(c.phone)}</td>
-                    <td class="py-3 px-4 text-slate-600">${escapeHtml(c.email)}</td>
-                    <td class="py-3 px-4 text-slate-500 text-xs">${escapeHtml(c.address)}</td>
-                    <td class="py-3 px-4 text-center space-x-2">
+                    <td class="py-3 px-4 font-medium text-slate-500 whitespace-nowrap">${escapeHtml(c.id)}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800 whitespace-nowrap">${escapeHtml(c.name)}</td>
+                    <td class="py-3 px-4 text-slate-600 whitespace-nowrap">${escapeHtml(c.phone)}</td>
+                    <td class="py-3 px-4 text-slate-600 whitespace-nowrap">${escapeHtml(c.email)}</td>
+                    <td class="py-3 px-4 text-slate-500 text-xs min-w-[180px]">${escapeHtml(c.address)}</td>
+                    <td class="py-3 px-4 text-center space-x-2 whitespace-nowrap">
                         <button onclick="openCustomerModal('${c.id}')" class="text-sky-600 hover:text-sky-800 text-xs font-medium">編輯</button>
                         <button onclick="deleteCustomer('${c.id}')" class="text-rose-500 hover:text-rose-700 text-xs font-medium">刪除</button>
                     </td>
@@ -1483,7 +1532,7 @@
                 info: "bg-slate-800"
             };
 
-            toast.className = `${bgColors[type] || 'bg-slate-800'} text-white px-4 py-3 rounded-lg shadow-lg text-sm flex items-center space-x-2 transition-all duration-300 transform translate-y-2 pointer-events-auto`;
+            toast.className = `${bgColors[type] || 'bg-slate-800'} text-white px-4 py-3 rounded-lg shadow-lg text-xs sm:text-sm flex items-center space-x-2 transition-all duration-300 transform translate-y-2 pointer-events-auto`;
             toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
 
             container.appendChild(toast);
