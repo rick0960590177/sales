@@ -338,7 +338,7 @@
             <div class="section-header">
                 <h2>訂單總覽</h2>
                 <div class="filter-group">
-                    <input type="text" id="searchInput" placeholder="搜尋客戶名稱、業務或訂單號...">
+                    <input type="text" id="searchInput" placeholder="搜尋客戶名稱、業務、地址或訂單號...">
                     <select id="statusFilter">
                         <option value="">全部狀態</option>
                         <option value="已完成">已完成</option>
@@ -388,6 +388,13 @@
                     <div class="form-group">
                         <label>訂單日期 *</label>
                         <input type="date" id="orderDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>配送地址 (選填)</label>
+                        <input type="text" id="shippingAddress" placeholder="請輸入詳細送貨地址 (可留空)">
                     </div>
                 </div>
 
@@ -563,6 +570,7 @@
                 customerName: '優質咖啡館',
                 customerEmail: 'coffee@example.com',
                 customerPhone: '0901234567',
+                shippingAddress: '胡志明市第一區咖啡路123號',
                 date: '2026-08-15',
                 items: [{ productName: '100% 阿拉比卡咖啡豆 (500g)', price: 240000, quantity: 10, subtotal: 2400000 }],
                 totalAmount: 2400000,
@@ -810,6 +818,7 @@
                         <p>單號：${escapeHTML(order.id)} | 日期：${escapeHTML(order.date)}</p>
                     </div>
                     <p><strong>客戶：</strong> ${escapeHTML(order.customerName)} (${escapeHTML(order.customerPhone)})</p>
+                    <p><strong>配送地址：</strong> ${escapeHTML(order.shippingAddress || '自取 / 未提供')}</p>
                     <p><strong>業務：</strong> ${escapeHTML(order.salesman)}</p>
                     <table>
                         <thead><tr><th>#</th><th>品名</th><th>單價</th><th>數量</th><th>小計</th></tr></thead>
@@ -855,6 +864,7 @@
                 customerName: document.getElementById('customerName').value.trim(),
                 customerEmail: document.getElementById('customerEmail').value.trim() || '未提供',
                 customerPhone: document.getElementById('customerPhone').value.trim(),
+                shippingAddress: document.getElementById('shippingAddress').value.trim() || '自取 / 未提供',
                 date: document.getElementById('orderDate').value,
                 items: items,
                 totalAmount: total,
@@ -879,7 +889,10 @@
             const status = document.getElementById('statusFilter').value;
 
             const filtered = ordersList.filter(o => {
-                const matchKw = o.customerName.toLowerCase().includes(kw) || o.id.toLowerCase().includes(kw) || o.salesman.toLowerCase().includes(kw);
+                const matchKw = o.customerName.toLowerCase().includes(kw) || 
+                                o.id.toLowerCase().includes(kw) || 
+                                o.salesman.toLowerCase().includes(kw) ||
+                                (o.shippingAddress && o.shippingAddress.toLowerCase().includes(kw));
                 const matchStatus = !status || o.status === status;
                 return matchKw && matchStatus;
             });
@@ -897,6 +910,7 @@
                             <span class="status-badge ${o.status === '已完成' ? 'status-completed' : 'status-pending'}" onclick="toggleOrderStatus('${o.id}')">${escapeHTML(o.status)}</span>
                         </div>
                         <p><strong>客戶：</strong> ${escapeHTML(o.customerName)} (${escapeHTML(o.customerPhone)})</p>
+                        <p><strong>地址：</strong> ${escapeHTML(o.shippingAddress || '自取 / 未提供')}</p>
                         <p><strong>業務：</strong> ${escapeHTML(o.salesman)}</p>
                         <p><strong>日期：</strong> ${escapeHTML(o.date)}</p>
                         <p style="margin-top:6px;"><strong>金額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(o.totalAmount)} VND</span></p>
