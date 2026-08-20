@@ -2,1073 +2,1425 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>專業級業務訂單與 ERP 管理系統</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企業級業務訂單 ERP 系統</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary-color: #6f4e37;
-            --primary-hover: #5a3e2b;
-            --secondary-color: #f4ece1;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #2b2b2b;
-            --border-color: #e2e8f0;
-            --danger-color: #e53e3e;
-            --danger-hover: #c53030;
-            --success-color: #38a169;
-            --info-color: #3182ce;
-            --radius: 8px;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 16px;
+            font-family: 'Inter', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
         }
-
-        .container {
-            width: 95%;
-            max-width: 1400px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 24px;
+        .sidebar-item-active {
+            background-color: #1e293b;
+            color: #38bdf8;
+            border-left: 4px solid #38bdf8;
         }
-
-        header {
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 16px;
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
+        /* 自訂滾動條 styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-
-        h1 {
-            color: var(--primary-color);
-            font-size: clamp(1.5rem, 4vw, 2rem);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
         }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
         }
-
-        .nav-tabs {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            width: 100%;
-            margin-top: 12px;
-        }
-
-        .nav-btn {
-            padding: 10px 18px;
-            border: 1px solid var(--border-color);
-            background: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-color);
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn:hover { background-color: var(--secondary-color); }
-        .nav-btn.active {
-            background: var(--primary-color);
-            color: #fff;
-            border-color: var(--primary-color);
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .filter-group input { flex: 2; min-width: 180px; }
-        .filter-group select { flex: 1; min-width: 120px; }
-
-        input, select, textarea {
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            width: 100%;
-            font-size: 0.95rem;
-            background-color: #fff;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(111, 78, 55, 0.15);
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .order-item {
-            background: var(--secondary-color);
-            padding: 16px;
-            border-radius: var(--radius);
-            margin-bottom: 12px;
-            border: 1px solid rgba(111, 78, 55, 0.1);
-        }
-
-        .btn-primary, .btn-secondary, .btn-danger, .btn-info {
-            padding: 10px 18px;
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-primary { background: var(--primary-color); color: #fff; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-secondary { background: #e2e8f0; color: #4a5568; }
-        .btn-secondary:hover { background: #cbd5e0; }
-        .btn-danger { background: var(--danger-color); color: #fff; }
-        .btn-danger:hover { background: var(--danger-hover); }
-        .btn-info { background: var(--info-color); color: #fff; }
-
-        .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
-
-        .summary {
-            background: #f7fafc;
-            padding: 16px;
-            border-radius: var(--radius);
-            border: 1px dashed var(--border-color);
-            text-align: right;
-            margin-bottom: 16px;
-        }
-
-        .summary-row { font-size: 1.05em; margin-bottom: 4px; }
-        .summary-row .amount { font-weight: 700; color: var(--primary-color); }
-
-        .report-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .report-card {
-            background: var(--secondary-color);
-            padding: 20px;
-            border-radius: var(--radius);
-            text-align: center;
-        }
-
-        .report-value {
-            font-size: 1.6em;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-top: 8px;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            margin-top: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-        }
-
-        .table th, .table td {
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px;
-            text-align: left;
-        }
-
-        .table th { background-color: var(--secondary-color); font-weight: 600; }
-        .table tbody tr:hover { background-color: rgba(244, 236, 225, 0.3); }
-
-        .orders-grid, .customers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 16px;
-        }
-
-        .card {
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 16px;
-            background: #fff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-        }
-
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .status-completed { background: #c6f6d5; color: #22543d; }
-        .status-pending { background: #feebc8; color: #744210; }
-
-        .price-hint { font-size: 0.8em; color: var(--danger-color); display: none; margin-top: 4px; }
-
-        #toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toast {
-            min-width: 250px;
-            padding: 12px 20px;
-            border-radius: var(--radius);
-            color: #fff;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
-        }
-
-        .toast-success { background-color: var(--success-color); }
-        .toast-error { background-color: var(--danger-color); }
-        .toast-info { background-color: var(--info-color); }
-
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
-
-        @media (max-width: 576px) {
-            body { padding: 8px; }
-            .container { padding: 12px; }
-            .nav-btn { flex: 1 1 calc(50% - 8px); text-align: center; }
-            .form-row { flex-direction: column; gap: 0; }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
-<body>
-    <div id="toast-container"></div>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <div class="container">
-        <header>
-            <h1>☕ 業務訂單 ERP 系統</h1>
-            <div class="header-actions">
-                <button class="btn-secondary btn-sm" id="exportDataBtn">📥 匯出資料</button>
-                <button class="btn-secondary btn-sm" id="importDataBtn">📤 匯入資料</button>
-                <input type="file" id="importFileInput" accept=".json" style="display: none;">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 側邊選單 Sidebar -->
+        <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 z-20">
+            <!-- 標誌區 -->
+            <div class="h-16 flex items-center justify-between px-6 bg-slate-950 font-bold text-lg text-white border-b border-slate-800">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="layers" class="text-sky-400"></i>
+                    <span>ApexERP 訂單系統</span>
+                </div>
             </div>
-            <nav class="nav-tabs">
-                <button class="nav-btn active" data-tab="orders">訂單管理</button>
-                <button class="nav-btn" data-tab="create">建立訂單</button>
-                <button class="nav-btn" data-tab="products">商品管理</button>
-                <button class="nav-btn" data-tab="customers">客戶管理</button>
-                <button class="nav-btn" data-tab="report">報表統計</button>
+
+            <!-- 導覽連結 -->
+            <nav class="flex-1 py-4 overflow-y-auto space-y-1">
+                <a href="#" onclick="switchTab('dashboard'); return false;" id="nav-dashboard" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>主控台 (Dashboard)</span>
+                </a>
+                <a href="#" onclick="switchTab('orders'); return false;" id="nav-orders" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    <span>訂單管理</span>
+                </a>
+                <a href="#" onclick="switchTab('create-order'); return false;" id="nav-create-order" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>新增訂單</span>
+                </a>
+                <a href="#" onclick="switchTab('products'); return false;" id="nav-products" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+                    <i data-lucide="package" class="w-5 h-5"></i>
+                    <span>商品管理</span>
+                </a>
+                <a href="#" onclick="switchTab('customers'); return false;" id="nav-customers" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span>客戶管理</span>
+                </a>
+                <a href="#" onclick="switchTab('reports'); return false;" id="nav-reports" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span>報表統計</span>
+                </a>
+                <a href="#" onclick="switchTab('data-io'); return false;" id="nav-data-io" class="sidebar-item flex items-center space-x-3 px-6 py-3 text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                    <span>資料匯入/匯出</span>
+                </a>
             </nav>
-        </header>
 
-        <!-- 訂單列表 -->
-        <section id="orders" class="tab-content active">
-            <div class="section-header">
-                <h2>訂單總覽</h2>
-                <div class="filter-group">
-                    <input type="text" id="searchInput" placeholder="搜尋客戶名稱、業務、地址或訂單號...">
-                    <select id="statusFilter">
-                        <option value="">全部狀態</option>
-                        <option value="已完成">已完成</option>
-                        <option value="待處理">待處理</option>
-                    </select>
+            <!-- 使用者資訊區 -->
+            <div class="p-4 border-t border-slate-800 text-xs text-slate-500 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-sky-600 text-white flex items-center justify-center font-bold">Admin</div>
+                    <div>
+                        <p class="font-semibold text-slate-300">系統管理員</p>
+                        <p class="text-slate-500">在線狀態</p>
+                    </div>
                 </div>
             </div>
-            <div id="ordersList" class="orders-grid"></div>
-        </section>
+        </aside>
 
-        <!-- 建立訂單 -->
-        <section id="create" class="tab-content">
-            <div class="section-header">
-                <h2>建立新訂單</h2>
-            </div>
-            <form id="orderForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>業務人員 *</label>
-                        <input type="text" id="salesmanName" required placeholder="請輸入姓名">
-                    </div>
-                    <div class="form-group">
-                        <label>訂單狀態 *</label>
-                        <select id="orderStatus" required>
-                            <option value="已完成">已完成</option>
-                            <option value="待處理" selected>待處理</option>
-                        </select>
-                    </div>
+        <!-- 主內容區域 -->
+        <main class="flex-1 flex flex-col overflow-y-auto bg-slate-100">
+            <!-- 頁頭資訊列 -->
+            <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-8 sticky top-0 z-10">
+                <h1 id="page-title" class="text-xl font-bold text-slate-800">主控台</h1>
+                <div class="flex items-center space-x-4">
+                    <span id="current-time" class="text-sm font-medium text-slate-500"></span>
+                    <button onclick="resetSystemData()" class="text-xs text-rose-600 hover:text-rose-800 font-medium px-3 py-1.5 rounded border border-rose-200 hover:bg-rose-50 transition">
+                        重置預設資料
+                    </button>
                 </div>
+            </header>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>客戶名稱 *</label>
-                        <input type="text" id="customerName" required placeholder="請輸入公司或客戶名">
-                    </div>
-                    <div class="form-group">
-                        <label>客戶郵箱 (選填)</label>
-                        <input type="email" id="customerEmail" placeholder="name@domain.com (可留空)">
-                    </div>
-                </div>
+            <!-- 內容容器 -->
+            <div class="p-8 flex-1">
+                
+                <!-- Toast 訊息通知區 -->
+                <div id="toast-container" class="fixed top-20 right-8 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>客戶電話 *</label>
-                        <input type="tel" id="customerPhone" required placeholder="請輸入電話號碼">
-                    </div>
-                    <div class="form-group">
-                        <label>訂單日期 *</label>
-                        <input type="date" id="orderDate" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>配送地址 (選填)</label>
-                        <input type="text" id="shippingAddress" placeholder="請輸入詳細送貨地址 (可留空)">
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>訂單品項</h3>
-                    <div id="itemsContainer" style="margin-top: 12px;"></div>
-                    <button type="button" id="addItemBtn" class="btn-secondary btn-sm" style="margin-bottom: 16px;">+ 新增商品</button>
-                </div>
-
-                <div class="summary">
-                    <div class="summary-row">
-                        <span>訂單總金額：</span>
-                        <span id="totalAmount" class="amount">0 VND</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>預估佣金 (10%)：</span>
-                        <span id="commissionAmount" class="amount">0 VND</span>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>備註事項</label>
-                        <textarea id="notes" rows="3" placeholder="特殊需求或配送說明..."></textarea>
-                    </div>
-                </div>
-
-                <div style="display: flex; gap: 12px; margin-top: 12px;">
-                    <button type="submit" id="submitOrderBtn" class="btn-primary">儲存並列印訂購單</button>
-                    <button type="button" id="resetFormBtn" class="btn-secondary">重置表單</button>
-                </div>
-            </form>
-        </section>
-
-        <!-- 商品管理 -->
-        <section id="products" class="tab-content">
-            <div class="section-header">
-                <h2>商品項目管理</h2>
-            </div>
-            <div class="card" style="margin-bottom: 20px;">
-                <h3>新增商品品項</h3>
-                <form id="addProductForm" style="margin-top: 12px;">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>系列 / 類別 *</label>
-                            <input type="text" id="newProductCategory" required placeholder="如：阿拉比卡 100%">
+                <!-- 區塊：主控台 -->
+                <section id="section-dashboard" class="space-y-6">
+                    <!-- KPI 指標卡片 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-slate-500">總銷售額</p>
+                                <p id="kpi-revenue" class="text-2xl font-bold text-slate-800 mt-1">$0</p>
+                            </div>
+                            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+                                <i data-lucide="dollar-sign" class="w-6 h-6"></i>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>商品名稱 *</label>
-                            <input type="text" id="newProductName" required placeholder="如：阿拉比卡咖啡豆">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-slate-500">訂單總數量</p>
+                                <p id="kpi-orders" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+                            </div>
+                            <div class="p-3 bg-sky-50 text-sky-600 rounded-lg">
+                                <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>規格 *</label>
-                            <input type="text" id="newProductSpec" required placeholder="如：250g">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-slate-500">客戶數量</p>
+                                <p id="kpi-customers" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+                            </div>
+                            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-slate-500">在售商品數</p>
+                                <p id="kpi-products" class="text-2xl font-bold text-slate-800 mt-1">0</p>
+                            </div>
+                            <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
+                                <i data-lucide="package" class="w-6 h-6"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>零售價 (VND) *</label>
-                            <input type="number" id="newProductRetail" min="0" required placeholder="0">
+
+                    <!-- 近期訂單與快捷操作 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="font-semibold text-slate-800 mb-4 flex items-center justify-between">
+                                <span>最新訂單動態</span>
+                                <button onclick="switchTab('orders')" class="text-sm text-sky-600 hover:text-sky-700 font-medium">查看全部</button>
+                            </h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-slate-600">
+                                    <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
+                                        <tr>
+                                            <th class="py-3 px-4">訂單編號</th>
+                                            <th class="py-3 px-4">客戶名稱</th>
+                                            <th class="py-3 px-4">金額</th>
+                                            <th class="py-3 px-4">狀態</th>
+                                            <th class="py-3 px-4">日期</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-recent-orders" class="divide-y divide-slate-100">
+                                        <!-- 動態注入內容 -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>批發價 (VND) *</label>
-                            <input type="number" id="newProductWholesale" min="0" required placeholder="0">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-semibold text-slate-800 mb-4">快捷操作</h3>
+                                <div class="space-y-3">
+                                    <button onclick="switchTab('create-order')" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition shadow-sm">
+                                        <i data-lucide="plus" class="w-5 h-5"></i>
+                                        <span>建立新訂單</span>
+                                    </button>
+                                    <button onclick="switchTab('products')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition">
+                                        <i data-lucide="package-plus" class="w-5 h-5"></i>
+                                        <span>新增商品</span>
+                                    </button>
+                                    <button onclick="switchTab('data-io')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition">
+                                        <i data-lucide="download" class="w-5 h-5"></i>
+                                        <span>備份/匯出系統資料</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-500">
+                                <p class="font-semibold text-slate-700 mb-1">提示：</p>
+                                所有新增與修改資料將即時自動儲存於您的瀏覽器 LocalStorage 中。
+                            </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn-primary btn-sm">建立商品</button>
-                </form>
-            </div>
+                </section>
 
-            <h3>現有商品清單</h3>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>類別</th>
-                            <th>品名</th>
-                            <th>規格</th>
-                            <th>零售價 (VND)</th>
-                            <th>批發價 (VND)</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productTableBody"></tbody>
-                </table>
-            </div>
-        </section>
+                <!-- 區塊：訂單管理 -->
+                <section id="section-orders" class="space-y-6 hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <!-- 搜尋與篩選列 -->
+                        <div class="flex flex-col md:flex-row gap-4 justify-between mb-6">
+                            <div class="flex flex-1 gap-4">
+                                <div class="relative flex-1">
+                                    <i data-lucide="search" class="absolute left-3 top-3 w-4 h-4 text-slate-400"></i>
+                                    <input type="text" id="order-search" placeholder="搜尋訂單編號或客戶名稱..." class="pl-9 pr-4 py-2 w-full border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+                                </div>
+                                <select id="order-status-filter" class="border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                                    <option value="ALL">所有狀態</option>
+                                    <option value="待處理">待處理</option>
+                                    <option value="已出貨">已出貨</option>
+                                    <option value="已完成">已完成</option>
+                                    <option value="已取消">已取消</option>
+                                </select>
+                            </div>
+                            <button onclick="switchTab('create-order')" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>新增訂單</span>
+                            </button>
+                        </div>
 
-        <!-- 客戶管理 -->
-        <section id="customers" class="tab-content">
-            <div class="section-header">
-                <h2>客戶資料庫</h2>
-            </div>
-            <div id="customersList" class="customers-grid"></div>
-        </section>
+                        <!-- 訂單表格 -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-600">
+                                <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
+                                    <tr>
+                                        <th class="py-3 px-4">訂單編號</th>
+                                        <th class="py-3 px-4">客戶名稱</th>
+                                        <th class="py-3 px-4">訂購項目數</th>
+                                        <th class="py-3 px-4">總金額</th>
+                                        <th class="py-3 px-4">訂單狀態</th>
+                                        <th class="py-3 px-4">建立日期</th>
+                                        <th class="py-3 px-4 text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-table-body" class="divide-y divide-slate-100">
+                                    <!-- 動態注入內容 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
 
-        <!-- 報表統計 -->
-        <section id="report" class="tab-content">
-            <div class="section-header">
-                <h2>營運報表統計</h2>
-            </div>
-            <div class="report-container">
-                <div class="report-card">
-                    <h3>累積總銷售額</h3>
-                    <div class="report-value" id="totalSales">0 VND</div>
-                </div>
-                <div class="report-card">
-                    <h3>累積撥發佣金</h3>
-                    <div class="report-value" id="totalCommission">0 VND</div>
-                </div>
-                <div class="report-card">
-                    <h3>總訂單數</h3>
-                    <div class="report-value" id="totalOrders">0</div>
-                </div>
-                <div class="report-card">
-                    <h3>已完成訂單</h3>
-                    <div class="report-value" id="completedOrders">0</div>
-                </div>
-            </div>
+                <!-- 區塊：新增訂單 -->
+                <section id="section-create-order" class="space-y-6 hidden">
+                    <form id="order-form" onsubmit="handleCreateOrder(event)" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
+                        <div class="border-b border-slate-200 pb-4">
+                            <h2 class="text-lg font-bold text-slate-800">建立新業務訂單</h2>
+                            <p class="text-sm text-slate-500">請選擇客戶資訊並加入訂購產品項目。</p>
+                        </div>
 
-            <h3>業務績效統計 (僅結算已完成訂單)</h3>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>業務人員</th>
-                            <th>總銷售額</th>
-                            <th>佣金總額</th>
-                            <th>成交筆數</th>
-                        </tr>
-                    </thead>
-                    <tbody id="performanceBody"></tbody>
-                </table>
+                        <!-- 客戶選擇區 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">選擇客戶 <span class="text-rose-500">*</span></label>
+                                <select id="order-customer-select" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                                    <!-- 選項動態生成 -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">訂單備註</label>
+                                <input type="text" id="order-remark" placeholder="例如：需附統編、急件處理..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- 品項選擇列表 -->
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-semibold text-slate-800">訂購商品列表</h3>
+                                <button type="button" onclick="addOrderItemRow()" class="text-sm text-sky-600 hover:text-sky-800 font-medium flex items-center space-x-1">
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                    <span>增加品項</span>
+                                </button>
+                            </div>
+
+                            <div class="border rounded-lg overflow-hidden border-slate-200">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-slate-50 text-slate-700 font-semibold text-xs border-b">
+                                        <tr>
+                                            <th class="p-3 w-1/2">商品名稱</th>
+                                            <th class="p-3 w-1/6">單價</th>
+                                            <th class="p-3 w-1/6">數量</th>
+                                            <th class="p-3 w-1/6">小計</th>
+                                            <th class="p-3 text-center">刪除</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="order-items-table-body" class="divide-y divide-slate-100">
+                                        <!-- 動態資料列 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 金額總計與操作按鈕 -->
+                        <div class="flex flex-col md:flex-row justify-between items-center pt-4 border-t border-slate-200">
+                            <div class="text-xl font-bold text-slate-800 mb-4 md:mb-0">
+                                總計金額: <span id="order-total-amount" class="text-sky-600">$0</span>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button type="button" onclick="switchTab('orders')" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium">取消</button>
+                                <button type="submit" class="px-5 py-2.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium shadow-sm flex items-center space-x-2">
+                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                    <span>提交並建立訂單</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- 區塊：商品管理 -->
+                <section id="section-products" class="space-y-6 hidden">
+                    <div class="flex justify-between items-center">
+                        <input type="text" id="product-search" placeholder="搜尋商品名稱或編號..." class="px-4 py-2 border border-slate-300 rounded-lg text-sm w-64 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <button onclick="openProductModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>新增商品</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <table class="w-full text-left text-sm text-slate-600">
+                            <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
+                                <tr>
+                                    <th class="py-3 px-4">商品編號</th>
+                                    <th class="py-3 px-4">商品名稱</th>
+                                    <th class="py-3 px-4">分類</th>
+                                    <th class="py-3 px-4">售價</th>
+                                    <th class="py-3 px-4">目前庫存</th>
+                                    <th class="py-3 px-4 text-center">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body" class="divide-y divide-slate-100">
+                                <!-- 動態注入內容 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 區塊：客戶管理 -->
+                <section id="section-customers" class="space-y-6 hidden">
+                    <div class="flex justify-between items-center">
+                        <input type="text" id="customer-search" placeholder="搜尋客戶名稱、電話或 Email..." class="px-4 py-2 border border-slate-300 rounded-lg text-sm w-64 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        <button onclick="openCustomerModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            <span>新增客戶</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <table class="w-full text-left text-sm text-slate-600">
+                            <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-xs border-b">
+                                <tr>
+                                    <th class="py-3 px-4">客戶編號</th>
+                                    <th class="py-3 px-4">客戶名稱</th>
+                                    <th class="py-3 px-4">聯絡電話</th>
+                                    <th class="py-3 px-4">電子郵件</th>
+                                    <th class="py-3 px-4">地址</th>
+                                    <th class="py-3 px-4 text-center">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customers-table-body" class="divide-y divide-slate-100">
+                                <!-- 動態注入內容 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 區塊：報表統計 -->
+                <section id="section-reports" class="space-y-6 hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="font-bold text-slate-800 mb-4 flex items-center space-x-2">
+                                <i data-lucide="trending-up" class="w-5 h-5 text-sky-600"></i>
+                                <span>熱銷商品 TOP 5 (銷售量)</span>
+                            </h3>
+                            <div class="h-64 relative" id="container-chart-top-products">
+                                <canvas id="chart-top-products"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="font-bold text-slate-800 mb-4 flex items-center space-x-2">
+                                <i data-lucide="pie-chart" class="w-5 h-5 text-sky-600"></i>
+                                <span>訂單狀態佔比</span>
+                            </h3>
+                            <div class="h-64 flex justify-center relative" id="container-chart-order-status">
+                                <canvas id="chart-order-status"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 區塊：資料匯入與匯出 -->
+                <section id="section-data-io" class="space-y-6 hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 匯出卡片 -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                            <div class="flex items-center space-x-3 text-sky-600">
+                                <i data-lucide="download-cloud" class="w-8 h-8"></i>
+                                <h3 class="text-lg font-bold text-slate-800">匯出系統資料</h3>
+                            </div>
+                            <p class="text-sm text-slate-500">將系統目前的訂單、商品及客戶數據匯出備份，或匯出成 CSV 檔以便於 Excel 分析。</p>
+                            
+                            <div class="space-y-2 pt-2">
+                                <button onclick="exportJSON()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center space-x-2 transition text-sm">
+                                    <i data-lucide="file-json" class="w-4 h-4"></i>
+                                    <span>匯出完整 JSON 備份檔</span>
+                                </button>
+                                <button onclick="exportOrdersCSV()" class="w-full border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center space-x-2 transition text-sm">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                                    <span>匯出訂單清單 (CSV)</span>
+                                </button>
+                                <button onclick="exportProductsCSV()" class="w-full border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center space-x-2 transition text-sm">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                                    <span>匯出商品清單 (CSV)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 匯入卡片 -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                            <div class="flex items-center space-x-3 text-emerald-600">
+                                <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+                                <h3 class="text-lg font-bold text-slate-800">匯入系統資料</h3>
+                            </div>
+                            <p class="text-sm text-slate-500">選擇先前匯出的 JSON 備份檔案，還原系統所有資料（將會覆蓋目前資料）。</p>
+                            
+                            <div class="pt-2">
+                                <label class="border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/30 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition">
+                                    <i data-lucide="file-up" class="w-10 h-10 text-slate-400 mb-2"></i>
+                                    <span class="text-sm font-medium text-slate-700">點擊選擇 JSON 檔案匯入</span>
+                                    <span class="text-xs text-slate-400 mt-1">僅支援 .json 格式備份檔</span>
+                                    <input type="file" id="import-json-file" accept=".json" onchange="importJSON(event)" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
             </div>
-        </section>
+        </main>
     </div>
 
-    <script>
-        const STORAGE_KEY_PRODUCTS = 'ERP_PRODUCTS_V2';
-        const STORAGE_KEY_ORDERS = 'ERP_ORDERS_V1';
+    <!-- 彈窗：訂單詳情 -->
+    <div id="modal-order-detail" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-2xl w-full mx-4 overflow-hidden">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800" id="order-modal-title">訂單詳情</h3>
+                <button onclick="closeModal('modal-order-detail')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto" id="order-modal-body">
+                <!-- 動態注入內容 -->
+            </div>
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+                <button onclick="closeModal('modal-order-detail')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-medium">關閉</button>
+            </div>
+        </div>
+    </div>
 
-        const defaultProducts = [
-            { id: 1, category: "阿拉比卡 100%", name: "100% 阿拉比卡咖啡豆", spec: "250g", retailPrice: 145000, wholesalePrice: 125000 },
-            { id: 2, category: "阿拉比卡 100%", name: "100% 阿拉比卡咖啡豆", spec: "500g", retailPrice: 280000, wholesalePrice: 240000 },
-            { id: 3, category: "阿拉比卡 100%", name: "100% 阿拉比卡冷萃咖啡", spec: "10包/袋", retailPrice: 125000, wholesalePrice: 105000 },
-            { id: 4, category: "阿拉比卡 100%", name: "100% 阿拉比卡冷萃咖啡", spec: "30包/袋", retailPrice: 350000, wholesalePrice: 295000 },
-            { id: 5, category: "阿拉比卡蜜處理", name: "蜜處理阿拉比卡咖啡豆", spec: "250g", retailPrice: 160000, wholesalePrice: 138000 },
-            { id: 6, category: "阿拉比卡蜜處理", name: "蜜處理阿拉比卡咖啡豆", spec: "500g", retailPrice: 310000, wholesalePrice: 265000 },
-            { id: 7, category: "阿拉比卡蜜處理", name: "冷萃阿拉比卡蜂蜜咖啡", spec: "10包/袋", retailPrice: 140000, wholesalePrice: 118000 },
-            { id: 8, category: "阿拉比卡蜜處理", name: "冷萃阿拉比卡蜂蜜咖啡", spec: "30包/袋", retailPrice: 390000, wholesalePrice: 330000 },
-            { id: 9, category: "羅布斯塔 100%", name: "100% 羅布斯塔咖啡豆", spec: "250g", retailPrice: 91000, wholesalePrice: 78000 },
-            { id: 10, category: "羅布斯塔 100%", name: "100% 羅布斯塔咖啡豆", spec: "500g", retailPrice: 172000, wholesalePrice: 148000 },
-            { id: 11, category: "羅布斯塔 100%", name: "100% 羅布斯塔冷萃咖啡", spec: "10包/袋", retailPrice: 80000, wholesalePrice: 70000 },
-            { id: 12, category: "羅布斯塔 100%", name: "100% 羅布斯塔冷萃咖啡", spec: "30包/袋", retailPrice: 230000, wholesalePrice: 200000 },
-            { id: 13, category: "羅布斯塔 100%", name: "羅布斯塔冷萃咖啡 - 茉莉花風味", spec: "10包/袋", retailPrice: 100000, wholesalePrice: 88000 },
-            { id: 14, category: "羅布斯塔 100%", name: "羅布斯塔冷萃咖啡 - 茉莉花風味", spec: "30包/袋", retailPrice: 250000, wholesalePrice: 220000 },
-            { id: 15, category: "羅布斯塔蜜處理", name: "蜜處理羅布斯塔咖啡豆", spec: "250g", retailPrice: 105000, wholesalePrice: 90000 },
-            { id: 16, category: "羅布斯塔蜜處理", name: "蜜處理羅布斯塔咖啡豆", spec: "500g", retailPrice: 200000, wholesalePrice: 170000 },
-            { id: 17, category: "羅布斯塔蜜處理", name: "冷萃羅布斯塔蜂蜜咖啡", spec: "10包/袋", retailPrice: 95000, wholesalePrice: 82000 },
-            { id: 18, category: "羅布斯塔蜜處理", name: "冷萃羅布斯塔蜂蜜咖啡", spec: "30包/袋", retailPrice: 270000, wholesalePrice: 230000 },
-            { id: 19, category: "濃縮咖啡混合 (80/20)", name: "80/20 混合濃縮咖啡", spec: "250g", retailPrice: 135000, wholesalePrice: 115000 },
-            { id: 20, category: "濃縮咖啡混合 (80/20)", name: "80/20 混合濃縮咖啡", spec: "500g", retailPrice: 260000, wholesalePrice: 220000 },
-            { id: 21, category: "商業混合咖啡 (70/30)", name: "70/30 商業混合咖啡", spec: "250g", retailPrice: 128000, wholesalePrice: 110000 },
-            { id: 22, category: "商業混合咖啡 (70/30)", name: "70/30 商業混合咖啡", spec: "500g", retailPrice: 245000, wholesalePrice: 210000 },
-            { id: 23, category: "南義風味混合 (50/50)", name: "50/50 南義風味混合咖啡", spec: "250g", retailPrice: 118000, wholesalePrice: 100000 },
-            { id: 24, category: "南義風味混合 (50/50)", name: "50/50 南義風味混合咖啡", spec: "500g", retailPrice: 225000, wholesalePrice: 190000 }
+    <!-- 彈窗：新增/編輯商品 -->
+    <div id="modal-product" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full mx-4 overflow-hidden">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800" id="product-modal-title">新增/編輯商品</h3>
+                <button onclick="closeModal('modal-product')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="saveProduct(event)" class="p-6 space-y-4">
+                <input type="hidden" id="prod-id">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">商品名稱</label>
+                    <input type="text" id="prod-name" required class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">類別</label>
+                    <input type="text" id="prod-category" placeholder="例如：電子產品、辦公用品" required class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">單價 (NT$)</label>
+                        <input type="number" id="prod-price" min="0" required class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">庫存量</label>
+                        <input type="number" id="prod-stock" min="0" required class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="pt-4 flex justify-end space-x-2 border-t">
+                    <button type="button" onclick="closeModal('modal-product')" class="px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-50">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-sm font-medium">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 彈窗：新增/編輯客戶 -->
+    <div id="modal-customer" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full mx-4 overflow-hidden">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800" id="customer-modal-title">新增/編輯客戶</h3>
+                <button onclick="closeModal('modal-customer')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="saveCustomer(event)" class="p-6 space-y-4">
+                <input type="hidden" id="cust-id">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">客戶/公司名稱</label>
+                    <input type="text" id="cust-name" required class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">聯絡電話</label>
+                    <input type="text" id="cust-phone" required class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">電子郵件</label>
+                    <input type="email" id="cust-email" required class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">送貨/聯絡地址</label>
+                    <input type="text" id="cust-address" required class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                </div>
+                <div class="pt-4 flex justify-end space-x-2 border-t">
+                    <button type="button" onclick="closeModal('modal-customer')" class="px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-50">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-sm font-medium">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 系統主要邏輯 JavaScript -->
+    <script>
+        // --- 預設 Mock 數據 ---
+        const initialProducts = [
+            { id: "P101", name: "High-End 企業級筆記型電腦", category: "資訊設備", price: 38000, stock: 25 },
+            { id: "P102", name: "27 吋 4K 專業顯示器", category: "資訊設備", price: 12500, stock: 40 },
+            { id: "P103", name: "無線人體工學滑鼠", category: "電腦周邊", price: 1200, stock: 150 },
+            { id: "P104", name: "機械式 RGB 鍵盤", category: "電腦周邊", price: 2800, stock: 80 },
+            { id: "P105", name: "主管級人體工學網椅", category: "辦公家具", price: 8500, stock: 12 }
         ];
 
-        const defaultOrders = [
+        const initialCustomers = [
+            { id: "C001", name: "創峰科技股份有限公司", phone: "02-27891234", email: "contact@apextech.com.tw", address: "台北市信義區信義路五段7號" },
+            { id: "C002", name: "遠東數位行銷社", phone: "04-23456789", email: "service@fareast-digital.com", address: "台中市西屯區台灣大道三段99號" },
+            { id: "C003", name: "藍海國際物流", phone: "07-3311223", email: "info@blueocean.com", address: "高雄市前鎮區成功二路88號" }
+        ];
+
+        const initialOrders = [
             {
-                id: 'ORD883921',
-                salesman: '張業務',
-                customerName: '優質咖啡館',
-                customerEmail: 'coffee@example.com',
-                customerPhone: '0901234567',
-                shippingAddress: '胡志明市第一區咖啡路123號',
-                date: '2026-08-15',
-                items: [{ productName: '100% 阿拉比卡咖啡豆 (500g)', price: 240000, quantity: 10, subtotal: 2400000 }],
-                totalAmount: 2400000,
-                commission: 240000,
-                notes: '每週定期配送',
-                status: '已完成'
+                id: "ORD-20260820-01",
+                customerId: "C001",
+                customerName: "創峰科技股份有限公司",
+                status: "已完成",
+                date: "2026-08-18",
+                remark: "優先出貨",
+                items: [
+                    { productId: "P101", productName: "High-End 企業級筆記型電腦", price: 38000, qty: 2, subtotal: 76000 },
+                    { productId: "P103", productName: "無線人體工學滑鼠", price: 1200, qty: 2, subtotal: 2400 }
+                ],
+                totalAmount: 78400
+            },
+            {
+                id: "ORD-20260820-02",
+                customerId: "C002",
+                customerName: "遠東數位行銷社",
+                status: "待處理",
+                date: "2026-08-20",
+                remark: "請附發票統編",
+                items: [
+                    { productId: "P102", productName: "27 吋 4K 專業顯示器", price: 12500, qty: 3, subtotal: 37500 }
+                ],
+                totalAmount: 37500
             }
         ];
 
-        let productsList = JSON.parse(localStorage.getItem(STORAGE_KEY_PRODUCTS)) || defaultProducts;
-        let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS)) || defaultOrders;
+        // --- 全域狀態管理 ---
+        let db = {
+            products: [],
+            customers: [],
+            orders: []
+        };
 
-        function saveData() {
-            localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(productsList));
-            localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(ordersList));
+        let topProductsChart = null;
+        let orderStatusChart = null;
+
+        // --- 初始化入口 ---
+        window.onload = function() {
+            lucide.createIcons();
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+            loadDatabase();
+            switchTab('dashboard');
+            
+            // 搜尋監聽
+            document.getElementById('order-search').addEventListener('input', renderOrdersTable);
+            document.getElementById('order-status-filter').addEventListener('change', renderOrdersTable);
+            document.getElementById('product-search').addEventListener('input', renderProductsTable);
+            document.getElementById('customer-search').addEventListener('input', renderCustomersTable);
+        };
+
+        function updateCurrentTime() {
+            const now = new Date();
+            document.getElementById('current-time').innerText = now.toLocaleString('zh-TW', { hour12: false });
         }
 
-        function escapeHTML(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>"']/g, match => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
-            }[match]));
+        function loadDatabase() {
+            try {
+                const localProducts = localStorage.getItem('erp_products');
+                const localCustomers = localStorage.getItem('erp_customers');
+                const localOrders = localStorage.getItem('erp_orders');
+
+                if (localProducts && localCustomers && localOrders) {
+                    db.products = JSON.parse(localProducts);
+                    db.customers = JSON.parse(localCustomers);
+                    db.orders = JSON.parse(localOrders);
+                } else {
+                    initDefaultData();
+                }
+            } catch (e) {
+                console.error("Localstorage 讀取異常，恢復為預設資料", e);
+                initDefaultData();
+            }
+            refreshUI();
         }
 
-        function formatNumber(num) {
-            return Number(num || 0).toLocaleString('zh-TW');
+        function initDefaultData() {
+            db.products = JSON.parse(JSON.stringify(initialProducts));
+            db.customers = JSON.parse(JSON.stringify(initialCustomers));
+            db.orders = JSON.parse(JSON.stringify(initialOrders));
+            saveDatabase();
         }
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        function saveDatabase() {
+            localStorage.setItem('erp_products', JSON.stringify(db.products));
+            localStorage.setItem('erp_customers', JSON.stringify(db.customers));
+            localStorage.setItem('erp_orders', JSON.stringify(db.orders));
+            refreshUI();
         }
 
-        function getLocalDateString() {
-            const today = new Date();
-            return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        function resetSystemData() {
+            if (confirm("確定要重置為預設資料嗎？所有自訂新增與修改的資料都將會被覆蓋。")) {
+                initDefaultData();
+                showToast("系統資料已成功恢復為預設狀態", "success");
+            }
         }
 
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(btn.dataset.tab).classList.add('active');
+        function refreshUI() {
+            renderKPI();
+            renderDashboardOrders();
+            renderOrdersTable();
+            renderProductsTable();
+            renderCustomersTable();
+            renderCustomerSelectOptions();
+        }
+
+        // --- 切換分頁選單 ---
+        function switchTab(tabId) {
+            const sections = ['dashboard', 'orders', 'create-order', 'products', 'customers', 'reports', 'data-io'];
+            sections.forEach(id => {
+                const sec = document.getElementById(`section-${id}`);
+                const nav = document.getElementById(`nav-${id}`);
+                if (sec) sec.classList.add('hidden');
+                if (nav) nav.classList.remove('sidebar-item-active');
             });
-        });
 
-        function renderProductTable() {
-            const tbody = document.getElementById('productTableBody');
-            tbody.innerHTML = productsList.map(p => `
-                <tr>
-                    <td><strong>${escapeHTML(p.category)}</strong></td>
-                    <td>${escapeHTML(p.name)}</td>
-                    <td>${escapeHTML(p.spec)}</td>
-                    <td>${formatNumber(p.retailPrice)} VND</td>
-                    <td>${formatNumber(p.wholesalePrice)} VND</td>
-                    <td><button class="btn-danger btn-sm" onclick="deleteProduct(${p.id})">刪除</button></td>
-                </tr>
-            `).join('');
-            updateAllProductSelects();
+            const currentSec = document.getElementById(`section-${tabId}`);
+            const currentNav = document.getElementById(`nav-${tabId}`);
+            if (currentSec) currentSec.classList.remove('hidden');
+            if (currentNav) currentNav.classList.add('sidebar-item-active');
+
+            const titles = {
+                'dashboard': '主控台',
+                'orders': '訂單管理',
+                'create-order': '新增業務訂單',
+                'products': '商品數據管理',
+                'customers': '客戶資料管理',
+                'reports': '業務報表統計',
+                'data-io': '資料備份與匯入匯出'
+            };
+            document.getElementById('page-title').innerText = titles[tabId] || '主控台';
+
+            if (tabId === 'create-order') {
+                resetOrderForm();
+            } else if (tabId === 'reports') {
+                renderCharts();
+            }
         }
 
-        document.getElementById('addProductForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const retail = parseFloat(document.getElementById('newProductRetail').value);
-            const wholesale = parseFloat(document.getElementById('newProductWholesale').value);
+        // --- 主控台模組 ---
+        function renderKPI() {
+            const totalRevenue = db.orders
+                .filter(o => o.status !== '已取消')
+                .reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
 
-            if (retail < 0 || wholesale < 0) {
-                showToast('價格不得為負數！', 'error');
+            document.getElementById('kpi-revenue').innerText = `$${totalRevenue.toLocaleString()}`;
+            document.getElementById('kpi-orders').innerText = db.orders.length;
+            document.getElementById('kpi-customers').innerText = db.customers.length;
+            document.getElementById('kpi-products').innerText = db.products.length;
+        }
+
+        function renderDashboardOrders() {
+            const tbody = document.getElementById('dashboard-recent-orders');
+            tbody.innerHTML = '';
+
+            const recent = [...db.orders].reverse().slice(0, 5);
+            if (recent.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">尚無訂單數據</td></tr>`;
                 return;
             }
 
-            productsList.push({
-                id: Date.now(),
-                category: document.getElementById('newProductCategory').value.trim(),
-                name: document.getElementById('newProductName').value.trim(),
-                spec: document.getElementById('newProductSpec').value.trim(),
-                retailPrice: retail,
-                wholesalePrice: wholesale
-            });
-
-            saveData();
-            renderProductTable();
-            e.target.reset();
-            showToast('商品新增成功！');
-        });
-
-        function deleteProduct(id) {
-            if (confirm('確定要刪除此商品嗎？')) {
-                productsList = productsList.filter(p => p.id !== id);
-                saveData();
-                renderProductTable();
-                showToast('商品已移除', 'info');
-            }
-        }
-
-        function getProductOptionsHTML(selectedId = "") {
-            let options = '<option value="">請選擇商品</option>';
-            productsList.forEach(p => {
-                const selected = String(p.id) === String(selectedId) ? 'selected' : '';
-                options += `<option value="${p.id}" data-retail="${p.retailPrice}" data-wholesale="${p.wholesalePrice}" ${selected}>[${escapeHTML(p.category)}] ${escapeHTML(p.name)} (${escapeHTML(p.spec)})</option>`;
-            });
-            return options;
-        }
-
-        function updateAllProductSelects() {
-            document.querySelectorAll('.product-select').forEach(sel => {
-                const current = sel.value;
-                sel.innerHTML = getProductOptionsHTML(current);
+            recent.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-sky-600">${escapeHtml(order.id)}</td>
+                    <td class="py-3 px-4">${escapeHtml(order.customerName)}</td>
+                    <td class="py-3 px-4 font-medium">$${(order.totalAmount || 0).toLocaleString()}</td>
+                    <td class="py-3 px-4">${getStatusBadge(order.status)}</td>
+                    <td class="py-3 px-4 text-xs text-slate-400">${escapeHtml(order.date)}</td>
+                `;
+                tbody.appendChild(tr);
             });
         }
 
-        function addOrderItem() {
-            const container = document.getElementById('itemsContainer');
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'order-item';
-            itemDiv.innerHTML = `
-                <div class="form-row" style="align-items: flex-end;">
-                    <div class="form-group" style="flex: 2;">
-                        <label>商品品項 *</label>
-                        <select class="product-select" required>${getProductOptionsHTML()}</select>
-                    </div>
-                    <div class="form-group">
-                        <label>單價 (VND) *</label>
-                        <input type="number" class="product-price" required min="0">
-                        <div class="price-hint">已自動套用批發價 (10+)</div>
-                    </div>
-                    <div class="form-group">
-                        <label>數量 *</label>
-                        <input type="number" class="product-quantity" required min="1" value="1">
-                    </div>
-                    <div class="form-group">
-                        <label>小計 (VND)</label>
-                        <input type="number" class="product-subtotal" readonly placeholder="0">
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <button type="button" class="btn-danger btn-sm btn-remove" style="height: 42px;">🗑️</button>
-                    </div>
-                </div>
-            `;
-
-            const select = itemDiv.querySelector('.product-select');
-            const priceInput = itemDiv.querySelector('.product-price');
-            const qtyInput = itemDiv.querySelector('.product-quantity');
-            const subtotalInput = itemDiv.querySelector('.product-subtotal');
-            const priceHint = itemDiv.querySelector('.price-hint');
-
-            function updateCalculations() {
-                const p = parseFloat(priceInput.value) || 0;
-                const q = parseInt(qtyInput.value) || 0;
-                subtotalInput.value = p * q;
-                calculateTotal();
-            }
-
-            function autoUpdatePrice() {
-                const opt = select.options[select.selectedIndex];
-                if (!opt || !opt.value) return;
-                const retail = parseFloat(opt.dataset.retail) || 0;
-                const wholesale = parseFloat(opt.dataset.wholesale) || 0;
-                const qty = parseInt(qtyInput.value) || 0;
-
-                if (qty >= 10 && wholesale > 0) {
-                    priceInput.value = wholesale;
-                    priceHint.style.display = 'block';
-                } else {
-                    priceInput.value = retail;
-                    priceHint.style.display = 'none';
-                }
-                updateCalculations();
-            }
-
-            select.addEventListener('change', autoUpdatePrice);
-            qtyInput.addEventListener('input', autoUpdatePrice);
-            priceInput.addEventListener('input', updateCalculations);
-
-            itemDiv.querySelector('.btn-remove').addEventListener('click', () => {
-                if (document.querySelectorAll('.order-item').length > 1) {
-                    itemDiv.remove();
-                    calculateTotal();
-                } else {
-                    showToast('訂單至少需包含一項商品！', 'error');
-                }
-            });
-
-            container.appendChild(itemDiv);
-        }
-
-        function calculateTotal() {
-            let total = 0;
-            document.querySelectorAll('.product-subtotal').forEach(inp => {
-                total += parseFloat(inp.value) || 0;
-            });
-            document.getElementById('totalAmount').textContent = `${formatNumber(total)} VND`;
-            document.getElementById('commissionAmount').textContent = `${formatNumber(total * 0.1)} VND`;
-            return total;
-        }
-
-        document.getElementById('addItemBtn').addEventListener('click', addOrderItem);
-
-        function resetOrderForm() {
-            document.getElementById('orderForm').reset();
-            document.getElementById('itemsContainer').innerHTML = '';
-            document.getElementById('orderDate').value = getLocalDateString();
-            addOrderItem();
-            calculateTotal();
-        }
-
-        document.getElementById('resetFormBtn').addEventListener('click', resetOrderForm);
-
-        function printInvoice(order) {
-            const printWin = window.open('', '_blank');
-            if (!printWin) return showToast('請解鎖彈出視窗以下載訂購單！', 'error');
-
-            const rows = order.items.map((item, idx) => `
-                <tr>
-                    <td style="text-align:center;">${idx + 1}</td>
-                    <td>${escapeHTML(item.productName)}</td>
-                    <td style="text-align:right;">${formatNumber(item.price)} VND</td>
-                    <td style="text-align:center;">${item.quantity}</td>
-                    <td style="text-align:right;">${formatNumber(item.subtotal)} VND</td>
-                </tr>
-            `).join('');
-
-            printWin.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>訂購單_${order.id}</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 20px; color: #333; }
-                        .header { text-align: center; border-bottom: 2px solid #6f4e37; padding-bottom: 10px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-                        th, td { border: 1px solid #ddd; padding: 8px; font-size: 14px; }
-                        th { background: #f4ece1; }
-                        .total { text-align: right; margin-top: 15px; font-size: 16px; font-weight: bold; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h2>☕ 銷售訂購單</h2>
-                        <p>單號：${escapeHTML(order.id)} | 日期：${escapeHTML(order.date)}</p>
-                    </div>
-                    <p><strong>客戶：</strong> ${escapeHTML(order.customerName)} (${escapeHTML(order.customerPhone)})</p>
-                    <p><strong>配送地址：</strong> ${escapeHTML(order.shippingAddress || '自取 / 未提供')}</p>
-                    <p><strong>業務：</strong> ${escapeHTML(order.salesman)}</p>
-                    <table>
-                        <thead><tr><th>#</th><th>品名</th><th>單價</th><th>數量</th><th>小計</th></tr></thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                    <div class="total">總計：${formatNumber(order.totalAmount)} VND</div>
-                    <script>window.onload = () => window.print();<\/script>
-                </body>
-                </html>
-            `);
-            printWin.document.close();
-        }
-
-        document.getElementById('orderForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const items = [];
-            let isValid = true;
-
-            document.querySelectorAll('.order-item').forEach(item => {
-                const select = item.querySelector('.product-select');
-                const price = parseFloat(item.querySelector('.product-price').value) || 0;
-                const qty = parseInt(item.querySelector('.product-quantity').value) || 0;
-
-                if (!select.value || qty <= 0) isValid = false;
-
-                const product = productsList.find(p => String(p.id) === String(select.value));
-                items.push({
-                    productName: product ? `${product.name} (${product.spec})` : '未知商品',
-                    price: price,
-                    quantity: qty,
-                    subtotal: price * qty
-                });
-            });
-
-            if (!isValid || items.length === 0) {
-                return showToast('請正確選擇商品並填寫數量！', 'error');
-            }
-
-            const total = calculateTotal();
-            const newOrder = {
-                id: 'ORD' + Date.now().toString().slice(-6),
-                salesman: document.getElementById('salesmanName').value.trim(),
-                customerName: document.getElementById('customerName').value.trim(),
-                customerEmail: document.getElementById('customerEmail').value.trim() || '未提供',
-                customerPhone: document.getElementById('customerPhone').value.trim(),
-                shippingAddress: document.getElementById('shippingAddress').value.trim() || '自取 / 未提供',
-                date: document.getElementById('orderDate').value,
-                items: items,
-                totalAmount: total,
-                commission: total * 0.1,
-                notes: document.getElementById('notes').value.trim(),
-                status: document.getElementById('orderStatus').value
+        function getStatusBadge(status) {
+            const styles = {
+                '待處理': 'bg-amber-100 text-amber-700',
+                '已出貨': 'bg-sky-100 text-sky-700',
+                '已完成': 'bg-emerald-100 text-emerald-700',
+                '已取消': 'bg-slate-100 text-slate-600'
             };
+            return `<span class="px-2.5 py-1 text-xs rounded-full font-medium ${styles[status] || 'bg-gray-100'}">${escapeHtml(status)}</span>`;
+        }
 
-            ordersList.unshift(newOrder);
-            saveData();
-            showToast('訂單建立成功！');
-            printInvoice(newOrder);
-            resetOrderForm();
-            renderOrdersList();
-            renderReport();
-            renderCustomersList();
-        });
+        // --- 訂單管理模組 ---
+        function renderOrdersTable() {
+            const tbody = document.getElementById('orders-table-body');
+            tbody.innerHTML = '';
 
-        function renderOrdersList() {
-            const container = document.getElementById('ordersList');
-            const kw = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
+            const searchKey = document.getElementById('order-search').value.toLowerCase().trim();
+            const statusFilter = document.getElementById('order-status-filter').value;
 
-            const filtered = ordersList.filter(o => {
-                const matchKw = o.customerName.toLowerCase().includes(kw) || 
-                                o.id.toLowerCase().includes(kw) || 
-                                o.salesman.toLowerCase().includes(kw) ||
-                                (o.shippingAddress && o.shippingAddress.toLowerCase().includes(kw));
-                const matchStatus = !status || o.status === status;
-                return matchKw && matchStatus;
+            const filtered = db.orders.filter(order => {
+                const matchSearch = order.id.toLowerCase().includes(searchKey) || order.customerName.toLowerCase().includes(searchKey);
+                const matchStatus = statusFilter === 'ALL' || order.status === statusFilter;
+                return matchSearch && matchStatus;
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = '<p style="color:#718096; grid-column:1/-1;">查無符合條件的訂單</p>';
+                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">查無符合條件的訂單數據</td></tr>`;
                 return;
             }
 
-            container.innerHTML = filtered.map(o => `
-                <div class="card">
-                    <div>
-                        <div class="card-header">
-                            <strong>${escapeHTML(o.id)}</strong>
-                            <span class="status-badge ${o.status === '已完成' ? 'status-completed' : 'status-pending'}" onclick="toggleOrderStatus('${o.id}')">${escapeHTML(o.status)}</span>
-                        </div>
-                        <p><strong>客戶：</strong> ${escapeHTML(o.customerName)} (${escapeHTML(o.customerPhone)})</p>
-                        <p><strong>地址：</strong> ${escapeHTML(o.shippingAddress || '自取 / 未提供')}</p>
-                        <p><strong>業務：</strong> ${escapeHTML(o.salesman)}</p>
-                        <p><strong>日期：</strong> ${escapeHTML(o.date)}</p>
-                        <p style="margin-top:6px;"><strong>金額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(o.totalAmount)} VND</span></p>
-                    </div>
-                    <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
-                        <button class="btn-info btn-sm" onclick="printOrderById('${o.id}')">📄 列印</button>
-                        <button class="btn-danger btn-sm" onclick="deleteOrder('${o.id}')">刪除</button>
-                    </div>
-                </div>
-            `).join('');
+            [...filtered].reverse().forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-sky-600">${escapeHtml(order.id)}</td>
+                    <td class="py-3 px-4">${escapeHtml(order.customerName)}</td>
+                    <td class="py-3 px-4">${order.items ? order.items.length : 0} 項</td>
+                    <td class="py-3 px-4 font-bold">$${(order.totalAmount || 0).toLocaleString()}</td>
+                    <td class="py-3 px-4">${getStatusBadge(order.status)}</td>
+                    <td class="py-3 px-4 text-xs text-slate-400">${escapeHtml(order.date)}</td>
+                    <td class="py-3 px-4 text-center space-x-2">
+                        <button onclick="viewOrderDetail('${order.id}')" class="text-sky-600 hover:text-sky-800 font-medium text-xs">查看</button>
+                        <select onchange="changeOrderStatus('${order.id}', this.value)" class="text-xs border rounded px-1 py-1 bg-white text-slate-600 focus:outline-none">
+                            <option value="待處理" ${order.status === '待處理' ? 'selected' : ''}>待處理</option>
+                            <option value="已出貨" ${order.status === '已出貨' ? 'selected' : ''}>已出貨</option>
+                            <option value="已完成" ${order.status === '已完成' ? 'selected' : ''}>已完成</option>
+                            <option value="已取消" ${order.status === '已取消' ? 'selected' : ''}>已取消</option>
+                        </select>
+                        <button onclick="deleteOrder('${order.id}')" class="text-rose-500 hover:text-rose-700 font-medium text-xs">刪除</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        function toggleOrderStatus(id) {
-            const order = ordersList.find(o => o.id === id);
+        function changeOrderStatus(orderId, newStatus) {
+            const order = db.orders.find(o => o.id === orderId);
             if (order) {
-                order.status = order.status === '已完成' ? '待處理' : '已完成';
-                saveData();
-                renderOrdersList();
-                renderReport();
-                showToast('訂單狀態已更新');
+                order.status = newStatus;
+                saveDatabase();
+                showToast(`訂單 ${orderId} 狀態已變更為：${newStatus}`, "success");
             }
         }
 
-        function deleteOrder(id) {
-            if (confirm(`確定要刪除訂單 ${id} 嗎？`)) {
-                ordersList = ordersList.filter(o => o.id !== id);
-                saveData();
-                renderOrdersList();
-                renderReport();
-                renderCustomersList();
-                showToast('訂單已刪除', 'info');
+        function deleteOrder(orderId) {
+            if (confirm(`確定要徹底刪除訂單 ${orderId} 嗎？此操作無法復原。`)) {
+                db.orders = db.orders.filter(o => o.id !== orderId);
+                saveDatabase();
+                showToast(`已成功刪除訂單 ${orderId}`, "info");
             }
         }
 
-        function printOrderById(id) {
-            const order = ordersList.find(o => o.id === id);
-            if (order) printInvoice(order);
-        }
+        function viewOrderDetail(orderId) {
+            const order = db.orders.find(o => o.id === orderId);
+            if (!order) return;
 
-        document.getElementById('searchInput').addEventListener('input', renderOrdersList);
-        document.getElementById('statusFilter').addEventListener('change', renderOrdersList);
+            document.getElementById('order-modal-title').innerText = `訂單詳情 - ${order.id}`;
+            const body = document.getElementById('order-modal-body');
 
-        function renderCustomersList() {
-            const container = document.getElementById('customersList');
-            const map = {};
-
-            ordersList.forEach(o => {
-                if (!map[o.customerPhone]) {
-                    map[o.customerPhone] = { name: o.customerName, email: o.customerEmail || '未提供', phone: o.customerPhone, count: 1, total: o.totalAmount };
-                } else {
-                    map[o.customerPhone].count += 1;
-                    map[o.customerPhone].total += o.totalAmount;
-                    if (o.customerEmail && map[o.customerPhone].email === '未提供') {
-                        map[o.customerPhone].email = o.customerEmail;
-                    }
-                }
-            });
-
-            const list = Object.values(map);
-            if (list.length === 0) {
-                container.innerHTML = '<p style="color:#718096; grid-column:1/-1;">尚無客戶資料</p>';
-                return;
-            }
-
-            container.innerHTML = list.map(c => `
-                <div class="card">
-                    <h3>${escapeHTML(c.name)}</h3>
-                    <p style="margin-top:8px;"><strong>電話：</strong> ${escapeHTML(c.phone)}</p>
-                    <p><strong>郵箱：</strong> ${escapeHTML(c.email)}</p>
-                    <p><strong>累積訂單：</strong> ${c.count} 筆</p>
-                    <p><strong>總消費額：</strong> <span style="color:var(--primary-color); font-weight:bold;">${formatNumber(c.total)} VND</span></p>
-                </div>
-            `).join('');
-        }
-
-        function renderReport() {
-            let sales = 0, comm = 0, completed = 0;
-            const stats = {};
-
-            ordersList.forEach(o => {
-                if (o.status === '已完成') {
-                    sales += o.totalAmount;
-                    comm += o.commission;
-                    completed++;
-
-                    if (!stats[o.salesman]) {
-                        stats[o.salesman] = { sales: o.totalAmount, comm: o.commission, count: 1 };
-                    } else {
-                        stats[o.salesman].sales += o.totalAmount;
-                        stats[o.salesman].comm += o.commission;
-                        stats[o.salesman].count += 1;
-                    }
-                }
-            });
-
-            document.getElementById('totalSales').textContent = `${formatNumber(sales)} VND`;
-            document.getElementById('totalCommission').textContent = `${formatNumber(comm)} VND`;
-            document.getElementById('totalOrders').textContent = ordersList.length;
-            document.getElementById('completedOrders').textContent = completed;
-
-            document.getElementById('performanceBody').innerHTML = Object.entries(stats).map(([name, s]) => `
-                <tr>
-                    <td><strong>${escapeHTML(name)}</strong></td>
-                    <td>${formatNumber(s.sales)} VND</td>
-                    <td>${formatNumber(s.comm)} VND</td>
-                    <td>${s.count}</td>
+            let itemsHtml = (order.items || []).map(item => `
+                <tr class="border-b border-slate-100">
+                    <td class="py-2">${escapeHtml(item.productName)}</td>
+                    <td class="py-2 text-right">$${(item.price || 0).toLocaleString()}</td>
+                    <td class="py-2 text-right">${item.qty}</td>
+                    <td class="py-2 text-right font-medium">$${(item.subtotal || 0).toLocaleString()}</td>
                 </tr>
             `).join('');
+
+            body.innerHTML = `
+                <div class="grid grid-cols-2 gap-4 text-sm bg-slate-50 p-4 rounded-lg">
+                    <div><span class="text-slate-500">客戶名稱：</span><span class="font-medium text-slate-800">${escapeHtml(order.customerName)}</span></div>
+                    <div><span class="text-slate-500">訂單日期：</span><span class="font-medium text-slate-800">${escapeHtml(order.date)}</span></div>
+                    <div><span class="text-slate-500">訂單狀態：</span>${getStatusBadge(order.status)}</div>
+                    <div><span class="text-slate-500">備註：</span><span class="font-medium text-slate-800">${escapeHtml(order.remark || '無')}</span></div>
+                </div>
+
+                <h4 class="font-bold text-slate-800 mt-4 mb-2 text-sm">訂購商品項目</h4>
+                <table class="w-full text-left text-sm">
+                    <thead class="text-xs text-slate-400 border-b">
+                        <tr>
+                            <th class="py-2">商品名稱</th>
+                            <th class="py-2 text-right">單價</th>
+                            <th class="py-2 text-right">數量</th>
+                            <th class="py-2 text-right">小計</th>
+                        </tr>
+                    </thead>
+                    <tbody>${itemsHtml}</tbody>
+                </table>
+
+                <div class="text-right font-bold text-lg text-slate-800 pt-3 border-t">
+                    總計：<span class="text-sky-600">$${(order.totalAmount || 0).toLocaleString()}</span>
+                </div>
+            `;
+
+            openModal('modal-order-detail');
         }
 
-        document.getElementById('exportDataBtn').addEventListener('click', () => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ products: productsList, orders: ordersList }));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `ERP_Backup_${getLocalDateString()}.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-            showToast('資料備份匯出成功！');
-        });
+        // --- 建立訂單模組 ---
+        function renderCustomerSelectOptions() {
+            const select = document.getElementById('order-customer-select');
+            select.innerHTML = '<option value="">-- 請選擇客戶 --</option>';
+            db.customers.forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.phone)})</option>`;
+            });
+        }
 
-        document.getElementById('importDataBtn').addEventListener('click', () => {
-            document.getElementById('importFileInput').click();
-        });
+        function resetOrderForm() {
+            document.getElementById('order-form').reset();
+            document.getElementById('order-items-table-body').innerHTML = '';
+            addOrderItemRow();
+            calculateOrderTotal();
+        }
 
-        document.getElementById('importFileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
+        function addOrderItemRow() {
+            const tbody = document.getElementById('order-items-table-body');
+            const rowId = Date.now() + Math.floor(Math.random() * 1000);
+
+            let optionsHtml = '<option value="">-- 請選擇商品 --</option>';
+            db.products.forEach(p => {
+                optionsHtml += `<option value="${p.id}" data-price="${p.price}">${escapeHtml(p.name)} (庫存: ${p.stock}, $${p.price})</option>`;
+            });
+
+            const tr = document.createElement('tr');
+            tr.id = `item-row-${rowId}`;
+            tr.innerHTML = `
+                <td class="p-2">
+                    <select onchange="updateRowPrice(${rowId})" id="prod-select-${rowId}" required class="w-full border rounded p-1.5 text-sm focus:ring-1 focus:ring-sky-500">
+                        ${optionsHtml}
+                    </select>
+                </td>
+                <td class="p-2">
+                    <input type="number" id="prod-price-${rowId}" readonly class="w-full border rounded p-1.5 text-sm bg-slate-50 text-slate-500" value="0">
+                </td>
+                <td class="p-2">
+                    <input type="number" id="prod-qty-${rowId}" oninput="updateRowSubtotal(${rowId})" min="1" value="1" required class="w-full border rounded p-1.5 text-sm">
+                </td>
+                <td class="p-2 font-medium" id="prod-subtotal-${rowId}">$0</td>
+                <td class="p-2 text-center">
+                    <button type="button" onclick="removeOrderItemRow(${rowId})" class="text-rose-500 hover:text-rose-700">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            lucide.createIcons();
+        }
+
+        function removeOrderItemRow(rowId) {
+            const row = document.getElementById(`item-row-${rowId}`);
+            if (row) {
+                row.remove();
+                calculateOrderTotal();
+            }
+        }
+
+        function updateRowPrice(rowId) {
+            const select = document.getElementById(`prod-select-${rowId}`);
+            const selectedOption = select ? select.options[select.selectedIndex] : null;
+            const price = selectedOption ? (parseFloat(selectedOption.dataset.price) || 0) : 0;
+
+            const priceInput = document.getElementById(`prod-price-${rowId}`);
+            if (priceInput) priceInput.value = price;
+            updateRowSubtotal(rowId);
+        }
+
+        function updateRowSubtotal(rowId) {
+            const priceInput = document.getElementById(`prod-price-${rowId}`);
+            const qtyInput = document.getElementById(`prod-qty-${rowId}`);
+            
+            const price = parseFloat(priceInput ? priceInput.value : 0) || 0;
+            const qty = parseInt(qtyInput ? qtyInput.value : 0) || 0;
+            const subtotal = price * qty;
+
+            const subtotalEl = document.getElementById(`prod-subtotal-${rowId}`);
+            if (subtotalEl) {
+                subtotalEl.innerText = `$${subtotal.toLocaleString()}`;
+            }
+            calculateOrderTotal();
+        }
+
+        function calculateOrderTotal() {
+            let total = 0;
+            const rows = document.querySelectorAll('#order-items-table-body tr');
+
+            rows.forEach(tr => {
+                const rowId = tr.id.replace('item-row-', '');
+                const price = parseFloat(document.getElementById(`prod-price-${rowId}`)?.value) || 0;
+                const qty = parseInt(document.getElementById(`prod-qty-${rowId}`)?.value) || 0;
+                total += price * qty;
+            });
+
+            document.getElementById('order-total-amount').innerText = `$${total.toLocaleString()}`;
+            return total;
+        }
+
+        function handleCreateOrder(e) {
+            e.preventDefault();
+
+            const customerId = document.getElementById('order-customer-select').value;
+            const customer = db.customers.find(c => c.id === customerId);
+            const remark = document.getElementById('order-remark').value.trim();
+
+            if (!customer) {
+                showToast("請選擇有效的客戶！", "error");
+                return;
+            }
+
+            const rows = document.querySelectorAll('#order-items-table-body tr');
+            if (rows.length === 0) {
+                showToast("請至少新增一個產品品項！", "error");
+                return;
+            }
+
+            const items = [];
+            let isValid = true;
+
+            rows.forEach(tr => {
+                const rowId = tr.id.replace('item-row-', '');
+                const prodSelect = document.getElementById(`prod-select-${rowId}`);
+                const prodId = prodSelect ? prodSelect.value : "";
+                const price = parseFloat(document.getElementById(`prod-price-${rowId}`)?.value || 0);
+                const qty = parseInt(document.getElementById(`prod-qty-${rowId}`)?.value || 0);
+
+                if (!prodId || qty <= 0) {
+                    isValid = false;
+                    return;
+                }
+
+                const product = db.products.find(p => p.id === prodId);
+                items.push({
+                    productId: prodId,
+                    productName: product ? product.name : '未知商品',
+                    price: price,
+                    qty: qty,
+                    subtotal: price * qty
+                });
+
+                // 自動扣減庫存
+                if (product) {
+                    product.stock = Math.max(0, product.stock - qty);
+                }
+            });
+
+            if (!isValid) {
+                showToast("請確保所有品項皆已選擇商品且數量大於 0！", "error");
+                return;
+            }
+
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const newOrder = {
+                id: `ORD-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}-${Math.floor(Math.random()*90 + 10)}`,
+                customerId: customer.id,
+                customerName: customer.name,
+                status: '待處理',
+                date: dateStr,
+                remark: remark,
+                items: items,
+                totalAmount: calculateOrderTotal()
+            };
+
+            db.orders.push(newOrder);
+            saveDatabase();
+
+            showToast("業務訂單建立成功！", "success");
+            switchTab('orders');
+        }
+
+        // --- 商品管理模組 ---
+        function renderProductsTable() {
+            const tbody = document.getElementById('products-table-body');
+            tbody.innerHTML = '';
+
+            const searchKey = document.getElementById('product-search').value.toLowerCase().trim();
+            const filtered = db.products.filter(p => p.name.toLowerCase().includes(searchKey) || p.id.toLowerCase().includes(searchKey));
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">查無符合條件的商品數據</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-slate-500">${escapeHtml(p.id)}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800">${escapeHtml(p.name)}</td>
+                    <td class="py-3 px-4 text-xs"><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded">${escapeHtml(p.category)}</span></td>
+                    <td class="py-3 px-4 font-bold text-slate-700">$${(p.price || 0).toLocaleString()}</td>
+                    <td class="py-3 px-4">
+                        <span class="${p.stock < 15 ? 'text-rose-600 font-bold' : 'text-slate-600'}">${p.stock} 件</span>
+                    </td>
+                    <td class="py-3 px-4 text-center space-x-2">
+                        <button onclick="openProductModal('${p.id}')" class="text-sky-600 hover:text-sky-800 text-xs font-medium">編輯</button>
+                        <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700 text-xs font-medium">刪除</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openProductModal(prodId = null) {
+            if (prodId) {
+                const prod = db.products.find(p => p.id === prodId);
+                if (!prod) return;
+                document.getElementById('product-modal-title').innerText = "編輯商品";
+                document.getElementById('prod-id').value = prod.id;
+                document.getElementById('prod-name').value = prod.name;
+                document.getElementById('prod-category').value = prod.category;
+                document.getElementById('prod-price').value = prod.price;
+                document.getElementById('prod-stock').value = prod.stock;
+            } else {
+                document.getElementById('product-modal-title').innerText = "新增商品";
+                document.getElementById('prod-id').value = "";
+                document.getElementById('prod-name').value = "";
+                document.getElementById('prod-category').value = "";
+                document.getElementById('prod-price').value = "";
+                document.getElementById('prod-stock').value = "";
+            }
+            openModal('modal-product');
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('prod-id').value;
+            const name = document.getElementById('prod-name').value.trim();
+            const category = document.getElementById('prod-category').value.trim();
+            const price = parseFloat(document.getElementById('prod-price').value) || 0;
+            const stock = parseInt(document.getElementById('prod-stock').value) || 0;
+
+            if (id) {
+                const prod = db.products.find(p => p.id === id);
+                if (prod) {
+                    prod.name = name;
+                    prod.category = category;
+                    prod.price = price;
+                    prod.stock = stock;
+                }
+            } else {
+                const newProd = {
+                    id: `P${Date.now().toString().slice(-4)}`,
+                    name: name,
+                    category: category,
+                    price: price,
+                    stock: stock
+                };
+                db.products.push(newProd);
+            }
+
+            saveDatabase();
+            closeModal('modal-product');
+            showToast("商品資料已成功儲存", "success");
+        }
+
+        function deleteProduct(prodId) {
+            if (confirm("確定要刪除此商品嗎？")) {
+                db.products = db.products.filter(p => p.id !== prodId);
+                saveDatabase();
+                showToast("商品已刪除", "info");
+            }
+        }
+
+        // --- 客戶管理模組 ---
+        function renderCustomersTable() {
+            const tbody = document.getElementById('customers-table-body');
+            tbody.innerHTML = '';
+
+            const searchKey = document.getElementById('customer-search').value.toLowerCase().trim();
+            const filtered = db.customers.filter(c => 
+                c.name.toLowerCase().includes(searchKey) || 
+                c.phone.includes(searchKey) || 
+                c.email.toLowerCase().includes(searchKey)
+            );
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">查無符合條件的客戶數據</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-slate-500">${escapeHtml(c.id)}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800">${escapeHtml(c.name)}</td>
+                    <td class="py-3 px-4 text-slate-600">${escapeHtml(c.phone)}</td>
+                    <td class="py-3 px-4 text-slate-600">${escapeHtml(c.email)}</td>
+                    <td class="py-3 px-4 text-slate-500 text-xs">${escapeHtml(c.address)}</td>
+                    <td class="py-3 px-4 text-center space-x-2">
+                        <button onclick="openCustomerModal('${c.id}')" class="text-sky-600 hover:text-sky-800 text-xs font-medium">編輯</button>
+                        <button onclick="deleteCustomer('${c.id}')" class="text-rose-500 hover:text-rose-700 text-xs font-medium">刪除</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openCustomerModal(custId = null) {
+            if (custId) {
+                const cust = db.customers.find(c => c.id === custId);
+                if (!cust) return;
+                document.getElementById('customer-modal-title').innerText = "編輯客戶";
+                document.getElementById('cust-id').value = cust.id;
+                document.getElementById('cust-name').value = cust.name;
+                document.getElementById('cust-phone').value = cust.phone;
+                document.getElementById('cust-email').value = cust.email;
+                document.getElementById('cust-address').value = cust.address;
+            } else {
+                document.getElementById('customer-modal-title').innerText = "新增客戶";
+                document.getElementById('cust-id').value = "";
+                document.getElementById('cust-name').value = "";
+                document.getElementById('cust-phone').value = "";
+                document.getElementById('cust-email').value = "";
+                document.getElementById('cust-address').value = "";
+            }
+            openModal('modal-customer');
+        }
+
+        function saveCustomer(e) {
+            e.preventDefault();
+            const id = document.getElementById('cust-id').value;
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const email = document.getElementById('cust-email').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+
+            if (id) {
+                const cust = db.customers.find(c => c.id === id);
+                if (cust) {
+                    cust.name = name;
+                    cust.phone = phone;
+                    cust.email = email;
+                    cust.address = address;
+                }
+            } else {
+                const newCust = {
+                    id: `C${Date.now().toString().slice(-4)}`,
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    address: address
+                };
+                db.customers.push(newCust);
+            }
+
+            saveDatabase();
+            closeModal('modal-customer');
+            showToast("客戶資料已成功儲存", "success");
+        }
+
+        function deleteCustomer(custId) {
+            if (confirm("確定要刪除該客戶資料嗎？")) {
+                db.customers = db.customers.filter(c => c.id !== custId);
+                saveDatabase();
+                showToast("客戶已刪除", "info");
+            }
+        }
+
+        // --- 報表統計與圖表繪製 ---
+        function renderCharts() {
+            // 安全銷毀既有圖表
+            if (topProductsChart) {
+                topProductsChart.destroy();
+                topProductsChart = null;
+            }
+            if (orderStatusChart) {
+                orderStatusChart.destroy();
+                orderStatusChart = null;
+            }
+
+            // 動態重構 Canvas DOM，徹底排除 ResizeObserver 與舊 Context 殘留問題
+            const containerProd = document.getElementById('container-chart-top-products');
+            const containerStatus = document.getElementById('container-chart-order-status');
+
+            if (containerProd) {
+                containerProd.innerHTML = '<canvas id="chart-top-products"></canvas>';
+            }
+            if (containerStatus) {
+                containerStatus.innerHTML = '<canvas id="chart-order-status"></canvas>';
+            }
+
+            // 計算熱銷商品 TOP 5
+            const productSales = {};
+            db.orders.forEach(o => {
+                if (o.status !== '已取消' && o.items) {
+                    o.items.forEach(i => {
+                        productSales[i.productName] = (productSales[i.productName] || 0) + (i.qty || 0);
+                    });
+                }
+            });
+
+            const sortedProds = Object.entries(productSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            const prodLabels = sortedProds.map(p => p[0]);
+            const prodData = sortedProds.map(p => p[1]);
+
+            // 圖表 1：熱銷商品長條圖
+            const canvasProd = document.getElementById('chart-top-products');
+            if (canvasProd) {
+                const ctx1 = canvasProd.getContext('2d');
+                topProductsChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: prodLabels.length ? prodLabels : ['無資料'],
+                        datasets: [{
+                            label: '銷售數量',
+                            data: prodData.length ? prodData : [0],
+                            backgroundColor: '#0284c7',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            }
+
+            // 計算訂單狀態分佈
+            const statusCounts = { '待處理': 0, '已出貨': 0, '已完成': 0, '已取消': 0 };
+            db.orders.forEach(o => {
+                if (statusCounts[o.status] !== undefined) {
+                    statusCounts[o.status]++;
+                }
+            });
+
+            // 圖表 2：訂單狀態甜甜圈圖
+            const canvasStatus = document.getElementById('chart-order-status');
+            if (canvasStatus) {
+                const ctx2 = canvasStatus.getContext('2d');
+                orderStatusChart = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(statusCounts),
+                        datasets: [{
+                            data: Object.values(statusCounts),
+                            backgroundColor: ['#f59e0b', '#0284c7', '#10b981', '#94a3b8']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+        }
+
+        // --- 資料匯入與匯出模組 ---
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `ERP_Backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("JSON 備份資料庫已匯出成功", "success");
+        }
+
+        function cleanCsvCell(str) {
+            if (str === null || str === undefined) return '""';
+            const cleanStr = String(str).replace(/"/g, '""').replace(/[\r\n]+/g, " ");
+            return `"${cleanStr}"`;
+        }
+
+        function exportOrdersCSV() {
+            let csvContent = "\uFEFF"; // UTF-8 BOM 避免 Excel 亂碼
+            csvContent += "訂單編號,客戶名稱,金額,狀態,建立日期,備註\n";
+
+            db.orders.forEach(o => {
+                csvContent += `${cleanCsvCell(o.id)},${cleanCsvCell(o.customerName)},${o.totalAmount || 0},${cleanCsvCell(o.status)},${cleanCsvCell(o.date)},${cleanCsvCell(o.remark || '')}\n`;
+            });
+
+            downloadCSV(csvContent, `Orders_${new Date().toISOString().slice(0,10)}.csv`);
+            showToast("訂單清單 CSV 匯出成功", "success");
+        }
+
+        function exportProductsCSV() {
+            let csvContent = "\uFEFF";
+            csvContent += "商品編號,商品名稱,分類,單價,目前庫存\n";
+
+            db.products.forEach(p => {
+                csvContent += `${cleanCsvCell(p.id)},${cleanCsvCell(p.name)},${cleanCsvCell(p.category)},${p.price || 0},${p.stock || 0}\n`;
+            });
+
+            downloadCSV(csvContent, `Products_${new Date().toISOString().slice(0,10)}.csv`);
+            showToast("商品清單 CSV 匯出成功", "success");
+        }
+
+        function downloadCSV(csvContent, fileName) {
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
             if (!file) return;
+
             const reader = new FileReader();
-            reader.onload = (evt) => {
+            reader.onload = function(e) {
                 try {
-                    const parsed = JSON.parse(evt.target.result);
-                    if (parsed.products && parsed.orders) {
-                        productsList = parsed.products;
-                        ordersList = parsed.orders;
-                        saveData();
-                        renderProductTable();
-                        renderOrdersList();
-                        renderCustomersList();
-                        renderReport();
-                        showToast('資料備份匯入成功！');
+                    const importedData = JSON.parse(e.target.result);
+                    if (importedData && Array.isArray(importedData.products) && Array.isArray(importedData.customers) && Array.isArray(importedData.orders)) {
+                        db = importedData;
+                        saveDatabase();
+                        showToast("系統資料已成功恢復並還原！", "success");
                     } else {
-                        showToast('檔案格式不相容！', 'error');
+                        showToast("檔案格式不符合系統備份規範！", "error");
                     }
                 } catch (err) {
-                    showToast('匯入失敗，請確認檔案類型！', 'error');
+                    showToast("解析 JSON 檔案失敗，請確認檔案格式！", "error");
                 }
+                event.target.value = '';
             };
             reader.readAsText(file);
-        });
+        }
 
-        // 初始化
-        document.getElementById('orderDate').value = getLocalDateString();
-        renderProductTable();
-        addOrderItem();
-        renderOrdersList();
-        renderCustomersList();
-        renderReport();
+        // --- 安全工具與 Toast ---
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const bgColors = {
+                success: "bg-emerald-600",
+                error: "bg-rose-600",
+                info: "bg-slate-800"
+            };
+
+            toast.className = `${bgColors[type] || 'bg-slate-800'} text-white px-4 py-3 rounded-lg shadow-lg text-sm flex items-center space-x-2 transition-all duration-300 transform translate-y-2 pointer-events-auto`;
+            toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
     </script>
 </body>
 </html>
+
