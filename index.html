@@ -375,8 +375,8 @@
                         <input type="text" id="customerName" required placeholder="請輸入公司或客戶名">
                     </div>
                     <div class="form-group">
-                        <label>客戶郵箱 *</label>
-                        <input type="email" id="customerEmail" required placeholder="name@domain.com">
+                        <label>客戶郵箱 (選填)</label>
+                        <input type="email" id="customerEmail" placeholder="name@domain.com (可留空)">
                     </div>
                 </div>
 
@@ -529,43 +529,29 @@
         const STORAGE_KEY_PRODUCTS = 'ERP_PRODUCTS_V2';
         const STORAGE_KEY_ORDERS = 'ERP_ORDERS_V1';
 
-        // 完全更新為最新提供之 22 個產品品項
         const defaultProducts = [
-            // 1. 阿拉比卡（阿拉比卡 100%）
             { id: 1, category: "阿拉比卡 100%", name: "100% 阿拉比卡咖啡豆", spec: "250g", retailPrice: 145000, wholesalePrice: 125000 },
             { id: 2, category: "阿拉比卡 100%", name: "100% 阿拉比卡咖啡豆", spec: "500g", retailPrice: 280000, wholesalePrice: 240000 },
             { id: 3, category: "阿拉比卡 100%", name: "100% 阿拉比卡冷萃咖啡", spec: "10包/袋", retailPrice: 125000, wholesalePrice: 105000 },
             { id: 4, category: "阿拉比卡 100%", name: "100% 阿拉比卡冷萃咖啡", spec: "30包/袋", retailPrice: 350000, wholesalePrice: 295000 },
-
-            // 2. 阿拉比卡蜂蜜處理（阿拉比卡蜜處理）
             { id: 5, category: "阿拉比卡蜜處理", name: "蜜處理阿拉比卡咖啡豆", spec: "250g", retailPrice: 160000, wholesalePrice: 138000 },
             { id: 6, category: "阿拉比卡蜜處理", name: "蜜處理阿拉比卡咖啡豆", spec: "500g", retailPrice: 310000, wholesalePrice: 265000 },
             { id: 7, category: "阿拉比卡蜜處理", name: "冷萃阿拉比卡蜂蜜咖啡", spec: "10包/袋", retailPrice: 140000, wholesalePrice: 118000 },
             { id: 8, category: "阿拉比卡蜜處理", name: "冷萃阿拉比卡蜂蜜咖啡", spec: "30包/袋", retailPrice: 390000, wholesalePrice: 330000 },
-
-            // 3. 羅布斯塔（羅布斯塔 100%）
             { id: 9, category: "羅布斯塔 100%", name: "100% 羅布斯塔咖啡豆", spec: "250g", retailPrice: 91000, wholesalePrice: 78000 },
             { id: 10, category: "羅布斯塔 100%", name: "100% 羅布斯塔咖啡豆", spec: "500g", retailPrice: 172000, wholesalePrice: 148000 },
             { id: 11, category: "羅布斯塔 100%", name: "100% 羅布斯塔冷萃咖啡", spec: "10包/袋", retailPrice: 80000, wholesalePrice: 70000 },
             { id: 12, category: "羅布斯塔 100%", name: "100% 羅布斯塔冷萃咖啡", spec: "30包/袋", retailPrice: 230000, wholesalePrice: 200000 },
             { id: 13, category: "羅布斯塔 100%", name: "羅布斯塔冷萃咖啡 - 茉莉花風味", spec: "10包/袋", retailPrice: 100000, wholesalePrice: 88000 },
             { id: 14, category: "羅布斯塔 100%", name: "羅布斯塔冷萃咖啡 - 茉莉花風味", spec: "30包/袋", retailPrice: 250000, wholesalePrice: 220000 },
-
-            // 4. 羅布斯塔蜂蜜處理（羅布斯塔蜜處理）
             { id: 15, category: "羅布斯塔蜜處理", name: "蜜處理羅布斯塔咖啡豆", spec: "250g", retailPrice: 105000, wholesalePrice: 90000 },
             { id: 16, category: "羅布斯塔蜜處理", name: "蜜處理羅布斯塔咖啡豆", spec: "500g", retailPrice: 200000, wholesalePrice: 170000 },
             { id: 17, category: "羅布斯塔蜜處理", name: "冷萃羅布斯塔蜂蜜咖啡", spec: "10包/袋", retailPrice: 95000, wholesalePrice: 82000 },
             { id: 18, category: "羅布斯塔蜜處理", name: "冷萃羅布斯塔蜂蜜咖啡", spec: "30包/袋", retailPrice: 270000, wholesalePrice: 230000 },
-
-            // 5. 濃縮咖啡混合（80% 阿拉比卡 : 20% 羅布斯塔）
             { id: 19, category: "濃縮咖啡混合 (80/20)", name: "80/20 混合濃縮咖啡", spec: "250g", retailPrice: 135000, wholesalePrice: 115000 },
             { id: 20, category: "濃縮咖啡混合 (80/20)", name: "80/20 混合濃縮咖啡", spec: "500g", retailPrice: 260000, wholesalePrice: 220000 },
-
-            // 6. 商業混合咖啡（70% 阿拉比卡 : 30% 羅布斯塔）
             { id: 21, category: "商業混合咖啡 (70/30)", name: "70/30 商業混合咖啡", spec: "250g", retailPrice: 128000, wholesalePrice: 110000 },
             { id: 22, category: "商業混合咖啡 (70/30)", name: "70/30 商業混合咖啡", spec: "500g", retailPrice: 245000, wholesalePrice: 210000 },
-
-            // 7. 南義大利混合咖啡（50% 阿拉比卡 : 50% 羅布斯塔）
             { id: 23, category: "南義風味混合 (50/50)", name: "50/50 南義風味混合咖啡", spec: "250g", retailPrice: 118000, wholesalePrice: 100000 },
             { id: 24, category: "南義風味混合 (50/50)", name: "50/50 南義風味混合咖啡", spec: "500g", retailPrice: 225000, wholesalePrice: 190000 }
         ];
@@ -867,7 +853,7 @@
                 id: 'ORD' + Date.now().toString().slice(-6),
                 salesman: document.getElementById('salesmanName').value.trim(),
                 customerName: document.getElementById('customerName').value.trim(),
-                customerEmail: document.getElementById('customerEmail').value.trim(),
+                customerEmail: document.getElementById('customerEmail').value.trim() || '未提供',
                 customerPhone: document.getElementById('customerPhone').value.trim(),
                 date: document.getElementById('orderDate').value,
                 items: items,
@@ -959,10 +945,13 @@
 
             ordersList.forEach(o => {
                 if (!map[o.customerPhone]) {
-                    map[o.customerPhone] = { name: o.customerName, email: o.customerEmail, phone: o.customerPhone, count: 1, total: o.totalAmount };
+                    map[o.customerPhone] = { name: o.customerName, email: o.customerEmail || '未提供', phone: o.customerPhone, count: 1, total: o.totalAmount };
                 } else {
                     map[o.customerPhone].count += 1;
                     map[o.customerPhone].total += o.totalAmount;
+                    if (o.customerEmail && map[o.customerPhone].email === '未提供') {
+                        map[o.customerPhone].email = o.customerEmail;
+                    }
                 }
             });
 
