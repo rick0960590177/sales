@@ -36,6 +36,28 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* 列印訂購單樣式 */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-order-invoice, #printable-order-invoice * {
+                visibility: visible;
+            }
+            #printable-order-invoice {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px;
+                background: #fff;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col overflow-x-hidden">
@@ -130,8 +152,8 @@
 
                 <!-- 區塊：主控台 -->
                 <section id="section-dashboard" class="space-y-6">
-                    <!-- KPI 指標卡片 (動態適應 1/2/4 欄) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <!-- KPI 指標卡片 (動態適應 1/2/4/5 欄) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
                         <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                             <div>
                                 <p class="text-xs sm:text-sm font-medium text-slate-500">總銷售額</p>
@@ -139,6 +161,15 @@
                             </div>
                             <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg flex-shrink-0">
                                 <i data-lucide="dollar-sign" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500">總業務獎金 (10%)</p>
+                                <p id="kpi-commission" class="text-xl sm:text-2xl font-bold text-amber-600 mt-1">0 VND</p>
+                            </div>
+                            <div class="p-3 bg-amber-50 text-amber-600 rounded-lg flex-shrink-0">
+                                <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                             </div>
                         </div>
                         <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
@@ -184,7 +215,9 @@
                                             <tr>
                                                 <th class="py-3 px-3 sm:px-4">訂單編號</th>
                                                 <th class="py-3 px-3 sm:px-4">客戶名稱</th>
+                                                <th class="py-3 px-3 sm:px-4">業務人員</th>
                                                 <th class="py-3 px-3 sm:px-4">金額</th>
+                                                <th class="py-3 px-3 sm:px-4">業務獎金 (10%)</th>
                                                 <th class="py-3 px-3 sm:px-4">狀態</th>
                                                 <th class="py-3 px-3 sm:px-4">日期</th>
                                             </tr>
@@ -215,8 +248,8 @@
                                 </div>
                             </div>
                             <div class="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800">
-                                <p class="font-semibold mb-1">幣別提示：</p>
-                                本系統金額單位均統一為 <strong>VND (越南盾)</strong>，提供零售價與批發價切換。
+                                <p class="font-semibold mb-1">幣別與獎金提示：</p>
+                                本系統金額單位均統一為 <strong>VND (越南盾)</strong>，提供零售價與批發價切換。訂單成立時系統將自動計算 <strong>10% 業務獎金</strong>。
                             </div>
                         </div>
                     </div>
@@ -230,7 +263,7 @@
                             <div class="flex flex-col sm:flex-row flex-1 gap-3 sm:gap-4">
                                 <div class="relative flex-1">
                                     <i data-lucide="search" class="absolute left-3 top-3 w-4 h-4 text-slate-400"></i>
-                                    <input type="text" id="order-search" placeholder="搜尋訂單編號或客戶名稱..." class="pl-9 pr-4 py-2 w-full border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+                                    <input type="text" id="order-search" placeholder="搜尋訂單編號、客戶名稱或業務人員..." class="pl-9 pr-4 py-2 w-full border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
                                 </div>
                                 <select id="order-status-filter" class="border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
                                     <option value="ALL">所有狀態</option>
@@ -254,9 +287,11 @@
                                         <tr>
                                             <th class="py-3 px-3 sm:px-4 whitespace-nowrap">訂單編號</th>
                                             <th class="py-3 px-3 sm:px-4 whitespace-nowrap">客戶名稱</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">業務人員</th>
                                             <th class="py-3 px-3 sm:px-4 whitespace-nowrap">價格類型</th>
                                             <th class="py-3 px-3 sm:px-4 whitespace-nowrap">項目數</th>
                                             <th class="py-3 px-3 sm:px-4 whitespace-nowrap">總金額 (VND)</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">業務獎金 (10%)</th>
                                             <th class="py-3 px-3 sm:px-4 whitespace-nowrap">訂單狀態</th>
                                             <th class="py-3 px-3 sm:px-4 whitespace-nowrap">建立日期</th>
                                             <th class="py-3 px-3 sm:px-4 text-center whitespace-nowrap">操作</th>
@@ -276,11 +311,15 @@
                     <form id="order-form" onsubmit="handleCreateOrder(event)" class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
                         <div class="border-b border-slate-200 pb-4">
                             <h2 class="text-lg font-bold text-slate-800">建立新咖啡業務訂單</h2>
-                            <p class="text-xs sm:text-sm text-slate-500">請選擇客戶、選擇定價體系（零售價 / 批發價）並加入訂購產品項目。</p>
+                            <p class="text-xs sm:text-sm text-slate-500">請輸入業務人員、選擇客戶、選擇定價體系（零售價 / 批發價）並加入訂購產品項目。系統將自動計算 10% 業務獎金。</p>
                         </div>
 
                         <!-- 客戶與定價類型選擇區 -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">業務人員 <span class="text-rose-500">*</span></label>
+                                <input type="text" id="order-sales-rep" required placeholder="請輸入業務人員姓名" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-2">選擇客戶 <span class="text-rose-500">*</span></label>
                                 <select id="order-customer-select" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -294,7 +333,7 @@
                                     <option value="wholesale">批發價 (Wholesale Price)</option>
                                 </select>
                             </div>
-                            <div class="sm:col-span-2 lg:col-span-1">
+                            <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-2">訂單備註</label>
                                 <input type="text" id="order-remark" placeholder="例如：研磨成細粉、附發票..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
                             </div>
@@ -332,8 +371,13 @@
 
                         <!-- 金額總計與操作按鈕 -->
                         <div class="flex flex-col sm:flex-row justify-between items-center pt-4 border-t border-slate-200 gap-4">
-                            <div class="text-lg sm:text-xl font-bold text-slate-800 w-full sm:w-auto text-center sm:text-left">
-                                總計金額: <span id="order-total-amount" class="text-amber-600">0 VND</span>
+                            <div class="space-y-1 text-center sm:text-left w-full sm:w-auto">
+                                <div class="text-lg sm:text-xl font-bold text-slate-800">
+                                    總計金額: <span id="order-total-amount" class="text-amber-600">0 VND</span>
+                                </div>
+                                <div class="text-xs sm:text-sm font-medium text-slate-500">
+                                    業務獎金預估 (10%): <span id="order-commission-amount" class="text-emerald-600 font-bold">0 VND</span>
+                                </div>
                             </div>
                             <div class="flex space-x-3 w-full sm:w-auto justify-end">
                                 <button type="button" onclick="switchTab('orders')" class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium">取消</button>
@@ -484,20 +528,77 @@
         </main>
     </div>
 
-    <!-- 彈窗：訂單詳情 -->
+    <!-- 彈窗：訂單詳情與訂購單列印 -->
     <div id="modal-order-detail" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50 flex-shrink-0">
+            <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50 flex-shrink-0 no-print">
                 <h3 class="font-bold text-base sm:text-lg text-slate-800" id="order-modal-title">訂單詳情</h3>
                 <button onclick="closeModal('modal-order-detail')" class="text-slate-400 hover:text-slate-600 p-1">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1" id="order-modal-body">
-                <!-- 動態注入內容 -->
+            
+            <div class="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1" id="printable-order-invoice">
+                <!-- 動態注入訂單詳情與印表機排版區 -->
             </div>
-            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end flex-shrink-0">
-                <button onclick="closeModal('modal-order-detail')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-medium">關閉</button>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center flex-shrink-0 no-print flex-wrap gap-2">
+                <div class="flex space-x-2">
+                    <button id="btn-modal-zalo-1" onclick="" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs sm:text-sm font-medium flex items-center space-x-1">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>ZALO 0839681380</span>
+                    </button>
+                    <button id="btn-modal-zalo-2" onclick="" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs sm:text-sm font-medium flex items-center space-x-1">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>ZALO 0348246669</span>
+                    </button>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="window.print()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-medium flex items-center space-x-1">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span>下載/列印訂購單</span>
+                    </button>
+                    <button onclick="closeModal('modal-order-detail')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs sm:text-sm font-medium">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 彈窗：訂單成立成功通知與操作選單 -->
+    <div id="modal-order-success" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden p-6 text-center space-y-5">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                <i data-lucide="check-circle" class="w-10 h-10"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-800">訂單建立成功！</h3>
+                <p class="text-sm text-slate-500 mt-1" id="success-order-id-text">訂單編號: -</p>
+                <p class="text-xs text-emerald-600 font-semibold mt-1">✓ 已自動扣減商品庫存 & 自動複製訂單內容至剪貼簿</p>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-lg text-left text-xs space-y-1 border border-slate-200">
+                <p class="font-semibold text-slate-700">自動複製訊息預覽：</p>
+                <p id="success-copy-preview" class="text-slate-500 truncate italic"></p>
+            </div>
+
+            <div class="space-y-2 pt-2">
+                <button id="btn-success-print" onclick="" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center space-x-2 text-sm transition">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span>查看 / 列印訂購單頁面</span>
+                </button>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btn-success-zalo1" onclick="" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-2 rounded-lg flex items-center justify-center space-x-1 text-xs transition">
+                        <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                        <span>Zalo (0839681380)</span>
+                    </button>
+                    <button id="btn-success-zalo2" onclick="" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2.5 px-2 rounded-lg flex items-center justify-center space-x-1 text-xs transition">
+                        <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                        <span>Zalo (0348246669)</span>
+                    </button>
+                </div>
+                <button onclick="closeModal('modal-order-success'); switchTab('orders');" class="w-full border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium py-2 px-4 rounded-lg text-xs transition">
+                    返回訂單列表
+                </button>
             </div>
         </div>
     </div>
@@ -632,6 +733,7 @@
                 id: "ORD-20260820-01",
                 customerId: "C001",
                 customerName: "Highlands Coffee Partner (連鎖門市)",
+                salesRep: "張小明",
                 priceType: "wholesale",
                 status: "已完成",
                 date: "2026-08-18",
@@ -640,12 +742,14 @@
                     { productId: "P-A102", productName: "Cà phê hạt Arabica 100% (500g)", price: 240000, qty: 10, subtotal: 2400000 },
                     { productId: "P-B502", productName: "Cà phê phối trộn Blend 80/20 Espresso (500g)", price: 220000, qty: 15, subtotal: 3300000 }
                 ],
-                totalAmount: 5700000
+                totalAmount: 5700000,
+                commission: 570000
             },
             {
                 id: "ORD-20260820-02",
                 customerId: "C002",
                 customerName: "Saigon Roastery (精品咖啡館)",
+                salesRep: "陳美麗",
                 priceType: "retail",
                 status: "待處理",
                 date: "2026-08-20",
@@ -654,7 +758,8 @@
                     { productId: "P-AH204", productName: "Cà phê ủ lạnh Arabica Honey (30 túi/túi)", price: 390000, qty: 2, subtotal: 780000 },
                     { productId: "P-R305", productName: "Cà phê ủ lạnh Robusta - Hương hoa nhài (10 túi/túi)", price: 100000, qty: 5, subtotal: 500000 }
                 ],
-                totalAmount: 1280000
+                totalAmount: 1280000,
+                commission: 128000
             }
         ];
 
@@ -712,6 +817,16 @@
                     db.products = JSON.parse(localProducts);
                     db.customers = JSON.parse(localCustomers);
                     db.orders = JSON.parse(localOrders);
+                    
+                    // 確保舊資料相容獎金與業務人員欄位
+                    db.orders.forEach(o => {
+                        if (o.commission === undefined) {
+                            o.commission = Math.round((o.totalAmount || 0) * 0.1);
+                        }
+                        if (!o.salesRep) {
+                            o.salesRep = "未指定業務";
+                        }
+                    });
                 } else {
                     initDefaultData();
                 }
@@ -758,8 +873,8 @@
             if (window.innerWidth < 1024) {
                 const sidebar = document.getElementById('app-sidebar');
                 const backdrop = document.getElementById('mobile-sidebar-backdrop');
-                sidebar.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
+                if (sidebar) sidebar.classList.add('-translate-x-full');
+                if (backdrop) backdrop.classList.add('hidden');
             }
 
             const sections = ['dashboard', 'orders', 'create-order', 'products', 'customers', 'reports', 'data-io'];
@@ -800,11 +915,12 @@
 
         // --- 主控台模組 ---
         function renderKPI() {
-            const totalRevenue = db.orders
-                .filter(o => o.status !== '已取消')
-                .reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+            const activeOrders = db.orders.filter(o => o.status !== '已取消');
+            const totalRevenue = activeOrders.reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+            const totalCommission = activeOrders.reduce((sum, o) => sum + (Number(o.commission) || Math.round((o.totalAmount || 0) * 0.1)), 0);
 
             document.getElementById('kpi-revenue').innerText = formatVND(totalRevenue);
+            document.getElementById('kpi-commission').innerText = formatVND(totalCommission);
             document.getElementById('kpi-orders').innerText = db.orders.length;
             document.getElementById('kpi-customers').innerText = db.customers.length;
             document.getElementById('kpi-products').innerText = db.products.length;
@@ -816,16 +932,19 @@
 
             const recent = [...db.orders].reverse().slice(0, 5);
             if (recent.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">尚無訂單數據</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">尚無訂單數據</td></tr>`;
                 return;
             }
 
             recent.forEach(order => {
                 const tr = document.createElement('tr');
+                const comm = order.commission !== undefined ? order.commission : Math.round((order.totalAmount || 0) * 0.1);
                 tr.innerHTML = `
                     <td class="py-3 px-3 sm:px-4 font-semibold text-sky-600 whitespace-nowrap">${escapeHtml(order.id)}</td>
                     <td class="py-3 px-3 sm:px-4 font-medium whitespace-nowrap">${escapeHtml(order.customerName)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-medium text-slate-700 whitespace-nowrap">${escapeHtml(order.salesRep || '未指定')}</td>
                     <td class="py-3 px-3 sm:px-4 font-medium text-amber-700 whitespace-nowrap">${formatVND(order.totalAmount)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-semibold text-emerald-600 whitespace-nowrap">${formatVND(comm)}</td>
                     <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${getStatusBadge(order.status)}</td>
                     <td class="py-3 px-3 sm:px-4 text-xs text-slate-400 whitespace-nowrap">${escapeHtml(order.date)}</td>
                 `;
@@ -852,31 +971,38 @@
             const statusFilter = document.getElementById('order-status-filter').value;
 
             const filtered = db.orders.filter(order => {
-                const matchSearch = order.id.toLowerCase().includes(searchKey) || order.customerName.toLowerCase().includes(searchKey);
+                const matchSearch = order.id.toLowerCase().includes(searchKey) || 
+                                     order.customerName.toLowerCase().includes(searchKey) ||
+                                     (order.salesRep && order.salesRep.toLowerCase().includes(searchKey));
                 const matchStatus = statusFilter === 'ALL' || order.status === statusFilter;
                 return matchSearch && matchStatus;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">查無符合條件的訂單數據</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="py-6 text-center text-slate-400">查無符合條件的訂單數據</td></tr>`;
                 return;
             }
 
             [...filtered].reverse().forEach(order => {
                 const priceTypeLabel = order.priceType === 'wholesale' ? '<span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 whitespace-nowrap">批發價</span>' : '<span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded whitespace-nowrap">零售價</span>';
-                
+                const comm = order.commission !== undefined ? order.commission : Math.round((order.totalAmount || 0) * 0.1);
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
                 tr.innerHTML = `
                     <td class="py-3 px-3 sm:px-4 font-medium text-sky-600 whitespace-nowrap">${escapeHtml(order.id)}</td>
                     <td class="py-3 px-3 sm:px-4 font-medium text-slate-800 whitespace-nowrap">${escapeHtml(order.customerName)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-medium text-slate-700 whitespace-nowrap">${escapeHtml(order.salesRep || '未指定')}</td>
                     <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${priceTypeLabel}</td>
                     <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${order.items ? order.items.length : 0} 項</td>
                     <td class="py-3 px-3 sm:px-4 font-bold text-amber-700 whitespace-nowrap">${formatVND(order.totalAmount)}</td>
+                    <td class="py-3 px-3 sm:px-4 font-bold text-emerald-600 whitespace-nowrap">${formatVND(comm)}</td>
                     <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${getStatusBadge(order.status)}</td>
                     <td class="py-3 px-3 sm:px-4 text-xs text-slate-400 whitespace-nowrap">${escapeHtml(order.date)}</td>
                     <td class="py-3 px-3 sm:px-4 text-center space-x-1 sm:space-x-2 whitespace-nowrap">
-                        <button onclick="viewOrderDetail('${order.id}')" class="text-sky-600 hover:text-sky-800 font-medium text-xs">查看</button>
+                        <button onclick="viewOrderDetail('${order.id}')" class="text-sky-600 hover:text-sky-800 font-medium text-xs">訂購單/查看</button>
+                        <button onclick="sendOrderZaloDirect('${order.id}', '0839681380')" class="text-blue-600 hover:text-blue-800 font-medium text-xs">Zalo 1</button>
+                        <button onclick="sendOrderZaloDirect('${order.id}', '0348246669')" class="text-sky-600 hover:text-sky-800 font-medium text-xs">Zalo 2</button>
                         <select onchange="changeOrderStatus('${order.id}', this.value)" class="text-xs border rounded px-1 py-1 bg-white text-slate-600 focus:outline-none">
                             <option value="待處理" ${order.status === '待處理' ? 'selected' : ''}>待處理</option>
                             <option value="已出貨" ${order.status === '已出貨' ? 'selected' : ''}>已出貨</option>
@@ -907,52 +1033,161 @@
             }
         }
 
+        // 生成訂單文字內容（用於複製與 Zalo 發送）
+        function generateOrderText(order) {
+            const cust = db.customers.find(c => c.id === order.customerId) || {};
+            const phone = cust.phone || '';
+            const address = cust.address || '';
+            const comm = order.commission !== undefined ? order.commission : Math.round((order.totalAmount || 0) * 0.1);
+
+            let text = `☕【CoffeeERP 咖啡業務訂購單】\n`;
+            text += `--------------------------------\n`;
+            text += `📋 訂單編號: ${order.id}\n`;
+            text += `📅 訂單日期: ${order.date}\n`;
+            text += `👔 業務人員: ${order.salesRep || '未指定'}\n`;
+            text += `👤 客戶名稱: ${order.customerName}\n`;
+            if (phone) text += `📞 聯絡電話: ${phone}\n`;
+            if (address) text += `📍 送貨地址: ${address}\n`;
+            text += `🏷️ 價格類型: ${order.priceType === 'wholesale' ? '批發價 (Wholesale)' : '零售價 (Retail)'}\n`;
+            text += `--------------------------------\n`;
+            text += `📦 訂購項目細項:\n`;
+
+            (order.items || []).forEach((item, index) => {
+                text += `${index + 1}. ${item.productName}\n`;
+                text += `   ${formatVND(item.price)} x ${item.qty} 包 = ${formatVND(item.subtotal)}\n`;
+            });
+
+            text += `--------------------------------\n`;
+            text += `💰 訂單總金額: ${formatVND(order.totalAmount)}\n`;
+            text += `🎁 業務獎金 (10%): ${formatVND(comm)}\n`;
+            if (order.remark) text += `📝 備註事項: ${order.remark}\n`;
+            text += `--------------------------------\n`;
+            text += `感謝您的訂購！祝您商祺！`;
+
+            return text;
+        }
+
+        // 查看訂單詳情與列印訂購單頁面
         function viewOrderDetail(orderId) {
             const order = db.orders.find(o => o.id === orderId);
             if (!order) return;
 
-            document.getElementById('order-modal-title').innerText = `訂單詳情 - ${order.id}`;
-            const body = document.getElementById('order-modal-body');
+            const cust = db.customers.find(c => c.id === order.customerId) || {};
 
-            let itemsHtml = (order.items || []).map(item => `
-                <tr class="border-b border-slate-100">
-                    <td class="py-2.5 font-medium text-slate-800">${escapeHtml(item.productName)}</td>
-                    <td class="py-2.5 text-right whitespace-nowrap">${formatVND(item.price)}</td>
-                    <td class="py-2.5 text-right font-semibold whitespace-nowrap">${item.qty} 包</td>
-                    <td class="py-2.5 text-right font-bold text-amber-700 whitespace-nowrap">${formatVND(item.subtotal)}</td>
+            document.getElementById('order-modal-title').innerText = `訂購單 / 詳情 - ${order.id}`;
+            const body = document.getElementById('printable-order-invoice');
+
+            let itemsHtml = (order.items || []).map((item, idx) => `
+                <tr class="border-b border-slate-200">
+                    <td class="py-2.5 px-2 text-center text-xs font-semibold text-slate-500">${idx + 1}</td>
+                    <td class="py-2.5 px-2 font-medium text-slate-800">${escapeHtml(item.productName)}</td>
+                    <td class="py-2.5 px-2 text-right whitespace-nowrap">${formatVND(item.price)}</td>
+                    <td class="py-2.5 px-2 text-right font-semibold whitespace-nowrap">${item.qty} 包</td>
+                    <td class="py-2.5 px-2 text-right font-bold text-amber-700 whitespace-nowrap">${formatVND(item.subtotal)}</td>
                 </tr>
             `).join('');
 
+            const comm = order.commission !== undefined ? order.commission : Math.round((order.totalAmount || 0) * 0.1);
+
             body.innerHTML = `
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm bg-slate-50 p-3 sm:p-4 rounded-lg">
-                    <div><span class="text-slate-500">客戶名稱：</span><span class="font-medium text-slate-800">${escapeHtml(order.customerName)}</span></div>
-                    <div><span class="text-slate-500">訂單日期：</span><span class="font-medium text-slate-800">${escapeHtml(order.date)}</span></div>
-                    <div><span class="text-slate-500">價格計費：</span><span class="font-semibold text-slate-700">${order.priceType === 'wholesale' ? '批發價 (Wholesale)' : '零售價 (Retail)'}</span></div>
-                    <div><span class="text-slate-500">訂單狀態：</span>${getStatusBadge(order.status)}</div>
-                    <div class="sm:col-span-2"><span class="text-slate-500">備註：</span><span class="font-medium text-slate-800">${escapeHtml(order.remark || '無')}</span></div>
+                <!-- 訂購單列印表頭 -->
+                <div class="border-b-2 border-slate-800 pb-4 mb-4 flex justify-between items-start">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 tracking-wide flex items-center gap-2">
+                            <i data-lucide="coffee" class="text-amber-600 no-print"></i>
+                            <span>咖啡業務訂購單 (Sales Order)</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">CoffeeERP Enterprise System</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 font-bold rounded text-xs mb-1">
+                            ${order.priceType === 'wholesale' ? '批發訂單 Wholesale' : '零售訂單 Retail'}
+                        </span>
+                        <p class="text-xs font-bold text-sky-700">${escapeHtml(order.id)}</p>
+                    </div>
                 </div>
 
-                <h4 class="font-bold text-slate-800 mt-4 mb-2 text-sm">訂購咖啡品項</h4>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm min-w-[300px]">
-                        <thead class="text-xs text-slate-400 border-b">
+                <!-- 客戶與訂單雙方基本資訊 -->
+                <div class="grid grid-cols-2 gap-4 text-xs sm:text-sm bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
+                    <div>
+                        <p class="font-bold text-slate-700 border-b border-slate-200 pb-1 mb-2">客戶資訊 (Customer Info)</p>
+                        <p><span class="text-slate-500">客戶名稱：</span><span class="font-semibold text-slate-800">${escapeHtml(order.customerName)}</span></p>
+                        <p><span class="text-slate-500">聯絡電話：</span><span class="text-slate-800">${escapeHtml(cust.phone || '無')}</span></p>
+                        <p><span class="text-slate-500">送貨地址：</span><span class="text-slate-800">${escapeHtml(cust.address || '無')}</span></p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-700 border-b border-slate-200 pb-1 mb-2">訂單細節 (Order Details)</p>
+                        <p><span class="text-slate-500">業務人員：</span><span class="font-semibold text-slate-800">${escapeHtml(order.salesRep || '未指定')}</span></p>
+                        <p><span class="text-slate-500">訂單日期：</span><span class="font-medium text-slate-800">${escapeHtml(order.date)}</span></p>
+                        <p><span class="text-slate-500">訂單狀態：</span>${getStatusBadge(order.status)}</p>
+                        <p><span class="text-slate-500">訂單備註：</span><span class="font-medium text-slate-800">${escapeHtml(order.remark || '無')}</span></p>
+                    </div>
+                </div>
+
+                <!-- 訂購商品表格 -->
+                <div class="overflow-x-auto mb-4">
+                    <table class="w-full text-left text-xs sm:text-sm border-collapse">
+                        <thead class="bg-slate-100 text-slate-700 font-bold border-y-2 border-slate-300">
                             <tr>
-                                <th class="py-2">商品名稱</th>
-                                <th class="py-2 text-right">單價</th>
-                                <th class="py-2 text-right">數量</th>
-                                <th class="py-2 text-right">小計</th>
+                                <th class="py-2 px-2 text-center w-8">#</th>
+                                <th class="py-2 px-2">商品名稱 (Product Name)</th>
+                                <th class="py-2 px-2 text-right">單價 (Price)</th>
+                                <th class="py-2 px-2 text-right">數量 (Qty)</th>
+                                <th class="py-2 px-2 text-right">小計 (Subtotal)</th>
                             </tr>
                         </thead>
                         <tbody>${itemsHtml}</tbody>
                     </table>
                 </div>
 
-                <div class="text-right font-bold text-base sm:text-lg text-slate-800 pt-3 border-t">
-                    總計金額：<span class="text-amber-600">${formatVND(order.totalAmount)}</span>
+                <!-- 金額結算與業務獎金 -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-amber-50/60 rounded-lg border border-amber-200 gap-3">
+                    <div class="text-xs text-amber-900 space-y-0.5">
+                        <p class="font-bold">業務獎金明細 (Sales Commission):</p>
+                        <p>10% 計算獎金金額: <span class="font-bold text-emerald-700 text-sm">${formatVND(comm)}</span></p>
+                    </div>
+                    <div class="text-right w-full sm:w-auto border-t sm:border-t-0 pt-2 sm:pt-0 border-amber-200">
+                        <p class="text-xs text-slate-500">訂單應付總金額 (Total Amount)</p>
+                        <p class="text-xl sm:text-2xl font-black text-amber-700">${formatVND(order.totalAmount)}</p>
+                    </div>
+                </div>
+
+                <!-- 簽名列印區 -->
+                <div class="pt-8 mt-6 grid grid-cols-2 gap-8 text-center text-xs text-slate-500">
+                    <div>
+                        <p class="font-medium text-slate-700">客戶確認簽名</p>
+                        <div class="h-16 border-b border-dashed border-slate-300"></div>
+                    </div>
+                    <div>
+                        <p class="font-medium text-slate-700">主管/經辦人簽章</p>
+                        <div class="h-16 border-b border-dashed border-slate-300"></div>
+                    </div>
                 </div>
             `;
 
+            document.getElementById('btn-modal-zalo-1').onclick = () => sendOrderZaloDirect(order.id, '0839681380');
+            document.getElementById('btn-modal-zalo-2').onclick = () => sendOrderZaloDirect(order.id, '0348246669');
+
+            lucide.createIcons();
             openModal('modal-order-detail');
+        }
+
+        // 直接複製內容並跳轉 Zalo
+        function sendOrderZaloDirect(orderId, phone) {
+            const order = db.orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const orderText = generateOrderText(order);
+            
+            navigator.clipboard.writeText(orderText).then(() => {
+                showToast(`已複製訂單內容！即將開啟 Zalo (${phone})`, "success");
+                setTimeout(() => {
+                    window.open(`https://zalo.me/${phone}`, '_blank');
+                }, 600);
+            }).catch(err => {
+                showToast("複製 failure，請手動複製", "error");
+                window.open(`https://zalo.me/${phone}`, '_blank');
+            });
         }
 
         // --- 建立訂單模組 ---
@@ -1062,17 +1297,26 @@
                 total += price * qty;
             });
 
+            const commission = Math.round(total * 0.1);
+
             document.getElementById('order-total-amount').innerText = formatVND(total);
+            document.getElementById('order-commission-amount').innerText = formatVND(commission);
             return total;
         }
 
         function handleCreateOrder(e) {
             e.preventDefault();
 
+            const salesRep = document.getElementById('order-sales-rep').value.trim();
             const customerId = document.getElementById('order-customer-select').value;
             const customer = db.customers.find(c => c.id === customerId);
             const priceType = document.getElementById('order-price-type').value;
             const remark = document.getElementById('order-remark').value.trim();
+
+            if (!salesRep) {
+                showToast("請輸入業務人員姓名！", "error");
+                return;
+            }
 
             if (!customer) {
                 showToast("請選擇有效的客戶！", "error");
@@ -1120,25 +1364,50 @@
                 return;
             }
 
+            const totalAmount = calculateOrderTotal();
+            const commission = Math.round(totalAmount * 0.1);
+
             const now = new Date();
             const dateStr = now.toISOString().split('T')[0];
             const newOrder = {
                 id: `ORD-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}-${Math.floor(Math.random()*90 + 10)}`,
                 customerId: customer.id,
                 customerName: customer.name,
+                salesRep: salesRep,
                 priceType: priceType,
                 status: '待處理',
                 date: dateStr,
                 remark: remark,
                 items: items,
-                totalAmount: calculateOrderTotal()
+                totalAmount: totalAmount,
+                commission: commission
             };
 
             db.orders.push(newOrder);
             saveDatabase();
 
-            showToast("咖啡業務訂單建立成功！", "success");
-            switchTab('orders');
+            // 生成訂單文字並自動複製至剪貼簿
+            const orderText = generateOrderText(newOrder);
+            navigator.clipboard.writeText(orderText).then(() => {
+                showToast("訂單已成立！內容已自動複製至剪貼簿", "success");
+            }).catch(err => {
+                console.warn("自動複製至剪貼簿受限：", err);
+            });
+
+            // 顯示成功提示視窗與快捷操作
+            document.getElementById('success-order-id-text').innerText = `訂單編號: ${newOrder.id} | 業務: ${newOrder.salesRep} | 總金額: ${formatVND(newOrder.totalAmount)}`;
+            document.getElementById('success-copy-preview').innerText = orderText.split('\n').slice(0, 4).join(' ') + ' ...';
+
+            document.getElementById('btn-success-print').onclick = () => {
+                closeModal('modal-order-success');
+                viewOrderDetail(newOrder.id);
+            };
+
+            document.getElementById('btn-success-zalo1').onclick = () => sendOrderZaloDirect(newOrder.id, '0839681380');
+            document.getElementById('btn-success-zalo2').onclick = () => sendOrderZaloDirect(newOrder.id, '0348246669');
+
+            lucide.createIcons();
+            openModal('modal-order-success');
         }
 
         // --- 商品管理模組 ---
@@ -1445,11 +1714,12 @@
 
         function exportOrdersCSV() {
             let csvContent = "\uFEFF"; // UTF-8 BOM
-            csvContent += "訂單編號,客戶名稱,價格類型,金額(VND),狀態,建立日期,備註\n";
+            csvContent += "訂單編號,客戶名稱,業務人員,價格類型,金額(VND),業務獎金(10%),狀態,建立日期,備註\n";
 
             db.orders.forEach(o => {
                 const pType = o.priceType === 'wholesale' ? '批發價' : '零售價';
-                csvContent += `${cleanCsvCell(o.id)},${cleanCsvCell(o.customerName)},${cleanCsvCell(pType)},${o.totalAmount || 0},${cleanCsvCell(o.status)},${cleanCsvCell(o.date)},${cleanCsvCell(o.remark || '')}\n`;
+                const comm = o.commission !== undefined ? o.commission : Math.round((o.totalAmount || 0) * 0.1);
+                csvContent += `${cleanCsvCell(o.id)},${cleanCsvCell(o.customerName)},${cleanCsvCell(o.salesRep || '未指定')},${cleanCsvCell(pType)},${o.totalAmount || 0},${comm},${cleanCsvCell(o.status)},${cleanCsvCell(o.date)},${cleanCsvCell(o.remark || '')}\n`;
             });
 
             downloadCSV(csvContent, `Coffee_Orders_${new Date().toISOString().slice(0,10)}.csv`);
@@ -1545,4 +1815,3 @@
     </script>
 </body>
 </html>
-
