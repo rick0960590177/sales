@@ -1,269 +1,801 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>精品咖啡專賣店 - 線上購物</title>
-    <!-- 引入 Tailwind CSS CDN -->
+    <title>VIEBUCKS COFFEE LAB - 頂級精品咖啡專賣</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        coffee: {
+                            50: '#fdfbf7',
+                            100: '#f5efe6',
+                            200: '#e8dcce',
+                            300: '#d5c2ab',
+                            600: '#8c6d53',
+                            800: '#4a3525',
+                            900: '#2b1d12',
+                            950: '#1a110a',
+                        },
+                        gold: {
+                            400: '#d4af37',
+                            500: '#c5a059',
+                            600: '#aa823c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f5efe6; }
+        ::-webkit-scrollbar-thumb { background: #d5c2ab; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8c6d53; }
+    </style>
 </head>
-<body class="bg-stone-50 text-stone-800 font-sans antialiased">
+<body class="bg-coffee-50 text-coffee-950 antialiased selection:bg-gold-500 selection:text-white">
 
-    <!-- 頂部公告列 -->
-    <div class="bg-amber-900 text-amber-100 text-xs sm:text-sm text-center py-2 px-4">
-        🎉 全館滿千免運中 ｜ 首次註冊會員即贈 100 元購物金
+    <!-- Top Announcement Bar -->
+    <div class="bg-coffee-950 text-gold-400 text-xs sm:text-sm text-center py-2.5 px-4 font-medium tracking-wide border-b border-coffee-900 flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-crown text-gold-500"></i>
+        <span>【秋季咖啡賞】全館滿千免運 ｜ 首次註冊會員即贈 $100 專屬折價券</span>
+        <span class="hidden md:inline bg-gold-500/20 text-gold-400 px-2 py-0.5 rounded text-xs ml-2">限時優惠</span>
     </div>
 
-    <!-- 導覽列 (Header) -->
-    <header class="sticky top-0 z-40 bg-white shadow-sm">
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-coffee-100 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Mobile Menu Toggle -->
+            <button id="mobile-menu-btn" class="md:hidden text-coffee-900 p-2 hover:bg-coffee-100 rounded-lg transition">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+
+            <!-- Brand Logo -->
             <div class="flex items-center space-x-3">
-                <a href="#" class="text-2xl font-bold tracking-wider text-amber-900">
-                    <i class="fa-solid fa-mug-hot mr-2"></i>COFFEE LAB
+                <a href="#" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 rounded-full bg-coffee-900 flex items-center justify-center text-gold-400 shadow-md group-hover:scale-105 transition">
+                        <i class="fa-solid fa-mug-hot text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl sm:text-2xl font-serif font-bold tracking-wider text-coffee-900">OKLAO</span>
+                        <span class="text-[9px] tracking-[0.25em] text-coffee-600 font-semibold uppercase">Coffee Specialty</span>
+                    </div>
                 </a>
             </div>
 
-            <nav class="hidden md:flex items-center space-x-8 font-medium">
-                <a href="#" class="text-amber-900 hover:text-amber-600 transition">所有商品</a>
-                <a href="#" class="text-stone-600 hover:text-amber-600 transition">精品咖啡豆</a>
-                <a href="#" class="text-stone-600 hover:text-amber-600 transition">濾掛咖啡包</a>
-                <a href="#" class="text-stone-600 hover:text-amber-600 transition">咖啡器具</a>
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-8 font-medium text-sm text-coffee-800">
+                <a href="#products" class="hover:text-gold-600 transition tracking-wide">精選咖啡豆</a>
+                <a href="#products" class="hover:text-gold-600 transition tracking-wide">濾掛/耳掛包</a>
+                <a href="#products" class="hover:text-gold-600 transition tracking-wide">世界莊園禮盒</a>
+                <a href="#story" class="hover:text-gold-600 transition tracking-wide">品牌溯源</a>
+                <a href="#reviews" class="hover:text-gold-600 transition tracking-wide">顧客評價</a>
             </nav>
 
-            <div class="flex items-center space-x-5 text-stone-700">
-                <button class="hover:text-amber-900 transition"><i class="fa-solid fa-search text-lg"></i></button>
-                <button class="hover:text-amber-900 transition"><i class="fa-solid fa-user text-lg"></i></button>
-                <!-- 購物車按鈕 -->
-                <button id="cart-btn" class="hover:text-amber-900 transition relative">
-                    <i class="fa-solid fa-cart-shopping text-lg"></i>
-                    <span id="cart-count" class="absolute -top-2 -right-2 bg-amber-900 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            <!-- Action Icons -->
+            <div class="flex items-center space-x-4 sm:space-x-6 text-coffee-900">
+                <button onclick="openSearchModal()" class="w-10 h-10 rounded-full hover:bg-coffee-100 flex items-center justify-center transition" title="搜尋商品">
+                    <i class="fa-solid fa-search text-base"></i>
+                </button>
+                <button onclick="openUserModal()" class="w-10 h-10 rounded-full hover:bg-coffee-100 flex items-center justify-center transition hidden sm:flex" title="會員中心">
+                    <i class="fa-solid fa-user text-base"></i>
+                </button>
+                <button id="cart-btn" class="relative w-10 h-10 rounded-full bg-coffee-900 text-gold-400 hover:bg-coffee-800 flex items-center justify-center transition shadow-md" title="檢視購物車">
+                    <i class="fa-solid fa-cart-shopping text-sm"></i>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
                 </button>
             </div>
         </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-coffee-100 px-4 pt-2 pb-6 space-y-3">
+            <a href="#products" class="block py-2 text-coffee-800 font-medium hover:text-gold-600 border-b border-coffee-50">精選咖啡豆</a>
+            <a href="#products" class="block py-2 text-coffee-800 font-medium hover:text-gold-600 border-b border-coffee-50">濾掛/耳掛包</a>
+            <a href="#products" class="block py-2 text-coffee-800 font-medium hover:text-gold-600 border-b border-coffee-50">世界莊園禮盒</a>
+            <a href="#story" class="block py-2 text-coffee-800 font-medium hover:text-gold-600 border-b border-coffee-50">品牌溯源</a>
+            <a href="#reviews" class="block py-2 text-coffee-800 font-medium hover:text-gold-600">顧客評價</a>
+        </div>
     </header>
 
-    <!-- 輪播大圖 / Banner 區塊 -->
-    <section class="relative bg-stone-900 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 flex flex-col items-start justify-center">
-            <span class="bg-amber-800 text-amber-100 text-xs px-3 py-1 rounded-full mb-4 tracking-widest">精選產地直營</span>
-            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 leading-tight">
-                探索每一杯咖啡的<br>極致風味
+    <!-- Hero Banner Section -->
+    <section class="relative bg-coffee-950 text-white overflow-hidden">
+        <div class="absolute inset-0 opacity-40 bg-[radial-gradient(#c5a059_1px,transparent_1px)] [background-size:24px_24px]"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-coffee-950 via-coffee-900/90 to-transparent z-10"></div>
+        <div class="absolute right-0 top-0 w-1/2 h-full hidden lg:block opacity-30 bg-cover bg-center mix-blend-luminosity" style="background-image: url('https://placehold.co/900x1200/2b1d12/d4af37?text=Coffee+Beans+Macro')"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 relative z-20 flex flex-col items-start justify-center">
+            <div class="inline-flex items-center space-x-2 bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs sm:text-sm px-4 py-1.5 rounded-full mb-6 font-medium tracking-widest backdrop-blur-sm">
+                <i class="fa-solid fa-award"></i>
+                <span>世界級莊園直營 ｜ 職人手工新鮮烘焙</span>
+            </div>
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-serif font-bold tracking-tight mb-6 leading-[1.1] max-w-3xl">
+                品味極致醇香<br>喚醒每一刻的美好
             </h1>
-            <p class="text-stone-300 text-lg max-w-xl mb-8">
-                嚴選全球莊園級咖啡豆，由專業烘豆師精準掌控火候，為您獻上最純粹的香氣與口感。
+            <p class="text-coffee-200 text-base sm:text-lg max-w-xl mb-10 font-light leading-relaxed">
+                嚴選全球高海拔莊園咖啡豆，從生豆嚴格篩選、精準控溫烘焙到杯測把關，只為獻給對咖啡品質絕不妥協的您。
             </p>
-            <a href="#products" class="bg-amber-700 hover:bg-amber-600 text-white font-medium px-8 py-3 rounded-md shadow-lg transition">
-                立即選購商品
-            </a>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                <a href="#products" class="bg-gold-500 hover:bg-gold-600 text-coffee-950 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-gold-500/20 transition-all text-center flex items-center justify-center space-x-2">
+                    <span>立即選購熱銷商品</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="#story" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium px-8 py-4 rounded-xl backdrop-blur-md transition-all text-center">
+                    探索品牌故事
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- 熱銷商品區塊 -->
-    <section id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="flex justify-between items-end mb-8">
+    <!-- Category Highlights -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-30 mb-16">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            <div onclick="filterCategory('all')" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-coffee-100 hover:border-gold-500 transform hover:-translate-y-1">
+                <div class="w-14 h-14 bg-coffee-100 group-hover:bg-gold-500 group-hover:text-white text-coffee-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl transition-all duration-300 shadow-inner">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <h3 class="font-bold text-coffee-900 text-base sm:text-lg mb-1">全部商品</h3>
+                <p class="text-coffee-600 text-xs">探索所有精選咖啡</p>
+            </div>
+            <div onclick="filterCategory('bean')" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-coffee-100 hover:border-gold-500 transform hover:-translate-y-1">
+                <div class="w-14 h-14 bg-coffee-100 group-hover:bg-gold-500 group-hover:text-white text-coffee-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl transition-all duration-300 shadow-inner">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+                <h3 class="font-bold text-coffee-900 text-base sm:text-lg mb-1">精品咖啡豆</h3>
+                <p class="text-coffee-600 text-xs">單品、配方、世界莊園</p>
+            </div>
+            <div onclick="filterCategory('drip')" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-coffee-100 hover:border-gold-500 transform hover:-translate-y-1">
+                <div class="w-14 h-14 bg-coffee-100 group-hover:bg-gold-500 group-hover:text-white text-coffee-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl transition-all duration-300 shadow-inner">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <h3 class="font-bold text-coffee-900 text-base sm:text-lg mb-1">濾掛咖啡包</h3>
+                <p class="text-coffee-600 text-xs">隨身沖泡・便利首選</p>
+            </div>
+            <div onclick="filterCategory('gift')" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-coffee-100 hover:border-gold-500 transform hover:-translate-y-1">
+                <div class="w-14 h-14 bg-coffee-100 group-hover:bg-gold-500 group-hover:text-white text-coffee-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl transition-all duration-300 shadow-inner">
+                    <i class="fa-solid fa-gift"></i>
+                </div>
+                <h3 class="font-bold text-coffee-900 text-base sm:text-lg mb-1">精美禮盒組</h3>
+                <p class="text-coffee-600 text-xs">節慶送禮、尊榮大方</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid Section -->
+    <section id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
             <div>
-                <span class="text-amber-800 font-semibold text-sm tracking-wider uppercase">FEATURED PRODUCTS</span>
-                <h2 class="text-3xl font-bold mt-1">館長推薦・熱銷商品</h2>
+                <span class="text-gold-600 font-semibold text-xs sm:text-sm tracking-widest uppercase block mb-2">FEATURED SELECTION</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-bold text-coffee-950">館長推薦・熱銷商品</h2>
+            </div>
+            <!-- Category Filter Tabs -->
+            <div class="flex flex-wrap gap-2 mt-4 md:mt-0 bg-coffee-200/60 p-1.5 rounded-xl">
+                <button onclick="filterCategory('all')" id="tab-all" class="filter-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition bg-coffee-900 text-white shadow">全部</button>
+                <button onclick="filterCategory('bean')" id="tab-bean" class="filter-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition text-coffee-800 hover:text-coffee-950">咖啡豆</button>
+                <button onclick="filterCategory('drip')" id="tab-drip" class="filter-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition text-coffee-800 hover:text-coffee-950">濾掛包</button>
+                <button onclick="filterCategory('gift')" id="tab-gift" class="filter-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition text-coffee-800 hover:text-coffee-950">禮盒組</button>
             </div>
         </div>
 
-        <!-- 商品網格 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- 商品 1 -->
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden group border border-stone-100 flex flex-col justify-between">
-                <div>
-                    <div class="bg-stone-200 h-64 relative overflow-hidden flex items-center justify-center text-stone-400">
-                        <i class="fa-solid fa-mug-hot text-5xl text-amber-900/30"></i>
-                        <span class="absolute top-3 left-3 bg-red-500 text-white text-xs px-2 py-1 rounded">熱銷</span>
+        <!-- Product Cards Container -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <!-- Dynamic products rendered via JS -->
+        </div>
+    </section>
+
+    <!-- Brand Story & Origin Section -->
+    <section id="story" class="bg-coffee-900 text-white py-20 my-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-repeat" style="background-image: url('https://placehold.co/400x400/2b1d12/d4af37?text=OKLAO')"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="text-gold-400 font-semibold text-xs sm:text-sm tracking-widest uppercase block mb-3">CRAFTED WITH PASSION</span>
+                <h2 class="text-3xl sm:text-5xl font-serif font-bold mb-6 leading-tight">堅持從生豆到杯中的<br>極致完美工藝</h2>
+                <p class="text-coffee-200 text-base leading-relaxed mb-6">
+                    OKLAO 歐客佬深耕精品咖啡多年，足跡遍佈世界各大頂級產區。我們親赴衣索比亞、巴拿馬、哥倫比亞等莊園，與當地農民契作，確保每一顆豆子都符合最高品質標準。
+                </p>
+                <div class="grid grid-cols-3 gap-6 pt-4 border-t border-coffee-800">
+                    <div>
+                        <div class="text-3xl sm:text-4xl font-serif font-bold text-gold-400 mb-1">100%</div>
+                        <div class="text-xs text-coffee-300">莊園頂級阿拉比卡</div>
                     </div>
-                    <div class="p-5">
-                        <span class="text-xs text-stone-500">衣索比亞 耶加雪菲 淺焙</span>
-                        <h3 class="product-title font-bold text-lg mt-1 mb-2 group-hover:text-amber-800 transition">紅櫻桃計畫 水洗 G1 (半磅)</h3>
+                    <div>
+                        <div class="text-3xl sm:text-4xl font-serif font-bold text-gold-400 mb-1">36hr</div>
+                        <div class="text-xs text-coffee-300">新鮮烘焙快速出貨</div>
                     </div>
-                </div>
-                <div class="p-5 pt-0 flex items-center justify-between">
-                    <span class="product-price text-xl font-bold text-amber-900" data-price="450">NT$ 450</span>
-                    <button onclick="addToCart('紅櫻桃計畫 水洗 G1 (半磅)', 450)" class="bg-stone-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg text-sm transition">
-                        加入購物車
-                    </button>
+                    <div>
+                        <div class="text-3xl sm:text-4xl font-serif font-bold text-gold-400 mb-1">4.9★</div>
+                        <div class="text-xs text-coffee-300">十萬會員真實好評</div>
+                    </div>
                 </div>
             </div>
-
-            <!-- 商品 2 -->
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden group border border-stone-100 flex flex-col justify-between">
-                <div>
-                    <div class="bg-stone-200 h-64 relative overflow-hidden flex items-center justify-center text-stone-400">
-                        <i class="fa-solid fa-mug-hot text-5xl text-amber-900/30"></i>
-                        <span class="absolute top-3 left-3 bg-amber-800 text-white text-xs px-2 py-1 rounded">人氣</span>
-                    </div>
-                    <div class="p-5">
-                        <span class="text-xs text-stone-500">綜合配方・中深焙</span>
-                        <h3 class="product-title font-bold text-lg mt-1 mb-2 group-hover:text-amber-800 transition">黃金曼特寧綜合豆 (半磅)</h3>
-                    </div>
-                </div>
-                <div class="p-5 pt-0 flex items-center justify-between">
-                    <span class="product-price text-xl font-bold text-amber-900" data-price="380">NT$ 380</span>
-                    <button onclick="addToCart('黃金曼特寧綜合豆 (半磅)', 380)" class="bg-stone-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg text-sm transition">
-                        加入購物車
-                    </button>
-                </div>
-            </div>
-
-            <!-- 商品 3 -->
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden group border border-stone-100 flex flex-col justify-between">
-                <div>
-                    <div class="bg-stone-200 h-64 relative overflow-hidden flex items-center justify-center text-stone-400">
-                        <i class="fa-solid fa-box-open text-5xl text-amber-900/30"></i>
-                        <span class="absolute top-3 left-3 bg-amber-800 text-white text-xs px-2 py-1 rounded">特惠</span>
-                    </div>
-                    <div class="p-5">
-                        <span class="text-xs text-stone-500">濾掛咖啡・綜合口味</span>
-                        <h3 class="product-title font-bold text-lg mt-1 mb-2 group-hover:text-amber-800 transition">精品手沖濾掛咖啡包 (10入裝)</h3>
-                    </div>
-                </div>
-                <div class="p-5 pt-0 flex items-center justify-between">
-                    <span class="product-price text-xl font-bold text-amber-900" data-price="299">NT$ 299</span>
-                    <button onclick="addToCart('精品手沖濾掛咖啡包 (10入裝)', 299)" class="bg-stone-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg text-sm transition">
-                        加入購物車
-                    </button>
-                </div>
-            </div>
-
-            <!-- 商品 4 -->
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden group border border-stone-100 flex flex-col justify-between">
-                <div>
-                    <div class="bg-stone-200 h-64 relative overflow-hidden flex items-center justify-center text-stone-400">
-                        <i class="fa-solid fa-mug-hot text-5xl text-amber-900/30"></i>
-                    </div>
-                    <div class="p-5">
-                        <span class="text-xs text-stone-500">哥倫比亞・中焙</span>
-                        <h3 class="product-title font-bold text-lg mt-1 mb-2 group-hover:text-amber-800 transition">薇拉小農 玫瑰茶香水洗 (半磅)</h3>
-                    </div>
-                </div>
-                <div class="p-5 pt-0 flex items-center justify-between">
-                    <span class="product-price text-xl font-bold text-amber-900" data-price="480">NT$ 480</span>
-                    <button onclick="addToCart('薇拉小農 玫瑰茶香水洗 (半磅)', 480)" class="bg-stone-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg text-sm transition">
-                        加入購物車
-                    </button>
+            <div class="relative">
+                <div class="bg-coffee-800 rounded-3xl p-6 sm:p-8 border border-coffee-700 shadow-2xl relative">
+                    <h3 class="text-xl font-serif font-bold mb-4 text-gold-400 flex items-center">
+                        <i class="fa-solid fa-mug-saucer mr-3"></i>四大堅持
+                    </h3>
+                    <ul class="space-y-4 text-coffee-200 text-sm">
+                        <li class="flex items-start space-x-3">
+                            <i class="fa-solid fa-check-circle text-gold-400 mt-1"></i>
+                            <div><strong>產地直送：</strong>嚴選全球各產區高海拔卓越盃（CoE）得獎莊園。</div>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i class="fa-solid fa-check-circle text-gold-400 mt-1"></i>
+                            <div><strong>職人烘焙：</strong>配備頂級 Probat 烘豆機，精準掌握每個溫區與烘焙曲線。</div>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i class="fa-solid fa-check-circle text-gold-400 mt-1"></i>
+                            <div><strong>嚴格品管：</strong>杯測師嚴格把關，無瑕疵豆混入，確保杯中風味乾淨純粹。</div>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i class="fa-solid fa-check-circle text-gold-400 mt-1"></i>
+                            <div><strong>氮氣保鮮：</strong>濾掛及咖啡豆均採用頂級單向排氣閥與鋁箔包裝保鮮。</div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 購物車抽屜滑出面板 (Drawer) -->
-    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
-        <div id="cart-backdrop" class="absolute inset-0 bg-black/50 transition-opacity"></div>
-        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div class="w-screen max-w-md bg-white shadow-xl flex flex-col">
-                <div class="flex items-center justify-between px-6 py-4 bg-stone-900 text-white">
-                    <h2 class="text-lg font-bold"><i class="fa-solid fa-cart-shopping mr-2"></i>您的購物車</h2>
-                    <button id="close-cart" class="text-stone-300 hover:text-white text-xl">&times;</button>
-                </div>
-                <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
-                    <!-- 動態帶入購物車清單 -->
-                    <p class="text-stone-500 text-center py-10">購物車目前是空的</p>
-                </div>
-                <div class="border-t border-stone-200 p-6 bg-stone-50">
-                    <div class="flex justify-between text-lg font-bold mb-4">
-                        <span>總計</span>
-                        <span id="cart-total" class="text-amber-900">NT$ 0</span>
+    <!-- Customer Reviews Section -->
+    <section id="reviews" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-gold-600 font-semibold text-xs sm:text-sm tracking-widest uppercase block mb-2">CUSTOMER TESTIMONIALS</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-coffee-950">咖啡同好真實口碑</h2>
+            <p class="text-coffee-600 text-sm mt-2">聽聽看購買過 OKLAO 精品咖啡的朋友們怎麼說</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex text-amber-500 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                     </div>
-                    <button onclick="checkout()" class="w-full bg-amber-800 hover:bg-amber-700 text-white font-medium py-3 rounded-lg shadow transition">
-                        前往結帳
+                    <p class="text-coffee-800 text-sm italic mb-6 leading-relaxed">
+                        「衣索比亞耶加雪菲的水洗風味真的太驚豔了！帶有乾淨的花香與柑橘酸值，早上手沖一杯整天都充滿精神，包裝非常有質感！」
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-4 border-t border-coffee-50">
+                    <div class="w-10 h-10 rounded-full bg-coffee-200 flex items-center justify-center font-bold text-coffee-800">林</div>
+                    <div>
+                        <div class="font-bold text-sm text-coffee-900">林先生 (資深咖啡愛好者)</div>
+                        <div class="text-xs text-coffee-500">已購買 紅櫻桃計畫 水洗 G1</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex text-amber-500 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-coffee-800 text-sm italic mb-6 leading-relaxed">
+                        「辦公室同事一致推薦的濾掛咖啡包！隨時隨地只要有熱水就能享受精品等級的香氣，曼特寧綜合豆的濃郁口感完全不輸咖啡廳現煮。」
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-4 border-t border-coffee-50">
+                    <div class="w-10 h-10 rounded-full bg-coffee-200 flex items-center justify-center font-bold text-coffee-800">張</div>
+                    <div>
+                        <div class="font-bold text-sm text-coffee-900">張小姐 (行銷總監)</div>
+                        <div class="text-xs text-coffee-500">已購買 精品手沖濾掛咖啡包</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex text-amber-500 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-coffee-800 text-sm italic mb-6 leading-relaxed">
+                        「過年送禮買了世界莊園禮盒組，長輩跟客戶都讚不絕口。出貨速度超快而且客服態度親切專業，已經回購好幾次了！」
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-4 border-t border-coffee-50">
+                    <div class="w-10 h-10 rounded-full bg-coffee-200 flex items-center justify-center font-bold text-coffee-800">王</div>
+                    <div>
+                        <div class="font-bold text-sm text-coffee-900">王老闆 (企業採購)</div>
+                        <div class="text-xs text-coffee-500">已購買 頂級世界莊園咖啡禮盒</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide-out Shopping Cart Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div id="cart-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col transform transition-transform duration-300">
+                <!-- Drawer Header -->
+                <div class="flex items-center justify-between px-6 py-5 bg-coffee-950 text-white border-b border-coffee-900">
+                    <h2 class="text-lg font-bold flex items-center">
+                        <i class="fa-solid fa-cart-shopping mr-3 text-gold-400"></i>購物車明細
+                    </h2>
+                    <button id="close-cart" class="text-coffee-300 hover:text-white text-2xl w-8 h-8 rounded-full flex items-center justify-center hover:bg-coffee-800 transition">&times;</button>
+                </div>
+
+                <!-- Free Shipping Progress Bar -->
+                <div class="bg-coffee-100 px-6 py-3 border-b border-coffee-200">
+                    <div class="flex justify-between text-xs font-semibold text-coffee-800 mb-1">
+                        <span id="shipping-status-text">已達到免運門檻！</span>
+                        <span id="shipping-amount-text">享全館免運</span>
+                    </div>
+                    <div class="w-full bg-coffee-200 h-2 rounded-full overflow-hidden">
+                        <div id="shipping-progress" class="bg-gold-500 h-full w-full transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Drawer Items List -->
+                <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Drawer Footer Summary -->
+                <div class="border-t border-coffee-200 p-6 bg-coffee-50 space-y-3">
+                    <div class="flex justify-between text-sm text-coffee-600">
+                        <span>商品小計</span>
+                        <span id="cart-subtotal">NT$ 0</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-coffee-600">
+                        <span>運費</span>
+                        <span id="cart-shipping-fee">NT$ 0</span>
+                    </div>
+                    <div class="flex justify-between text-lg font-bold text-coffee-950 pt-2 border-t border-coffee-200">
+                        <span>總計金額</span>
+                        <span id="cart-total" class="text-gold-600 text-xl">NT$ 0</span>
+                    </div>
+                    <button onclick="checkout()" class="w-full bg-gold-500 hover:bg-gold-600 text-coffee-950 font-bold py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
+                        <span>前往安全結帳</span>
+                        <i class="fa-solid fa-lock text-xs"></i>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 頁尾 -->
-    <footer class="bg-stone-900 text-stone-300 mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center text-sm text-stone-500">
-            © 2026 COFFEE LAB All Rights Reserved.
+    <!-- Search Modal -->
+    <div id="search-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative">
+            <button onclick="closeSearchModal()" class="absolute top-4 right-4 text-coffee-400 hover:text-coffee-800 text-xl">&times;</button>
+            <h3 class="text-xl font-serif font-bold text-coffee-900 mb-4">搜尋商品</h3>
+            <div class="relative">
+                <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="輸入咖啡豆、產地或濾掛名稱..." class="w-full pl-12 pr-4 py-3 bg-coffee-50 border border-coffee-200 rounded-xl focus:outline-none focus:border-gold-500 text-coffee-900">
+                <i class="fa-solid fa-search absolute left-4 top-3.5 text-coffee-400"></i>
+            </div>
+            <div id="search-results" class="mt-4 max-h-60 overflow-y-auto space-y-2">
+                <!-- Search results rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="user-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+            <button onclick="closeUserModal()" class="absolute top-4 right-4 text-coffee-400 hover:text-coffee-800 text-xl">&times;</button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-coffee-900 rounded-full flex items-center justify-center text-gold-400 text-2xl mx-auto mb-3 shadow">
+                    <i class="fa-solid fa-user-circle"></i>
+                </div>
+                <h3 class="text-2xl font-serif font-bold text-coffee-900">會員中心</h3>
+                <p class="text-xs text-coffee-600 mt-1">登入即可累積紅利點數並享有會員專屬折扣</p>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-coffee-800 mb-1">電子郵件 / 手機號碼</label>
+                    <input type="text" required placeholder="name@example.com" class="w-full px-4 py-3 bg-coffee-50 border border-coffee-200 rounded-xl focus:outline-none focus:border-gold-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-coffee-800 mb-1">密碼</label>
+                    <input type="password" required placeholder="••••••••" class="w-full px-4 py-3 bg-coffee-50 border border-coffee-200 rounded-xl focus:outline-none focus:border-gold-500 text-sm">
+                </div>
+                <button type="submit" class="w-full bg-coffee-900 hover:bg-coffee-800 text-white font-bold py-3.5 rounded-xl shadow transition">
+                    立即登入會員
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-coffee-950 text-coffee-300 pt-16 pb-12 border-t border-coffee-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div>
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center text-coffee-950 font-bold">
+                        <i class="fa-solid fa-mug-hot"></i>
+                    </div>
+                    <span class="text-xl font-serif font-bold text-white tracking-wider">OKLAO COFFEE</span>
+                </div>
+                <p class="text-xs text-coffee-400 leading-relaxed mb-4">
+                    堅持新鮮烘焙，傳遞每一滴咖啡的溫暖與美好。我們致力於提供全球頂級精品咖啡豆與極致的品飲體驗。
+                </p>
+                <div class="flex space-x-3 text-lg text-gold-400">
+                    <a href="#" class="w-9 h-9 rounded-full bg-coffee-900 hover:bg-gold-500 hover:text-coffee-950 flex items-center justify-center transition"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-coffee-900 hover:bg-gold-500 hover:text-coffee-950 flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-coffee-900 hover:bg-gold-500 hover:text-coffee-950 flex items-center justify-center transition"><i class="fa-brands fa-line"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 text-sm tracking-wider uppercase">商品分類</h4>
+                <ul class="space-y-2.5 text-xs">
+                    <li><a href="#products" class="hover:text-gold-400 transition">單品精品咖啡豆</a></li>
+                    <li><a href="#products" class="hover:text-gold-400 transition">義式濃縮配方豆</a></li>
+                    <li><a href="#products" class="hover:text-gold-400 transition">手沖濾掛咖啡包</a></li>
+                    <li><a href="#products" class="hover:text-gold-400 transition">世界莊園禮盒組</a></li>
+                    <li><a href="#products" class="hover:text-gold-400 transition">咖啡沖煮器具</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 text-sm tracking-wider uppercase">客戶服務</h4>
+                <ul class="space-y-2.5 text-xs">
+                    <li><a href="#" class="hover:text-gold-400 transition">會員制度與紅利</a></li>
+                    <li><a href="#" class="hover:text-gold-400 transition">物流配送說明</a></li>
+                    <li><a href="#" class="hover:text-gold-400 transition">退換貨政策</a></li>
+                    <li><a href="#" class="hover:text-gold-400 transition">常見問題 FAQ</a></li>
+                    <li><a href="#" class="hover:text-gold-400 transition">聯絡我們</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 text-sm tracking-wider uppercase">訂閱咖啡快訊</h4>
+                <p class="text-xs text-coffee-400 mb-4 leading-relaxed">搶先獲得新品上市通知、烘豆師專欄與限時會員折扣碼。</p>
+                <form onsubmit="subscribeNewsletter(event)" class="space-y-2">
+                    <input type="email" required placeholder="請輸入您的電子郵件" class="w-full px-3.5 py-2.5 bg-coffee-900 border border-coffee-800 rounded-xl text-xs text-white focus:outline-none focus:border-gold-500">
+                    <button type="submit" class="w-full bg-gold-500 hover:bg-gold-600 text-coffee-950 font-bold py-2.5 rounded-xl text-xs transition">
+                        立即訂閱
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-coffee-900 text-center text-[11px] text-coffee-500">
+            © 2026 OKLAO COFFEE LAB All Rights Reserved. Designed for Professional Coffee E-Commerce Experience.
         </div>
     </footer>
 
-    <!-- 互動 JavaScript 邏輯 -->
+    <!-- Application JavaScript Logic -->
     <script>
-        let cart = [];
+        // Product dataset
+        const products = [
+            {
+                id: 1,
+                name: "衣索比亞 耶加雪菲 紅櫻桃計畫 水洗 G1",
+                category: "bean",
+                origin: "衣索比亞 ‧ 淺焙",
+                flavor: "帶有清新茉莉花香、檸檬柑橘與明亮果酸",
+                price: 450,
+                tag: "熱銷金牌",
+                tagColor: "bg-red-600",
+                icon: "fa-mug-hot"
+            },
+            {
+                id: 2,
+                name: "黃金曼特寧 頂級三道手選 獨家配方豆",
+                category: "bean",
+                origin: "印尼 ‧ 中深焙",
+                flavor: "濃郁黑巧克力、藥草香與焦糖醇厚尾韻",
+                price: 380,
+                tag: "人氣首選",
+                tagColor: "bg-gold-600",
+                icon: "fa-mug-hot"
+            },
+            {
+                id: 3,
+                name: "巴拿馬 翡翠莊園 藝妓 競標批次",
+                category: "bean",
+                origin: "巴拿馬 ‧ 極淺焙",
+                flavor: "強烈佛手柑香氣、白桃與卓越熱帶水果風味",
+                price: 980,
+                tag: "限量珍稀",
+                tagColor: "bg-purple-600",
+                icon: "fa-seedling"
+            },
+            {
+                id: 4,
+                name: "精品手沖濾掛咖啡包 (綜合風味 10入裝)",
+                category: "drip",
+                origin: "多國產區 ‧ 中焙",
+                flavor: "隨身便利包裝，完美還原手沖層次口感",
+                price: 299,
+                tag: "超值特惠",
+                tagColor: "bg-blue-600",
+                icon: "fa-box-open"
+            },
+            {
+                id: 5,
+                name: "哥倫比亞 薇拉小農 玫瑰茶香 水洗",
+                category: "bean",
+                origin: "哥倫比亞 ‧ 淺中焙",
+                flavor: "玫瑰花瓣氣息、草莓與紅茶般滑順口感",
+                price: 480,
+                tag: "新品上市",
+                tagColor: "bg-emerald-600",
+                icon: "fa-mug-hot"
+            },
+            {
+                id: 6,
+                name: "曼巴風味 氮氣保鮮濾掛咖啡盒 (15入)",
+                category: "drip",
+                origin: "印尼/巴西 ‧ 中深焙",
+                flavor: "口感溫潤平衡，核果香氣與焦糖甜感",
+                price: 399,
+                tag: "辦公室必備",
+                tagColor: "bg-gold-600",
+                icon: "fa-box-open"
+            },
+            {
+                id: 7,
+                name: "世界頂級莊園 精品咖啡豆禮盒組 (三入)",
+                category: "gift",
+                origin: "衣索比亞/瓜地馬拉/肯亞",
+                flavor: "送禮尊榮大方，一次品嚐三種卓越產區風味",
+                price: 1280,
+                tag: "送禮首選",
+                tagColor: "bg-coffee-800",
+                icon: "fa-gift"
+            },
+            {
+                id: 8,
+                name: "肯亞 AA 奧卡拉莊園 雙重厭氧發酵",
+                category: "bean",
+                origin: "肯亞 ‧ 淺中焙",
+                flavor: "濃郁黑醋栗、烏梅酒香與豐富水果調性",
+                price: 550,
+                tag: "職人推薦",
+                tagColor: "bg-amber-600",
+                icon: "fa-mug-hot"
+            }
+        ];
 
+        let cart = [];
+        let currentFilter = 'all';
+
+        // DOM Elements
+        const productGrid = document.getElementById('product-grid');
         const cartBtn = document.getElementById('cart-btn');
         const cartDrawer = document.getElementById('cart-drawer');
         const closeCart = document.getElementById('close-cart');
         const cartBackdrop = document.getElementById('cart-backdrop');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
 
-        // 打開與關閉購物車面板
+        // Toggle mobile menu
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Cart Drawer toggle
         cartBtn.addEventListener('click', () => cartDrawer.classList.remove('hidden'));
         closeCart.addEventListener('click', () => cartDrawer.classList.add('hidden'));
         cartBackdrop.addEventListener('click', () => cartDrawer.classList.add('hidden'));
 
-        // 加入購物車功能
-        function addToCart(name, price) {
-            const existingItem = cart.find(item => item.name === name);
-            if (existingItem) {
-                existingItem.quantity += 1;
+        // Render products
+        function renderProducts(filter = 'all') {
+            currentFilter = filter;
+            
+            // Update active tab styling
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('bg-coffee-900', 'text-white', 'shadow');
+                tab.classList.add('text-coffee-800');
+            });
+            const activeTab = document.getElementById(`tab-${filter}`);
+            if (activeTab) {
+                activeTab.classList.remove('text-coffee-800');
+                activeTab.classList.add('bg-coffee-900', 'text-white', 'shadow');
+            }
+
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+            
+            productGrid.innerHTML = '';
+            filtered.forEach(p => {
+                productGrid.innerHTML += `
+                    <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-coffee-100 flex flex-col justify-between group">
+                        <div>
+                            <div class="bg-coffee-100 h-60 relative overflow-hidden flex items-center justify-center text-coffee-400 group-hover:bg-coffee-200 transition-colors">
+                                <i class="fa-solid ${p.icon} text-6xl text-coffee-800/20 group-hover:scale-110 transition-transform duration-500"></i>
+                                <span class="absolute top-3 left-3 ${p.tagColor} text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">${p.tag}</span>
+                            </div>
+                            <div class="p-6">
+                                <span class="text-xs text-gold-600 font-semibold tracking-wide uppercase">${p.origin}</span>
+                                <h3 class="font-serif font-bold text-lg text-coffee-950 mt-1 mb-2 group-hover:text-gold-600 transition-colors line-clamp-1">${p.name}</h3>
+                                <p class="text-xs text-coffee-600 line-clamp-2 leading-relaxed">${p.flavor}</p>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0 flex items-center justify-between border-t border-coffee-50 mt-4">
+                            <div>
+                                <span class="text-xs text-coffee-400 block">建議售價</span>
+                                <span class="text-xl font-serif font-bold text-coffee-950">NT$ ${p.price}</span>
+                            </div>
+                            <button onclick="addToCart(${p.id})" class="bg-coffee-900 hover:bg-gold-500 hover:text-coffee-950 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md flex items-center space-x-1.5">
+                                <i class="fa-solid fa-cart-plus"></i>
+                                <span>加入購物車</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterCategory(cat) {
+            renderProducts(cat);
+        }
+
+        // Add to cart logic
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.quantity += 1;
             } else {
-                cart.push({ name, price, quantity: 1 });
+                cart.push({ ...product, quantity: 1 });
             }
             updateCartUI();
             
-            // 點擊後輕量提示
-            alert(`已成功將「${name}」加入購物車！`);
+            // Open cart drawer automatically for immediate feedback
+            cartDrawer.classList.remove('hidden');
         }
 
-        // 更新購物車介面與數量
+        // Update cart UI & totals
         function updateCartUI() {
             const cartCount = document.getElementById('cart-count');
             const cartItemsContainer = document.getElementById('cart-items-container');
+            const cartSubtotal = document.getElementById('cart-subtotal');
+            const cartShippingFee = document.getElementById('cart-shipping-fee');
             const cartTotal = document.getElementById('cart-total');
+            const shippingProgress = document.getElementById('shipping-progress');
+            const shippingStatusText = document.getElementById('shipping-status-text');
 
             let totalCount = 0;
-            let totalPrice = 0;
+            let subtotal = 0;
+            const freeShippingThreshold = 1000;
 
             if (cart.length === 0) {
-                cartItemsContainer.innerHTML = '<p class="text-stone-500 text-center py-10">購物車目前是空的</p>';
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center py-16 text-coffee-400">
+                        <i class="fa-solid fa-cart-shopping text-4xl mb-3 text-coffee-300"></i>
+                        <p class="text-sm font-medium">您的購物車目前是空的</p>
+                        <a href="#products" onclick="cartDrawer.classList.add('hidden')" class="inline-block mt-4 text-xs bg-coffee-900 text-gold-400 px-4 py-2 rounded-lg font-bold">去挑選熱銷商品</a>
+                    </div>
+                `;
             } else {
                 cartItemsContainer.innerHTML = '';
                 cart.forEach((item, index) => {
                     totalCount += item.quantity;
-                    totalPrice += item.price * item.quantity;
+                    subtotal += item.price * item.quantity;
 
                     cartItemsContainer.innerHTML += `
-                        flex items-center justify-between border-b border-stone-100 pb-4">
-                            <div>
-                                <h4 class="font-bold text-stone-800">${item.name}</h4>
-                                <p class="text-sm text-stone-500">NT$ ${item.price} × ${item.quantity}</p>
+                        <div class="flex items-center justify-between border-b border-coffee-100 pb-4">
+                            <div class="flex-1 pr-4">
+                                <h4 class="font-bold text-sm text-coffee-900 line-clamp-1">${item.name}</h4>
+                                <p class="text-xs text-coffee-500 mt-0.5">NT$ ${item.price}</p>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <span class="font-bold text-amber-900">NT$ ${item.price * item.quantity}</span>
-                                <button onclick="removeItem(${index})" class="text-red-500 hover:text-red-700 text-sm ml-2"><i class="fa-solid fa-trash"></i></button>
+                                <div class="flex items-center border border-coffee-200 rounded-lg overflow-hidden bg-coffee-50">
+                                    <button onclick="updateQty(${index}, -1)" class="px-2 py-1 text-xs text-coffee-700 hover:bg-coffee-200 transition">-</button>
+                                    <span class="px-2 text-xs font-bold text-coffee-900">${item.quantity}</span>
+                                    <button onclick="updateQty(${index}, 1)" class="px-2 py-1 text-xs text-coffee-700 hover:bg-coffee-200 transition">+</button>
+                                </div>
+                                <button onclick="removeCartItem(${index})" class="text-red-500 hover:text-red-700 p-1 text-sm"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </div>
                     `;
                 });
             }
 
+            const shippingFee = subtotal >= freeShippingThreshold || subtotal === 0 ? 0 : 100;
+            const total = subtotal + shippingFee;
+
             cartCount.innerText = totalCount;
-            cartTotal.innerText = `NT$ ${totalPrice}`;
+            cartSubtotal.innerText = `NT$ ${subtotal}`;
+            cartShippingFee.innerText = shippingFee === 0 ? 'NT$ 0 (免運)' : `NT$ ${shippingFee}`;
+            cartTotal.innerText = `NT$ ${total}`;
+
+            // Free shipping progress calculation
+            const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+            shippingProgress.style.width = `${progressPercent}%`;
+            if (subtotal >= freeShippingThreshold) {
+                shippingStatusText.innerText = '🎉 已達到全館免運門檻！';
+            } else {
+                const diff = freeShippingThreshold - subtotal;
+                shippingStatusText.innerText = `再消費 NT$ ${diff} 即可享免運優惠`;
+            }
         }
 
-        // 移除購物車特定商品
-        function removeItem(index) {
+        function updateQty(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeCartItem(index) {
             cart.splice(index, 1);
             updateCartUI();
         }
 
-        // 模擬結帳
+        // Checkout simulation
         function checkout() {
             if (cart.length === 0) {
-                alert('您的購物車是空的！');
+                alert('您的購物車是空的，請先加入商品！');
                 return;
             }
-            alert('感謝您的購買！此為展示用前端頁面，尚未串接實際金流系統。');
+            alert('感謝您的訂購！系統已成功接收您的訂單，將立即為您安排新鮮烘焙與出貨。');
             cart = [];
             updateCartUI();
             cartDrawer.classList.add('hidden');
+        }
+
+        // Search modal functionality
+        function openSearchModal() {
+            document.getElementById('search-modal').classList.remove('hidden');
+            document.getElementById('search-modal').classList.add('flex');
+            document.getElementById('search-input').focus();
+        }
+        function closeSearchModal() {
+            document.getElementById('search-modal').classList.add('hidden');
+            document.getElementById('search-modal').classList.remove('flex');
+        }
+        function handleSearch(query) {
+            const resultsContainer = document.getElementById('search-results');
+            if (!query.trim()) {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+            const filtered = products.filter(p => p.name.includes(query) || p.origin.includes(query) || p.flavor.includes(query));
+            resultsContainer.innerHTML = '';
+            if (filtered.length === 0) {
+                resultsContainer.innerHTML = '<p class="text-xs text-coffee-500 text-center py-4">找不到符合的咖啡商品</p>';
+                return;
+            }
+            filtered.forEach(p => {
+                resultsContainer.innerHTML += `
+                    <div onclick="closeSearchModal(); addToCart(${p.id});" class="p-3 hover:bg-coffee-50 rounded-xl cursor-pointer flex justify-between items-center transition">
+                        <div>
+                            <div class="font-bold text-sm text-coffee-900">${p.name}</div>
+                            <div class="text-xs text-coffee-500">${p.origin}</div>
+                        </div>
+                        <span class="font-serif font-bold text-gold-600">NT$ ${p.price}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // User modal functionality
+        function openUserModal() {
+            document.getElementById('user-modal').classList.remove('hidden');
+            document.getElementById('user-modal').classList.add('flex');
+        }
+        function closeUserModal() {
+            document.getElementById('user-modal').classList.add('hidden');
+            document.getElementById('user-modal').classList.remove('flex');
+        }
+        function handleLogin(e) {
+            e.preventDefault();
+            alert('登入成功！歡迎回到 OKLAO COFFEE 會員中心。');
+            closeUserModal();
+        }
+
+        // Newsletter subscription
+        function subscribeNewsletter(e) {
+            e.preventDefault();
+            alert('感謝您的訂閱！專屬優惠券已寄送至您的電子信箱。');
+            e.target.reset();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            renderProducts('all');
+            updateCartUI();
         }
     </script>
 </body>
