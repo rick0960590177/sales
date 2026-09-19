@@ -1,898 +1,913 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIEBUCKS - Specialty Coffee Supply Chain & Artisanal Roastery</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- React & ReactDOM -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <!-- Babel for JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            coffee: {
-              50: '#fdfbf7',
-              100: '#f4ede2',
-              200: '#e6d7c3',
-              600: '#8c6d53',
-              700: '#6f5540',
-              800: '#584332',
-              900: '#3d2c1d',
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIEBUCKS 官方購物與品牌資訊網站</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        coffee: {
+                            50: '#fdfbf7',
+                            100: '#f4ebd0',
+                            200: '#e5d1a3',
+                            600: '#8b5a2b',
+                            700: '#6f441d',
+                            800: '#4a2e12',
+                            900: '#2c1808',
+                        },
+                        gold: {
+                            500: '#c5a059',
+                            600: '#b08b43',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdfbf7; color: #3d2c1d; }
-    .font-serif { font-family: 'Playfair Display', serif; }
-    @media print {
-      body * { visibility: hidden; }
-      #printable-receipt, #printable-receipt * { visibility: visible; }
-      #printable-receipt { position: absolute; left: 0; top: 0; width: 100%; }
-    }
-  </style>
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hero-title { font-family: 'Playfair Display', serif; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fdfbf7; }
+        ::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 4px; }
+    </style>
 </head>
-<body class="bg-coffee-50 min-h-screen text-coffee-900 selection:bg-coffee-200">
-  <div id="root"></div>
+<body class="bg-coffee-50 text-coffee-900 antialiased selection:bg-gold-500 selection:text-white">
 
-  <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
+    <div class="bg-coffee-900 text-gold-500 text-xs sm:text-sm py-2 px-4 text-center font-medium tracking-wide">
+        <i class="fa-solid fa-mug-hot mr-2"></i>歡慶 VIEBUCKS 10週年，全館下載APP享 9 折優惠！滿 $800 免運費
+    </div>
 
-    // --- 圖標元件包裝 ---
-    const Icons = {
-      ShoppingBag: (props) => <i data-lucide="shopping-bag" {...props}></i>,
-      Coffee: (props) => <i data-lucide="coffee" {...props}></i>,
-      Clock: (props) => <i data-lucide="clock" {...props}></i>,
-      FileText: (props) => <i data-lucide="file-text" {...props}></i>,
-      Trash: (props) => <i data-lucide="trash-2" {...props}></i>,
-      X: (props) => <i data-lucide="x" {...props}></i>,
-      Plus: (props) => <i data-lucide="plus" {...props}></i>,
-      Minus: (props) => <i data-lucide="minus" {...props}></i>,
-      Check: (props) => <i data-lucide="check" {...props}></i>,
-      Printer: (props) => <i data-lucide="printer" {...props}></i>,
-      Globe: (props) => <i data-lucide="globe" {...props}></i>,
-      ChevronRight: (props) => <i data-lucide="chevron-right" {...props}></i>,
-      Sparkles: (props) => <i data-lucide="sparkles" {...props}></i>
-    };
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-coffee-100 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3">
+                    <a href="#" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 rounded-full bg-coffee-900 flex items-center justify-center text-gold-500 font-serif font-bold text-xl shadow-md">V</div>
+                        <div>
+                            <span class="font-serif text-2xl font-bold tracking-wider text-coffee-900 block leading-none">VIEBUCKS</span>
+                            <span class="text-[10px] tracking-widest text-gold-600 font-semibold uppercase">Coffee Roasters</span>
+                        </div>
+                    </a>
+                </div>
 
-    // --- 語系字典 ---
-    const TRANSLATIONS = {
-      zh: {
-        brandSubtitle: "精品咖啡供應鏈與烘焙坊",
-        allProducts: "全部商品",
-        dripBags: "耳掛咖啡包",
-        coldBrew: "冷萃配方",
-        beans: "精品咖啡豆",
-        wholesaleNotice: "批發優惠：同規格滿 10 件以上享批發價！",
-        addToCart: "加入購物車",
-        spec: "規格",
-        grind: "研磨方式",
-        retailPrice: "零售價",
-        wholesalePrice: "批發價 (≥10)",
-        cartTitle: "購物車",
-        subtotal: "小計",
-        shippingFee: "運費",
-        free: "免運費",
-        total: "總計",
-        checkout: "前往結帳",
-        emptyCart: "購物車目前是空的",
-        customerInfo: "顧客與收件資訊",
-        fullName: "收件人姓名",
-        phone: "聯絡電話",
-        address: "收件地址",
-        notes: "備註說明",
-        submitOrder: "確認送出訂單",
-        submitting: "處理中...",
-        orderHistoryTitle: "歷史訂單紀錄",
-        viewReceipt: "查看收據",
-        clearHistory: "清除歷史紀錄",
-        confirmClear: "確定要清除所有歷史訂單嗎？",
-        noHistory: "尚無訂單紀錄",
-        receiptTitle: "VIEBUCKS 官方交易收據",
-        orderDate: "訂單日期",
-        orderId: "訂單編號",
-        customer: "客戶姓名",
-        item: "品名規格",
-        qty: "數量",
-        price: "單價",
-        payable: "應付金額",
-        print: "列印收據",
-        close: "關閉",
-        grindOptions: {
-          whole: "原豆 (不研磨)",
-          espresso: "義式半自動 (細研磨)",
-          handpour: "手沖 / 濾紙 (中研磨)",
-          frenchpress: "法式濾壓壺 (粗研磨)"
-        }
-      },
-      vi: {
-        brandSubtitle: "Chuỗi cung ứng & Rang xay cà phê đặc sản",
-        allProducts: "Tất cả sản phẩm",
-        dripBags: "Cà phê túi lọc",
-        coldBrew: "Cold Brew",
-        beans: "Cà phê hạt",
-        wholesaleNotice: "Ưu đãi sỉ: Giảm giá khi mua từ 10 sản phẩm trở lên!",
-        addToCart: "Thêm vào giỏ",
-        spec: "Quy cách",
-        grind: "Độ xay",
-        retailPrice: "Giá lẻ",
-        wholesalePrice: "Giá sỉ (≥10)",
-        cartTitle: "Giỏ hàng",
-        subtotal: "Tạm tính",
-        shippingFee: "Phí vận chuyển",
-        free: "Miễn phí",
-        total: "Tổng cộng",
-        checkout: "Thanh toán",
-        emptyCart: "Giỏ hàng trống",
-        customerInfo: "Thông tin giao hàng",
-        fullName: "Họ và tên",
-        phone: "Số điện thoại",
-        address: "Địa chỉ giao hàng",
-        notes: "Ghi chú",
-        submitOrder: "Xác nhận đặt hàng",
-        submitting: "Đang xử lý...",
-        orderHistoryTitle: "Lịch sử đơn hàng",
-        viewReceipt: "Xem hóa đơn",
-        clearHistory: "Xóa lịch sử",
-        confirmClear: "Bạn có chắc muốn xóa lịch sử?",
-        noHistory: "Chưa có đơn hàng",
-        receiptTitle: "HÓA ĐƠN MUA HÀNG VIEBUCKS",
-        orderDate: "Ngày đặt",
-        orderId: "Mã đơn hàng",
-        customer: "Khách hàng",
-        item: "Sản phẩm",
-        qty: "SL",
-        price: "Đơn giá",
-        payable: "Thanh toán",
-        print: "In hóa đơn",
-        close: "Đóng",
-        grindOptions: {
-          whole: "Hạt nguyên bản",
-          espresso: "Pha máy (Xay mịn)",
-          handpour: "Pha phin / Thủ công (Xay vừa)",
-          frenchpress: "French Press (Xay thô)"
-        }
-      },
-      en: {
-        brandSubtitle: "Specialty Coffee Supply Chain & Roastery",
-        allProducts: "All Products",
-        dripBags: "Drip Coffee Bags",
-        coldBrew: "Cold Brew",
-        beans: "Specialty Beans",
-        wholesaleNotice: "Wholesale tier: 10+ items unlock wholesale pricing!",
-        addToCart: "Add to Cart",
-        spec: "Specification",
-        grind: "Grind Type",
-        retailPrice: "Retail",
-        wholesalePrice: "Wholesale (≥10)",
-        cartTitle: "Shopping Cart",
-        subtotal: "Subtotal",
-        shippingFee: "Shipping",
-        free: "Free",
-        total: "Total",
-        checkout: "Proceed to Checkout",
-        emptyCart: "Your cart is empty",
-        customerInfo: "Checkout Details",
-        fullName: "Full Name",
-        phone: "Phone Number",
-        address: "Delivery Address",
-        notes: "Order Notes",
-        submitOrder: "Submit Order",
-        submitting: "Processing...",
-        orderHistoryTitle: "Order History",
-        viewReceipt: "View Receipt",
-        clearHistory: "Clear History",
-        confirmClear: "Are you sure you want to clear history?",
-        noHistory: "No order history found",
-        receiptTitle: "VIEBUCKS OFFICIAL RECEIPT",
-        orderDate: "Date",
-        orderId: "Order ID",
-        customer: "Customer",
-        item: "Item & Spec",
-        qty: "Qty",
-        price: "Price",
-        payable: "Total Payable",
-        print: "Print Receipt",
-        close: "Close",
-        grindOptions: {
-          whole: "Whole Beans",
-          espresso: "Espresso (Fine)",
-          handpour: "Hand Drip / Pour Over (Medium)",
-          frenchpress: "French Press (Coarse)"
-        }
-      }
-    };
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-coffee-800">
+                    <a href="#promotions" class="hover:text-gold-600 transition-colors">限時特惠</a>
+                    <a href="#shop" class="hover:text-gold-600 transition-colors">精選商品</a>
+                    <a href="#knowledge" class="hover:text-gold-600 transition-colors">咖啡知識</a>
+                    <a href="#stores" class="hover:text-gold-600 transition-colors">門市據點</a>
+                    <a href="#franchise" class="hover:text-gold-600 transition-colors font-semibold text-gold-600">加盟專區</a>
+                    <a href="#about" class="hover:text-gold-600 transition-colors">關於我們</a>
+                </nav>
 
-    // --- 商品與庫存資料 ---
-    const INITIAL_PRODUCTS = [
-      {
-        id: 'p1',
-        category: 'beans',
-        name: 'VIEBUCKS Signature Blend',
-        description: '嚴選衣索比亞與哥倫比亞產區，帶有柑橘與焦糖香氣。',
-        price: 280000,
-        wholesalePrice: 240000,
-        stock: 50,
-        specs: ['250g', '500g', '1kg']
-      },
-      {
-        id: 'p2',
-        category: 'beans',
-        name: 'Da Lat Premium Arabica',
-        description: '越南大勒高原頂級阿拉比卡，風味醇厚平衡、帶有莓果尾韻。',
-        price: 320000,
-        wholesalePrice: 270000,
-        stock: 35,
-        specs: ['250g', '500g']
-      },
-      {
-        id: 'p3',
-        category: 'dripBags',
-        name: 'Artisanal Drip Bag Box (10pcs)',
-        description: '氮气保鲜耳掛包禮盒，隨時隨地享受職人手沖口感。',
-        price: 180000,
-        wholesalePrice: 150000,
-        stock: 80,
-        specs: ['10入裝', '20入裝']
-      },
-      {
-        id: 'p4',
-        category: 'coldBrew',
-        name: 'Cold Brew Concentrate Bottle',
-        description: '12小時低溫萃取冷萃濃縮液，加冰塊或牛奶即可享用。',
-        price: 220000,
-        wholesalePrice: 190000,
-        stock: 25,
-        specs: ['500ml', '1L']
-      }
-    ];
+                <!-- Actions: Cart & Mobile Menu Button -->
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-full bg-coffee-100 text-coffee-900 hover:bg-gold-500 hover:text-white transition-all shadow-sm">
+                        <i class="fa-solid fa-bag-shopping text-lg"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                    </button>
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-lg text-coffee-800 hover:bg-coffee-100">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    const SHIPPING_CONFIG = {
-      FREE_THRESHOLD: 500000,
-      FLAT_RATE: 30000
-    };
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-coffee-100 px-6 py-4 space-y-3 shadow-lg">
+            <a href="#promotions" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">限時特惠</a>
+            <a href="#shop" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">精選商品</a>
+            <a href="#knowledge" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">咖啡知識</a>
+            <a href="#stores" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">門市據點</a>
+            <a href="#franchise" onclick="toggleMobileMenu()" class="block text-gold-600 font-semibold py-1">加盟專區</a>
+            <a href="#about" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">關於我們</a>
+        </div>
+    </header>
 
-    const ORDER_HISTORY_STORAGE_KEY = 'viebucks_order_history_v1';
+    <section class="relative bg-coffee-900 text-white overflow-hidden">
+        <div class="absolute inset-0 opacity-40 bg-[radial-gradient(#c5a059_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <span class="inline-block bg-gold-500/20 text-gold-500 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase border border-gold-500/30">
+                        10週年慶典・藝伎藏寶盒上市
+                    </span>
+                    <h1 class="hero-title text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                        品味世界頂級莊園，<br>喚醒每一刻的<span class="text-gold-500">醇香記憶</span>。
+                    </h1>
+                    <p class="text-coffee-100/80 text-base sm:text-lg max-w-lg leading-relaxed">
+                        嚴選巴拿馬藝伎、衣索比亞耶加雪菲與頂級越南阿拉比卡豆。職人手作烘焙，完美封存產地靈魂。
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="#shop" class="bg-gold-500 hover:bg-gold-600 text-coffee-900 font-bold px-8 py-3.5 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5">
+                            立即選購商品 <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                        <a href="#franchise" class="bg-white/10 hover:bg-white/20 text-white border border-white/30 font-semibold px-8 py-3.5 rounded-xl transition-all">
+                            品牌加盟諮詢
+                        </a>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none rounded-2xl overflow-hidden shadow-2xl border-4 border-gold-500/30">
+                        <img src="https://placehold.co/600x450/4a2e12/f4ebd0?text=VIEBUCKS+Signature+Coffee" alt="VIEBUCKS Signature Coffee" class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700">
+                    </div>
+                    <!-- Floating Badge -->
+                    <div class="absolute -bottom-6 -left-6 bg-white text-coffee-900 p-4 rounded-xl shadow-2xl border border-coffee-100 flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-gold-500 rounded-lg flex items-center justify-center text-white text-xl font-bold">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">國際咖啡大獎肯定</p>
+                            <p class="text-sm font-bold text-coffee-900">2026 頂級金賞烘焙認證</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    function App() {
-      const [lang, setLang] = useState('zh');
-      const t = TRANSLATIONS[lang];
+    <section class="bg-white border-b border-coffee-100 shadow-sm py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                <a href="#shop" class="p-4 rounded-xl hover:bg-coffee-50 transition-all border border-transparent hover:border-gold-500/30 group">
+                    <div class="w-12 h-12 mx-auto mb-2 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center group-hover:bg-gold-500 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-seedling text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-coffee-900 text-sm">精品咖啡豆</h3>
+                    <p class="text-xs text-gray-500">莊園單品與配方豆</p>
+                </a>
+                <a href="#shop" class="p-4 rounded-xl hover:bg-coffee-50 transition-all border border-transparent hover:border-gold-500/30 group">
+                    <div class="w-12 h-12 mx-auto mb-2 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center group-hover:bg-gold-500 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-mug-saucer text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-coffee-900 text-sm">濾掛咖啡</h3>
+                    <p class="text-xs text-gray-500">隨沖即飲職人口感</p>
+                </a>
+                <a href="#shop" class="p-4 rounded-xl hover:bg-coffee-50 transition-all border border-transparent hover:border-gold-500/30 group">
+                    <div class="w-12 h-12 mx-auto mb-2 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center group-hover:bg-gold-500 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-gift text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-coffee-900 text-sm">中秋/十週年禮盒</h3>
+                    <p class="text-xs text-gray-500">企業送禮首選推薦</p>
+                </a>
+                <a href="#stores" class="p-4 rounded-xl hover:bg-coffee-50 transition-all border border-transparent hover:border-gold-500/30 group">
+                    <div class="w-12 h-12 mx-auto mb-2 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center group-hover:bg-gold-500 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-store text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-coffee-900 text-sm">門市據點與菜單</h3>
+                    <p class="text-xs text-gray-500">全台實體店鋪查詢</p>
+                </a>
+            </div>
+        </div>
+    </section>
 
-      const [products, setProducts] = useState(INITIAL_PRODUCTS);
-      const [activeCategory, setActiveCategory] = useState('all');
-      const [cart, setCart] = useState([]);
-      const [isCartOpen, setIsCartOpen] = useState(false);
-      const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-      const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-      const [activeReceipt, setActiveReceipt] = useState(null);
+    <section id="shop" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-gold-600 font-semibold text-xs tracking-widest uppercase bg-gold-500/10 px-3 py-1 rounded-full">
+                Featured Products
+            </span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-coffee-900 mt-3">熱銷及主打商品牆</h2>
+            <p class="text-gray-600 text-sm sm:text-base mt-2">嚴選頂級莊園豆、限量禮盒與人氣濾掛，滿足您的挑剔味蕾。</p>
+            
+            <!-- Category Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-2 mt-6">
+                <button onclick="filterProducts('all')" class="category-btn active px-4 py-2 rounded-full text-xs font-semibold bg-coffee-900 text-white transition-all">全部商品</button>
+                <button onclick="filterProducts('bean')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-coffee-100 text-coffee-800 hover:bg-coffee-200 transition-all">精品咖啡豆</button>
+                <button onclick="filterProducts('drip')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-coffee-100 text-coffee-800 hover:bg-coffee-200 transition-all">濾掛/浸泡式</button>
+                <button onclick="filterProducts('gift')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-coffee-100 text-coffee-800 hover:bg-coffee-200 transition-all">限定禮盒</button>
+            </div>
+        </div>
 
-      useEffect(() => {
-        if (window.lucide) {
-          window.lucide.createIcons();
-        }
-      });
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Products will be injected via JavaScript -->
+        </div>
+    </section>
 
-      const filteredProducts = activeCategory === 'all'
-        ? products
-        : products.filter(p => p.category === activeCategory);
+    <section class="bg-gradient-to-r from-coffee-900 to-coffee-800 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-coffee-800/50 p-8 sm:p-12 rounded-3xl border border-gold-500/20 shadow-xl">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center space-x-2 bg-gold-500 text-coffee-900 px-3 py-1 rounded-full text-xs font-bold">
+                        <i class="fa-brands fa-line text-base"></i><span>LINE@ 好友專屬福利</span>
+                    </div>
+                    <h3 class="font-serif text-2xl sm:text-3xl font-bold">立即加入 LINE 好友，領取 $100 折價券</h3>
+                    <p class="text-coffee-100/80 text-sm leading-relaxed">
+                        綁定 VIEBUCKS 會員卡，享首購 9 折、生日專屬禮遇，以及不定期拿鐵買一送一優惠券！
+                    </p>
+                    <div class="pt-2">
+                        <button onclick="openLineModal()" class="bg-gold-500 hover:bg-gold-600 text-coffee-900 font-bold px-6 py-3 rounded-xl shadow-md transition-all">
+                            立即加入官方 LINE <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="text-center md:text-right">
+                    <div class="inline-block bg-white p-6 rounded-2xl shadow-lg text-coffee-900 max-w-xs mx-auto">
+                        <div class="w-32 h-32 mx-auto bg-coffee-100 rounded-xl flex items-center justify-center mb-3 border-2 border-dashed border-gold-500">
+                            <i class="fa-solid fa-qrcode text-6xl text-coffee-800"></i>
+                        </div>
+                        <p class="text-xs font-bold text-coffee-800">掃描 QR Code 加入好友</p>
+                        <p class="text-[10px] text-gray-500 mt-1">ID: @viebucks_coffee</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      const addToCart = (product, selectedSpec, grindType, quantity = 1) => {
-        const cartKey = `${product.id}-${selectedSpec}-${grindType}`;
-        setCart(prev => {
-          const existing = prev.find(item => item.cartKey === cartKey);
-          if (existing) {
-            return prev.map(item => item.cartKey === cartKey ? { ...item, quantity: item.quantity + quantity } : item);
-          }
-          return [...prev, {
-            ...product,
-            cartKey,
-            spec: selectedSpec,
-            grind: grindType,
-            grindLabel: t.grindOptions[grindType],
-            quantity
-          }];
-        });
-        setIsCartOpen(true);
-      };
+    <section id="knowledge" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-gold-600 font-semibold text-xs tracking-widest uppercase bg-gold-500/10 px-3 py-1 rounded-full">
+                Coffee Education
+            </span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-coffee-900 mt-3">咖啡知識與風味專欄</h2>
+            <p class="text-gray-600 text-sm sm:text-base mt-2">探索咖啡豆的奧秘，從產地處理法到手沖黃金比例，成為您的咖啡品鑑指南。</p>
+        </div>
 
-      const updateQuantity = (cartKey, delta) => {
-        setCart(prev => prev.map(item => {
-          if (item.cartKey === cartKey) {
-            const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...item, quantity: newQty } : null;
-          }
-          return item;
-        }).filter(Boolean));
-      };
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Article 1 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-coffee-100 flex flex-col">
+                <img src="https://placehold.co/400x250/6f441d/f4ebd0?text=Hand+Drip+Guide" alt="Hand Drip Guide" class="w-full h-48 object-cover">
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-gold-600 uppercase tracking-wide">沖煮學堂</span>
+                        <h3 class="font-serif text-xl font-bold text-coffee-900 mt-2">手沖咖啡黃金比例與注水技巧全解析</h3>
+                        <p class="text-gray-600 text-sm mt-2 line-clamp-2">水溫 92 度、粉水比 1:15，如何透過三段式注水完美萃取花香與果酸？</p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400">2026-03-15</span>
+                        <button onclick="openKnowledgeModal('handDrip')" class="text-xs font-bold text-coffee-900 hover:text-gold-600 flex items-center">
+                            閱讀文章 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-      const deductStock = (purchasedItems) => {
-        setProducts(prev => prev.map(p => {
-          const matched = purchasedItems.filter(item => item.id === p.id);
-          if (matched.length > 0) {
-            const totalDeducted = matched.reduce((sum, item) => sum + item.quantity, 0);
-            return { ...p, stock: Math.max(0, p.stock - totalDeducted) };
-          }
-          return p;
-        }));
-      };
+            <!-- Article 2 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-coffee-100 flex flex-col">
+                <img src="https://placehold.co/400x250/4a2e12/f4ebd0?text=Processing+Methods" alt="Processing Methods" class="w-full h-48 object-cover">
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-gold-600 uppercase tracking-wide">產地風味</span>
+                        <h3 class="font-serif text-xl font-bold text-coffee-900 mt-2">日曬 vs 水洗 vs 蜜處理：風味差異在哪裡？</h3>
+                        <p class="text-gray-600 text-sm mt-2 line-clamp-2">深入探討咖啡豆處理法如何影響風味，挑選專屬於您的命定咖啡豆。</p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400">2026-03-10</span>
+                        <button onclick="openKnowledgeModal('processing')" class="text-xs font-bold text-coffee-900 hover:text-gold-600 flex items-center">
+                            閱讀文章 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-      return (
-        <div className="min-h-screen flex flex-col">
-          {/* Header */}
-          <header className="sticky top-0 z-35 bg-coffee-50/90 backdrop-blur-md border-b border-coffee-200/60">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-coffee-900 text-white flex items-center justify-center font-serif text-xl font-bold shadow-md">
-                  V
+            <!-- Article 3 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-coffee-100 flex flex-col">
+                <img src="https://placehold.co/400x250/2c1808/f4ebd0?text=Roast+Levels" alt="Roast Levels" class="w-full h-48 object-cover">
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-gold-600 uppercase tracking-wide">烘焙科學</span>
+                        <h3 class="font-serif text-xl font-bold text-coffee-900 mt-2">淺焙、中焙與深焙：烘焙度如何決定咖啡靈魂</h3>
+                        <p class="text-gray-600 text-sm mt-2 line-clamp-2">淺焙的水果酸香與深焙的濃厚焦糖苦甜，哪一款最能打動你的味蕾？</p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400">2026-03-01</span>
+                        <button onclick="openKnowledgeModal('roasting')" class="text-xs font-bold text-coffee-900 hover:text-gold-600 flex items-center">
+                            閱讀文章 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="franchise" class="bg-coffee-100/50 py-16 sm:py-24 border-t border-b border-coffee-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <span class="text-gold-600 font-semibold text-xs tracking-widest uppercase bg-gold-500/20 px-3 py-1 rounded-full">
+                        Business Partnership
+                    </span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-coffee-900">VIEBUCKS 加盟招募與企業合作</h2>
+                    <p class="text-gray-700 text-base leading-relaxed">
+                        我們提供完整的品牌授權、專業烘焙技術支援、門市營運輔導與原物料直供。誠摯邀請認同品牌理念的夥伴加入，攜手共創精品咖啡事業新高峰。
+                    </p>
+                    <ul class="space-y-3 text-sm text-coffee-800 font-medium">
+                        <li class="flex items-center space-x-3"><i class="fa-solid fa-circle-check text-gold-600"></i><span>完善的開店教育訓練與技術轉移</span></li>
+                        <li class="flex items-center space-x-3"><i class="fa-solid fa-circle-check text-gold-600"></i><span>嚴謹的商圈保障與營運數據支援</span></li>
+                        <li class="flex items-center space-x-3"><i class="fa-solid fa-circle-check text-gold-600"></i><span>企業特約合作與客製化掛耳包 B2B 業務</span></li>
+                    </ul>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-xl border border-coffee-100">
+                    <h3 class="font-serif text-xl font-bold text-coffee-900 mb-6">線上加盟與企業諮詢表單</h3>
+                    <form id="franchise-form" onsubmit="handleFranchiseSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-coffee-800 mb-1">您的姓名 / 聯絡人</label>
+                            <input type="text" id="f-name" required class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-coffee-800 mb-1">聯絡電話</label>
+                                <input type="tel" id="f-phone" required class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-coffee-800 mb-1">電子信箱</label>
+                                <input type="email" id="f-email" required class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-coffee-800 mb-1">預計發展區域 / 諮詢項目</label>
+                            <select id="f-type" class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm bg-white">
+                                <option value="franchise">實體門市加盟</option>
+                                <option value="corporate">企業禮盒 / 企業特約採購</option>
+                                <option value="beans">B2B 營業豆批發供貨</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-coffee-800 mb-1">備註說明 / 創業規劃</label>
+                            <textarea id="f-message" rows="3" class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm" placeholder="請簡述您的開店預算或具體需求..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-coffee-900 hover:bg-gold-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-md">
+                            送出諮詢申請
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stores" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-gold-600 font-semibold text-xs tracking-widest uppercase bg-gold-500/10 px-3 py-1 rounded-full">
+                Store Locations
+            </span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-coffee-900 mt-3">全台直營與概念門市</h2>
+            <p class="text-gray-600 text-sm sm:text-base mt-2">歡迎蒞臨門市品嘗手沖咖啡，享受美好的咖啡時光。</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-serif text-lg font-bold text-coffee-900">台北旗艦概念店</h3>
+                    <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-1 rounded-full">營業中</span>
+                </div>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-location-dot text-gold-600 mr-2"></i>台北市信義區松高路 12 號 1 樓</p>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-phone text-gold-600 mr-2"></i>(02) 2345-6789</p>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-clock text-gold-600 mr-2"></i>週一至週日 08:00 - 21:30</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-serif text-lg font-bold text-coffee-900">台中歌劇院烘焙店</h3>
+                    <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-1 rounded-full">營業中</span>
+                </div>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-location-dot text-gold-600 mr-2"></i>台中市西屯區惠來路二段 101 號</p>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-phone text-gold-600 mr-2"></i>(04) 2255-8888</p>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-clock text-gold-600 mr-2"></i>週一至週日 09:00 - 22:00</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-serif text-lg font-bold text-coffee-900">高雄美術館概念館</h3>
+                    <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-1 rounded-full">營業中</span>
+                </div>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-location-dot text-gold-600 mr-2"></i>高雄市鼓山區美術東二路 88 號</p>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-phone text-gold-600 mr-2"></i>(07) 555-1234</p>
+                <p class="text-xs text-gray-600"><i class="fa-solid fa-clock text-gold-600 mr-2"></i>週一至週日 08:30 - 21:00</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="about" class="bg-coffee-900 text-white pt-16 pb-12 border-t border-coffee-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+                <!-- Col 1: Brand Info -->
+                <div class="col-span-2 space-y-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center text-coffee-900 font-serif font-bold text-lg">V</div>
+                        <span class="font-serif text-2xl font-bold tracking-wider">VIEBUCKS</span>
+                    </div>
+                    <p class="text-coffee-100/70 text-xs sm:text-sm leading-relaxed max-w-sm">
+                        VIEBUCKS 致力於提供世界頂級莊園咖啡豆與職人手作濾掛系列。堅持永續環保與公平貿易，讓每一杯咖啡都充滿溫度與故事。
+                    </p>
+                    <div class="flex space-x-3 text-gold-500 text-lg">
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-line"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div>
+                    <h4 class="font-bold text-sm text-gold-500 uppercase tracking-wider mb-4">商品分類</h4>
+                    <ul class="space-y-2.5 text-xs text-coffee-100/80">
+                        <li><a href="#shop" class="hover:text-gold-500 transition-colors">精品咖啡豆</a></li>
+                        <li><a href="#shop" class="hover:text-gold-500 transition-colors">職人濾掛咖啡</a></li>
+                        <li><a href="#shop" class="hover:text-gold-500 transition-colors">十週年限定禮盒</a></li>
+                        <li><a href="#shop" class="hover:text-gold-500 transition-colors">極萃咖啡液</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: About & Support -->
+                <div>
+                    <h4 class="font-bold text-sm text-gold-500 uppercase tracking-wider mb-4">關於與服務</h4>
+                    <ul class="space-y-2.5 text-xs text-coffee-100/80">
+                        <li><a href="#about" class="hover:text-gold-500 transition-colors">品牌故事與理念</a></li>
+                        <li><a href="#stores" class="hover:text-gold-500 transition-colors">全台門市據點</a></li>
+                        <li><a href="#knowledge" class="hover:text-gold-500 transition-colors">咖啡知識專欄</a></li>
+                        <li><a href="#franchise" class="hover:text-gold-500 transition-colors">加盟招募與企業合作</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Legal & Contact -->
+                <div>
+                    <h4 class="font-bold text-sm text-gold-500 uppercase tracking-wider mb-4">客戶服務</h4>
+                    <ul class="space-y-2.5 text-xs text-coffee-100/80">
+                        <li><a href="#" onclick="showInfoModal('terms')" class="hover:text-gold-500 transition-colors">隱私權與服務條款</a></li>
+                        <li><a href="#" onclick="showInfoModal('shipping')" class="hover:text-gold-500 transition-colors">購物說明與物流配送</a></li>
+                        <li><a href="#" onclick="showInfoModal('faq')" class="hover:text-gold-500 transition-colors">常見問題 FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-coffee-800 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-coffee-100/60">
+                <p>&copy; 2026 VIEBUCKS Coffee Roasters. All rights reserved.</p>
+                <p class="mt-2 sm:mt-0">Designed with Passion & Precision for Coffee Lovers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleCartDrawer()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <div class="flex items-center justify-between px-6 py-4 bg-coffee-900 text-white">
+                    <h3 class="font-serif text-lg font-bold flex items-center">
+                        <i class="fa-solid fa-bag-shopping mr-2 text-gold-500"></i> 您的購物車
+                    </h3>
+                    <button onclick="toggleCartDrawer()" class="text-coffee-100 hover:text-white p-2">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-gray-100">
+                    <!-- Dynamic cart items -->
+                </div>
+
+                <!-- Cart Summary & Checkout -->
+                <div class="p-6 bg-coffee-50 border-t border-coffee-200 space-y-4">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>小計</span>
+                        <span id="cart-subtotal">$0</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>運費 (滿$800免運)</span>
+                        <span id="cart-shipping">$0</span>
+                    </div>
+                    <div class="flex justify-between text-lg font-bold text-coffee-900 pt-2 border-t border-coffee-200">
+                        <span>總計金額</span>
+                        <span id="cart-total" class="text-gold-600">$0</span>
+                    </div>
+                    <button onclick="openCheckoutModal()" id="checkout-btn" class="w-full bg-gold-500 hover:bg-gold-600 text-coffee-900 font-bold py-3.5 rounded-xl shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        前往安全結帳 <i class="fa-solid fa-lock ml-1 text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-coffee-900 p-2">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="font-serif text-2xl font-bold text-coffee-900 mb-2">模擬結帳填寫</h3>
+            <p class="text-xs text-gray-500 mb-6">請填寫收件資訊以完成您的 VIEBUCKS 訂單。</p>
+            
+            <form id="order-form" onsubmit="handleOrderSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-coffee-800 mb-1">收件人姓名</label>
+                    <input type="text" id="o-name" required class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-coffee-800 mb-1">手機號碼</label>
+                        <input type="tel" id="o-phone" required class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-coffee-800 mb-1">電子郵件</label>
+                        <input type="email" id="o-email" required class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                    </div>
                 </div>
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-bold font-serif tracking-wide text-coffee-900">VIEBUCKS</h1>
-                  <p className="text-[10px] text-coffee-600 font-medium tracking-wider uppercase">{t.brandSubtitle}</p>
+                    <label class="block text-xs font-bold text-coffee-800 mb-1">收件地址</label>
+                    <input type="text" id="o-address" required class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm focus:ring-2 focus:ring-gold-500 focus:outline-none" placeholder="例如：台北市信義區忠孝東路五段100號">
                 </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                {/* Language Switcher */}
-                <div className="flex bg-coffee-100 p-1 rounded-xl border border-coffee-200">
-                  {['zh', 'vi', 'en'].map(l => (
-                    <button
-                      key={l}
-                      onClick={() => setLang(l)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${lang === l ? 'bg-coffee-900 text-white shadow' : 'text-coffee-700 hover:text-coffee-900'}`}
-                    >
-                      {l.toUpperCase()}
+                <div>
+                    <label class="block text-xs font-bold text-coffee-800 mb-1">付款方式</label>
+                    <select class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm bg-white focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                        <option value="credit">信用卡線上一次付清</option>
+                        <option value="linepay">LINE Pay 行動支付</option>
+                        <option value="cod">超商取貨付款</option>
+                    </select>
+                </div>
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-coffee-900 hover:bg-gold-600 text-white font-bold py-3.5 rounded-xl shadow-lg transition-all">
+                        確認送出訂單
                     </button>
-                  ))}
                 </div>
-
-                {/* History Button */}
-                <button
-                  onClick={() => setIsHistoryOpen(true)}
-                  className="p-2.5 rounded-2xl bg-coffee-100 hover:bg-coffee-200 text-coffee-800 transition-all flex items-center gap-1.5 text-xs font-bold"
-                >
-                  <Icons.Clock className="h-4 w-4" />
-                  <span className="hidden sm:inline">{t.orderHistoryTitle}</span>
-                </button>
-
-                {/* Cart Button */}
-                <button
-                  onClick={() => setIsCartOpen(true)}
-                  className="relative p-2.5 rounded-2xl bg-coffee-900 text-white hover:bg-coffee-800 transition-all shadow-md flex items-center gap-2"
-                >
-                  <Icons.ShoppingBag className="h-5 w-5" />
-                  {cart.length > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 bg-amber-700 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">
-                      {cart.reduce((sum, item) => sum + item.quantity, 0)}
-                    </span>
-                  )}
-                </button>
-              </div>
-            </div>
-          </header>
-
-          {/* Main Content */}
-          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-            {/* Notice Banner */}
-            <div className="bg-coffee-200/50 border border-coffee-200 rounded-2xl p-4 flex items-center gap-3 text-xs sm:text-sm text-coffee-800">
-              <Icons.Sparkles className="h-5 w-5 text-amber-800 shrink-0" />
-              <span className="font-medium">{t.wholesaleNotice}</span>
-            </div>
-
-            {/* Category Filter */}
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-              {[
-                { id: 'all', label: t.allProducts },
-                { id: 'beans', label: t.beans },
-                { id: 'dripBags', label: t.dripBags },
-                { id: 'coldBrew', label: t.coldBrew }
-              ].map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm ${activeCategory === cat.id ? 'bg-coffee-900 text-white shadow-md' : 'bg-white text-coffee-700 border border-coffee-200 hover:bg-coffee-100'}`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Product Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredProducts.map(product => (
-                <ProductCard key={product.id} product={product} onAddToCart={addToCart} t={t} />
-              ))}
-            </div>
-          </main>
-
-          {/* Footer */}
-          <footer className="bg-coffee-100 border-t border-coffee-200/60 py-8 mt-auto">
-            <div className="max-w-7xl mx-auto px-4 text-center text-xs text-coffee-600 space-y-1">
-              <p className="font-bold text-coffee-800">VIEBUCKS Specialty Coffee Supply Chain</p>
-              <p>© 2026 VIEBUCKS. All rights reserved. Sourced & Roasted with Passion.</p>
-            </div>
-          </footer>
-
-          {/* Modals */}
-          <CartDrawer
-            isOpen={isCartOpen}
-            onClose={() => setIsCartOpen(false)}
-            cart={cart}
-            updateQuantity={updateQuantity}
-            onOpenCheckout={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }}
-            t={t}
-          />
-
-          <CheckoutModal
-            isOpen={isCheckoutOpen}
-            onClose={() => setIsCheckoutOpen(false)}
-            cart={cart}
-            clearCart={() => setCart([])}
-            products={products}
-            deductStock={deductStock}
-            onOpenReceipt={(order) => setActiveReceipt(order)}
-            t={t}
-          />
-
-          <OrderHistoryModal
-            isOpen={isHistoryOpen}
-            onClose={() => setIsHistoryOpen(false)}
-            onViewReceipt={(order) => setActiveReceipt(order)}
-            t={t}
-          />
-
-          <ReceiptModal
-            order={activeReceipt}
-            onClose={() => setActiveReceipt(null)}
-            t={t}
-          />
-        </div>
-      );
-    }
-
-    function ProductCard({ product, onAddToCart, t }) {
-      const [selectedSpec, setSelectedSpec] = useState(product.specs[0]);
-      const [grindType, setGrindType] = useState('whole');
-      const [qty, setQty] = useState(1);
-
-      return (
-        <div className="bg-white rounded-3xl p-5 border border-coffee-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
-          <div className="space-y-4">
-            <div className="flex justify-between items-start gap-2">
-              <h3 className="font-serif font-bold text-base sm:text-lg text-coffee-900">{product.name}</h3>
-              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${product.stock > 10 ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
-                Stock: {product.stock}
-              </span>
-            </div>
-
-            <p className="text-xs text-coffee-600/90 leading-relaxed line-clamp-2">{product.description}</p>
-
-            {/* Spec selector */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase text-coffee-700">{t.spec}</label>
-              <div className="flex flex-wrap gap-1.5">
-                {product.specs.map(spec => (
-                  <button
-                    key={spec}
-                    onClick={() => setSelectedSpec(spec)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${selectedSpec === spec ? 'bg-coffee-900 text-white border-coffee-900' : 'bg-gray-50 text-coffee-700 border-coffee-200 hover:bg-coffee-100'}`}
-                  >
-                    {spec}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Grind selector */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase text-coffee-700">{t.grind}</label>
-              <select
-                value={grindType}
-                onChange={(e) => setGrindType(e.target.value)}
-                className="w-full bg-gray-50 border border-coffee-200 rounded-xl p-2 text-xs font-medium text-coffee-900 focus:outline-none focus:ring-1 focus:ring-coffee-900"
-              >
-                <option value="whole">{t.grindOptions.whole}</option>
-                <option value="espresso">{t.grindOptions.espresso}</option>
-                <option value="handpour">{t.grindOptions.handpour}</option>
-                <option value="frenchpress">{t.grindOptions.frenchpress}</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="pt-5 mt-5 border-t border-coffee-100 space-y-3">
-            <div className="flex justify-between items-baseline">
-              <div>
-                <span className="text-[10px] text-coffee-600 block">{t.retailPrice}</span>
-                <span className="text-sm font-bold text-coffee-900">{product.price.toLocaleString()} VND</span>
-              </div>
-              <div className="text-right">
-                <span className="text-[10px] text-amber-800 block">{t.wholesalePrice}</span>
-                <span className="text-xs font-bold text-amber-900">{product.wholesalePrice.toLocaleString()} VND</span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => onAddToCart(product, selectedSpec, grindType, qty)}
-              disabled={product.stock <= 0}
-              className="w-full bg-coffee-900 hover:bg-coffee-800 disabled:bg-gray-300 text-white font-bold py-3 rounded-2xl text-xs shadow transition-all flex items-center justify-center gap-2"
-            >
-              <Icons.ShoppingBag className="h-4 w-4" /> {t.addToCart}
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    function CartDrawer({ isOpen, onClose, cart, updateQuantity, onOpenCheckout, t }) {
-      if (!isOpen) return null;
-
-      const getUnitPrice = (item) => item.quantity >= 10 ? item.wholesalePrice : item.price;
-      const subtotal = cart.reduce((sum, item) => sum + getUnitPrice(item) * item.quantity, 0);
-      const isFreeShipping = subtotal >= SHIPPING_CONFIG.FREE_THRESHOLD || subtotal === 0;
-      const shippingFee = isFreeShipping ? 0 : SHIPPING_CONFIG.FLAT_RATE;
-      const grandTotal = subtotal + shippingFee;
-
-      return (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={onClose} />
-          <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
-              <div className="p-6 bg-coffee-50 border-b border-coffee-200 flex items-center justify-between">
-                <h2 className="text-lg font-bold font-serif text-coffee-900 flex items-center gap-2"><Icons.ShoppingBag className="h-5 w-5 text-coffee-800" /> {t.cartTitle}</h2>
-                <button onClick={onClose} className="p-2 rounded-full hover:bg-coffee-200/50 transition-colors"><Icons.X className="h-5 w-5" /></button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {cart.length === 0 ? (
-                  <div className="py-20 text-center text-coffee-600 space-y-2">
-                    <div className="bg-coffee-100 p-4 rounded-full text-coffee-400 w-16 h-16 flex items-center justify-center mx-auto">
-                      <Icons.Coffee className="h-8 w-8" />
-                    </div>
-                    <p className="text-sm font-medium">{t.emptyCart}</p>
-                  </div>
-                ) : (
-                  cart.map(item => (
-                    <div key={item.cartKey} className="bg-coffee-50/60 rounded-2xl p-4 flex gap-4 items-center border border-coffee-200/60 shadow-sm">
-                      <div className="flex-1">
-                        <h4 className="text-xs sm:text-sm font-bold text-coffee-900 line-clamp-1">{item.name} ({item.spec})</h4>
-                        <p className="text-[10px] text-coffee-600 mt-0.5">{item.grindLabel}</p>
-                        <div className="text-xs sm:text-sm font-bold text-coffee-900 mt-1">
-                          {getUnitPrice(item).toLocaleString()} VND
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 bg-white rounded-xl border border-coffee-200 p-1 shadow-inner">
-                        <button onClick={() => updateQuantity(item.cartKey, -1)} className="p-1 hover:bg-coffee-100 rounded-lg transition-colors"><Icons.Minus className="h-3 w-3" /></button>
-                        <span className="w-6 text-center text-xs font-bold">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.cartKey, 1)} className="p-1 hover:bg-coffee-100 rounded-lg transition-colors"><Icons.Plus className="h-3 w-3" /></button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {cart.length > 0 && (
-                <div className="p-5 sm:p-6 bg-coffee-50 border-t border-coffee-200 space-y-3">
-                  <div className="space-y-1.5 text-xs">
-                    <div className="flex justify-between text-coffee-700"><span>{t.subtotal}:</span><span>{subtotal.toLocaleString()} VND</span></div>
-                    <div className="flex justify-between text-coffee-700"><span>{t.shippingFee}:</span><span>{shippingFee === 0 ? t.free : `${shippingFee.toLocaleString()} VND`}</span></div>
-                    <div className="flex justify-between font-bold text-sm sm:text-base text-coffee-900 pt-2 border-t border-coffee-200">
-                      <span>{t.total}:</span>
-                      <span className="text-amber-800">{grandTotal.toLocaleString()} VND</span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={onOpenCheckout}
-                    className="w-full bg-coffee-900 hover:bg-coffee-800 text-white font-bold py-3.5 rounded-2xl shadow-md text-xs sm:text-sm transition-all flex items-center justify-center gap-2"
-                  >
-                    {t.checkout}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function CheckoutModal({ isOpen, onClose, cart, clearCart, products, deductStock, onOpenReceipt, t }) {
-      const [name, setName] = useState('');
-      const [phone, setPhone] = useState('');
-      const [address, setAddress] = useState('');
-      const [notes, setNotes] = useState('');
-      const [isSubmitting, setIsSubmitting] = useState(false);
-
-      const getUnitPrice = (item) => item.quantity >= 10 ? item.wholesalePrice : item.price;
-      const subtotal = cart.reduce((sum, item) => sum + getUnitPrice(item) * item.quantity, 0);
-      const isFreeShipping = subtotal >= SHIPPING_CONFIG.FREE_THRESHOLD || subtotal === 0;
-      const shippingFee = isFreeShipping ? 0 : SHIPPING_CONFIG.FLAT_RATE;
-      const grandTotal = subtotal + shippingFee;
-
-      const handleSubmitOrder = (e) => {
-        e.preventDefault();
-        if (!name || !phone || !address) return;
-
-        setIsSubmitting(true);
-        setTimeout(() => {
-          const newOrder = {
-            id: Math.floor(100000 + Math.random() * 900000).toString(),
-            date: new Date().toLocaleString(),
-            customerName: name,
-            phone,
-            address,
-            notes,
-            items: cart.map(item => ({
-              name: item.name,
-              spec: item.spec,
-              grindLabel: item.grindLabel,
-              quantity: item.quantity,
-              unitPrice: getUnitPrice(item)
-            })),
-            subtotal,
-            shippingFee,
-            grandTotal
-          };
-
-          try {
-            const savedHistory = JSON.parse(localStorage.getItem(ORDER_HISTORY_STORAGE_KEY) || '[]');
-            localStorage.setItem(ORDER_HISTORY_STORAGE_KEY, JSON.stringify([newOrder, ...savedHistory]));
-          } catch (e) {}
-
-          deductStock(cart);
-          clearCart();
-          setIsSubmitting(false);
-          onClose();
-          onOpenReceipt(newOrder);
-        }, 800);
-      };
-
-      if (!isOpen) return null;
-
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
-          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-coffee-200 p-6 sm:p-8 space-y-5 max-h-[95vh] overflow-y-auto z-10">
-            <button onClick={onClose} className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"><Icons.X className="h-5 w-5" /></button>
-
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold font-serif text-coffee-900">{t.customerInfo}</h2>
-              <p className="text-xs text-coffee-600/80 mt-0.5">請填寫您的收件資訊以完成訂單</p>
-            </div>
-
-            <form onSubmit={handleSubmitOrder} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-coffee-800 mb-1">{t.fullName}</label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-gray-50 border border-coffee-200/80 rounded-2xl p-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-coffee-900 transition-all shadow-inner"
-                  placeholder="例：Nguyễn Văn A / 張小明"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase text-coffee-800 mb-1">{t.phone}</label>
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-gray-50 border border-coffee-200/80 rounded-2xl p-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-coffee-900 transition-all shadow-inner"
-                  placeholder="例：0912345678"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase text-coffee-800 mb-1">{t.address}</label>
-                <textarea
-                  required
-                  rows="2"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="w-full bg-gray-50 border border-coffee-200/80 rounded-2xl p-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-coffee-900 transition-all shadow-inner resize-none"
-                  placeholder="例：District 1, HCMC"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase text-coffee-800 mb-1">{t.notes}</label>
-                <input
-                  type="text"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="w-full bg-gray-50 border border-coffee-200/80 rounded-2xl p-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-coffee-900 transition-all shadow-inner"
-                  placeholder="例：請於下午送達 / Giao hàng buổi chiều"
-                />
-              </div>
-
-              <div className="bg-coffee-50 p-4 rounded-2xl border border-coffee-100 space-y-2 text-xs">
-                <div className="flex justify-between text-coffee-700"><span>{t.subtotal}:</span><span>{subtotal.toLocaleString()} VND</span></div>
-                <div className="flex justify-between text-coffee-700"><span>{t.shippingFee}:</span><span>{shippingFee === 0 ? t.free : `${shippingFee.toLocaleString()} VND`}</span></div>
-                <div className="flex justify-between font-bold text-sm sm:text-base text-coffee-900 pt-2 border-t border-coffee-200">
-                  <span>{t.payable}</span>
-                  <span className="text-amber-800">{grandTotal.toLocaleString()} VND</span>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-coffee-900 hover:bg-coffee-800 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
-              >
-                {isSubmitting ? t.submitting : t.submitOrder}
-              </button>
             </form>
-          </div>
         </div>
-      );
-    }
+    </div>
 
-    function OrderHistoryModal({ isOpen, onClose, onViewReceipt, t }) {
-      const [orders, setOrders] = useState([]);
-
-      useEffect(() => {
-        try {
-          const saved = JSON.parse(localStorage.getItem(ORDER_HISTORY_STORAGE_KEY) || '[]');
-          setOrders(saved);
-        } catch (e) { setOrders([]); }
-      }, []);
-
-      const clearAllHistory = () => {
-        if (window.confirm(t.confirmClear)) {
-          localStorage.removeItem(ORDER_HISTORY_STORAGE_KEY);
-          setOrders([]);
-        }
-      };
-
-      if (!isOpen) return null;
-
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
-          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-coffee-200 p-6 sm:p-8 space-y-5 max-h-[92vh] overflow-y-auto z-10 flex flex-col">
-            <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-              <h2 className="text-lg sm:text-xl font-bold font-serif text-coffee-900 flex items-center gap-2"><Icons.Clock className="h-5 w-5 text-coffee-800" /> {t.orderHistoryTitle}</h2>
-              <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 transition-colors"><Icons.X className="h-5 w-5" /></button>
+    <div id="info-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-gray-400 hover:text-coffee-900 p-2">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div id="info-modal-content" class="space-y-4">
+                <!-- Dynamic Content -->
             </div>
+        </div>
+    </div>
 
-            <div className="flex-1 overflow-y-auto space-y-3.5">
-              {orders.length === 0 ? (
-                <div className="py-16 text-center text-coffee-600 space-y-2">
-                  <div className="bg-coffee-100 p-4 rounded-full text-coffee-400 w-16 h-16 flex items-center justify-center mx-auto">
-                    <Icons.FileText className="h-8 w-8" />
-                  </div>
-                  <p className="text-sm font-medium">{t.noHistory}</p>
-                </div>
-              ) : (
-                orders.map(order => (
-                  <div key={order.id} className="bg-coffee-50/70 rounded-2xl p-4 border border-coffee-200/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-coffee-900 text-sm">#{order.id}</span>
-                        <span className="text-[10px] text-gray-500">{order.date}</span>
-                      </div>
-                      <p className="text-xs text-coffee-800 font-medium">{order.customerName} ({order.phone})</p>
-                      <p className="text-xs font-bold text-amber-900">{order.grandTotal.toLocaleString()} VND</p>
+    <script>
+        // Product Catalog Data
+        const products = [
+            {
+                id: 1,
+                name: "【10週年限定】巴拿馬藝伎藏寶盒",
+                category: "gift",
+                price: 1680,
+                originalPrice: 1980,
+                image: "https://placehold.co/400x300/4a2e12/f4ebd0?text=Geisha+Gift+Box",
+                badge: "限量100組",
+                desc: "水洗巴拿馬藝伎咖啡豆 200g，帶有強烈茉莉花香與柑橘香氣，尊榮木盒包裝。"
+            },
+            {
+                id: 2,
+                name: "衣索比亞 耶加雪菲 經典濾掛包 (10入)",
+                category: "drip",
+                price: 420,
+                originalPrice: 500,
+                image: "https://placehold.co/400x300/6f441d/f4ebd0?text=Yirgacheffe+Drip",
+                badge: "熱銷冠軍",
+                desc: "帶有佛手柑、檸檬皮與白花香調，口感清爽明亮，隨時隨地享受手沖風味。"
+            },
+            {
+                id: 3,
+                name: "黃金曼特寧 頂級精品咖啡豆 (半磅)",
+                category: "bean",
+                price: 550,
+                originalPrice: 620,
+                image: "https://placehold.co/400x300/2c1808/f4ebd0?text=Mandheling+Beans",
+                badge: "職人推薦",
+                desc: "濃郁的草本香氣、黑巧克力尾韻，厚實飽滿，義式濃縮與手沖皆宜。"
+            },
+            {
+                id: 4,
+                name: "VIEBUCKS 極萃冷萃咖啡液 (6入裝)",
+                category: "drip",
+                price: 360,
+                originalPrice: 420,
+                image: "https://placehold.co/400x300/8b5a2b/f4ebd0?text=Cold+Brew+Liquid",
+                badge: "新品上市",
+                desc: "18小時低溫慢速萃取，加牛奶或水即刻還原精品冷萃咖啡。"
+            },
+            {
+                id: 5,
+                name: "哥倫比亞 天堂莊園 雙重發酵蜜處理 (半磅)",
+                category: "bean",
+                price: 680,
+                originalPrice: 780,
+                image: "https://placehold.co/400x300/4a2e12/f4ebd0?text=Colombia+Honey",
+                badge: "限量莊園",
+                desc: "充滿熱帶水果、水蜜桃與酒香風味，層次豐富迷人。"
+            },
+            {
+                id: 6,
+                name: "世界甜點系列 綜合濾掛咖啡 (12入)",
+                category: "drip",
+                price: 480,
+                originalPrice: 560,
+                image: "https://placehold.co/400x300/6f441d/f4ebd0?text=Dessert+Drip+Pack",
+                badge: "人氣組合",
+                desc: "專為搭配甜點設計的三款配方，核果、焦糖與莓果風味交織。"
+            },
+            {
+                id: 7,
+                name: "馬卡龍綜合手作禮盒 (咖啡豆+濾掛)",
+                category: "gift",
+                price: 980,
+                originalPrice: 1200,
+                image: "https://placehold.co/400x300/2c1808/f4ebd0?text=Macaron+Gift+Set",
+                badge: "送禮首選",
+                desc: "精選兩款招牌咖啡豆搭配精美陶瓷濾杯與濾掛包，送禮大方體面。"
+            },
+            {
+                id: 8,
+                name: "越南頂級阿拉比卡 典藏配方豆 (半磅)",
+                category: "bean",
+                price: 450,
+                originalPrice: 520,
+                image: "https://placehold.co/400x300/8b5a2b/f4ebd0?text=Vietnam+Arabica",
+                badge: "產地直營",
+                desc: "高海拔火山土壤孕育，甜感高、低酸度，帶有烤堅果與焦糖香氣。"
+            }
+        ];
+
+        // Cart State
+        let cart = [];
+
+        // Initialize App on DOM Load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts('all');
+            updateCartUI();
+        });
+
+        // Render Products Function
+        function renderProducts(category) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const filtered = category === 'all' ? products : products.filter(p => p.category === category);
+
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-coffee-100 flex flex-col group";
+                card.innerHTML = `
+                    <div class="relative overflow-hidden bg-coffee-50 aspect-4/3">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-3 left-3 bg-coffee-900 text-gold-500 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                            ${product.badge}
+                        </span>
                     </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-serif font-bold text-coffee-900 text-base group-hover:text-gold-600 transition-colors">${product.name}</h3>
+                            <p class="text-xs text-gray-500 mt-1 line-clamp-2">${product.desc}</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-coffee-100 flex items-center justify-between">
+                            <div>
+                                <span class="text-lg font-bold text-coffee-900">$${product.price}</span>
+                                <span class="text-xs text-gray-400 line-through ml-1.5">$${product.originalPrice}</span>
+                            </div>
+                            <button onclick="addToCart(${product.id})" class="bg-coffee-900 hover:bg-gold-500 hover:text-coffee-900 text-white p-2.5 rounded-xl transition-all shadow-sm">
+                                <i class="fa-solid fa-cart-plus text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
 
-                    <button
-                      onClick={() => onViewReceipt(order)}
-                      className="bg-coffee-900 hover:bg-coffee-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow transition-all flex items-center justify-center gap-1.5"
-                    >
-                      <Icons.FileText className="h-4 w-4" /> {t.viewReceipt}
+            // Update Active Category Button Style
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.className = "category-btn px-4 py-2 rounded-full text-xs font-semibold bg-coffee-100 text-coffee-800 hover:bg-coffee-200 transition-all";
+            });
+            event && event.target && (event.target.className = "category-btn active px-4 py-2 rounded-full text-xs font-semibold bg-coffee-900 text-white transition-all");
+        }
+
+        // Filter Function wrapper
+        function filterProducts(cat) {
+            renderProducts(cat);
+        }
+
+        // Cart Drawer Toggle
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        // Add to Cart Logic
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existing = cart.find(item => item.id === productId);
+
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            updateCartUI();
+            showToast(`已將 ${product.name} 加入購物車`);
+        }
+
+        // Update Cart UI & Calculations
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const badge = document.getElementById('cart-badge');
+            const subtotalEl = document.getElementById('cart-subtotal');
+            const shippingEl = document.getElementById('cart-shipping');
+            const totalEl = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            badge.innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400 space-y-3">
+                        <i class="fa-solid fa-bag-shopping text-4xl"></i>
+                        <p class="text-sm">您的購物車目前是空的</p>
+                    </div>
+                `;
+                subtotalEl.innerText = '$0';
+                shippingEl.innerText = '$0';
+                totalEl.innerText = '$0';
+                checkoutBtn.disabled = true;
+                return;
+            }
+
+            checkoutBtn.disabled = false;
+            container.innerHTML = '';
+            let subtotal = 0;
+
+            cart.forEach(item => {
+                subtotal += item.price * item.quantity;
+                const itemEl = document.createElement('div');
+                itemEl.className = "flex items-center py-4 space-x-4";
+                itemEl.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-xl border border-gray-100">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-coffee-900 text-xs sm:text-sm">${item.name}</h4>
+                        <p class="text-xs text-gold-600 font-semibold mt-0.5">$${item.price}</p>
+                        <div class="flex items-center space-x-2 mt-2">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center text-xs">-</button>
+                            <span class="text-xs font-bold">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center text-xs">+</button>
+                        </div>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-red-600 p-2 text-sm">
+                        <i class="fa-solid fa-trash-can"></i>
                     </button>
-                  </div>
-                ))
-              )}
-            </div>
+                `;
+                container.appendChild(itemEl);
+            });
 
-            {orders.length > 0 && (
-              <div className="pt-4 border-t border-gray-100 flex justify-end">
-                <button
-                  onClick={clearAllHistory}
-                  className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl text-xs transition-colors flex items-center gap-1.5"
-                >
-                  <Icons.Trash className="h-4 w-4" /> {t.clearHistory}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
+            const shipping = subtotal >= 800 || subtotal === 0 ? 0 : 80;
+            const total = subtotal + shipping;
 
-    function ReceiptModal({ order, onClose, t }) {
-      if (!order) return null;
+            subtotalEl.innerText = `$${subtotal}`;
+            shippingEl.innerText = shipping === 0 ? '免運費' : `$${shipping}`;
+            totalEl.innerText = `$${total}`;
+        }
 
-      const handlePrint = () => {
-        window.print();
-      };
+        // Update Item Quantity
+        function updateQuantity(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== productId);
+                }
+                updateCartUI();
+            }
+        }
 
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
-          <div id="printable-receipt" className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-coffee-200 p-6 sm:p-8 space-y-6 max-h-[95vh] overflow-y-auto z-10">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-xl font-bold font-serif text-coffee-900">VIEBUCKS</h2>
-                <p className="text-[10px] text-coffee-600 uppercase tracking-wider">{t.receiptTitle}</p>
-              </div>
-              <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 transition-colors print:hidden"><Icons.X className="h-5 w-5" /></button>
-            </div>
+        // Remove from Cart
+        function removeFromCart(productId) {
+            cart = cart.filter(i => i.id !== productId);
+            updateCartUI();
+        }
 
-            <div className="bg-coffee-50 p-4 rounded-2xl space-y-1.5 text-xs">
-              <div className="flex justify-between"><span className="text-coffee-600">{t.orderId}:</span><span className="font-bold text-coffee-900">#{order.id}</span></div>
-              <div className="flex justify-between"><span className="text-coffee-600">{t.orderDate}:</span><span className="font-medium text-coffee-900">{order.date}</span></div>
-              <div className="flex justify-between"><span className="text-coffee-600">{t.customer}:</span><span className="font-medium text-coffee-900">{order.customerName} ({order.phone})</span></div>
-              <div className="flex justify-between"><span className="text-coffee-600">{t.address}:</span><span className="font-medium text-coffee-900 text-right max-w-[200px]">{order.address}</span></div>
-            </div>
+        // Checkout Modal Actions
+        function openCheckoutModal() {
+            toggleCartDrawer();
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
 
-            <div className="space-y-3">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-coffee-200 text-coffee-700">
-                    <th className="pb-2 font-bold">{t.item}</th>
-                    <th className="pb-2 font-bold text-center">{t.qty}</th>
-                    <th className="pb-2 font-bold text-right">{t.price}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-coffee-100">
-                  {order.items.map((item, idx) => (
-                    <tr key={idx} className="text-coffee-800">
-                      <td className="py-2.5">
-                        <p className="font-bold">{item.name} ({item.spec})</p>
-                        <p className="text-[10px] text-coffee-600">{item.grindLabel}</p>
-                      </td>
-                      <td className="py-2.5 text-center font-medium">{item.quantity}</td>
-                      <td className="py-2.5 text-right font-bold">{(item.unitPrice * item.quantity).toLocaleString()} VND</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
 
-              <div className="pt-3 border-t border-coffee-200 space-y-1 text-xs">
-                <div className="flex justify-between text-coffee-700"><span>{t.subtotal}</span><span>{order.subtotal.toLocaleString()} VND</span></div>
-                <div className="flex justify-between text-coffee-700"><span>{t.shippingFee}</span><span>{order.shippingFee === 0 ? t.free : `${order.shippingFee.toLocaleString()} VND`}</span></div>
-                <div className="flex justify-between font-bold text-sm text-coffee-900 pt-2 border-t border-coffee-200">
-                  <span>{t.payable}</span>
-                  <span className="text-amber-800">{order.grandTotal.toLocaleString()} VND</span>
+        function handleOrderSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('o-name').value;
+            closeCheckoutModal();
+            cart = [];
+            updateCartUI();
+            showToast(`感謝 ${name}！您的訂單已成功建立，系統已發送確認信至您的信箱。`);
+        }
+
+        // Franchise Form Submission
+        function handleFranchiseSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('f-name').value;
+            document.getElementById('franchise-form').reset();
+            showToast(`感謝 ${name}！您的加盟諮詢已送出，專人將於 24 小時內與您聯繫。`);
+        }
+
+        // Knowledge Modal Reader
+        function openKnowledgeModal(type) {
+            const modal = document.getElementById('info-modal');
+            const content = document.getElementById('info-modal-content');
+            
+            let data = {
+                handDrip: {
+                    title: "手沖咖啡黃金比例與注水技巧全解析",
+                    text: "手沖咖啡看似簡單，卻包含了水溫、研磨度、粉水比與注水手法四大核心變數。建議粉水比為 1:15，使用 92°C 左右的純淨水。悶蒸 30 秒釋放二氧化碳後，以細水流由內而外畫圓注水，能完美帶出花香與豐富層次。"
+                },
+                processing: {
+                    title: "日曬 vs 水洗 vs 蜜處理：風味差異在哪裡？",
+                    text: "日曬法保留了較多果肉發酵氣息，帶有熱帶水果與濃郁甜感；水洗法則展現乾淨明亮的酸質與花香；蜜處理介於兩者之間，保留了果膠層的黏稠感與焦糖甜香。了解不同處理法，能幫您精準挑選喜愛的風味。"
+                },
+                roasting: {
+                    title: "淺焙、中焙與深焙：烘焙度如何決定咖啡靈魂",
+                    text: "淺焙保留最多產地原生果酸與花香；中焙平衡了酸度與醇厚感，帶有堅果與焦糖香氣；深焙則呈現濃厚醇厚度與黑巧克力尾韻，幾乎無酸感。依據您的沖煮器具與口味偏好選擇最適烘焙度。"
+                }
+            };
+
+            const item = data[type];
+            content.innerHTML = `
+                <h3 class="font-serif text-2xl font-bold text-coffee-900">${item.title}</h3>
+                <p class="text-sm text-gray-600 leading-relaxed pt-2">${item.text}</p>
+                <div class="pt-4">
+                    <button onclick="closeInfoModal()" class="w-full bg-coffee-900 text-white py-3 rounded-xl font-bold text-sm">關閉閱讀</button>
                 </div>
-              </div>
-            </div>
+            `;
+            modal.classList.remove('hidden');
+        }
 
-            <div className="pt-4 flex gap-3 print:hidden">
-              <button
-                onClick={handlePrint}
-                className="flex-1 bg-coffee-900 hover:bg-coffee-800 text-white font-bold py-3 rounded-2xl text-xs shadow transition-all flex items-center justify-center gap-2"
-              >
-                <Icons.Printer className="h-4 w-4" /> {t.print}
-              </button>
-              <button
-                onClick={onClose}
-                className="px-6 bg-coffee-100 hover:bg-coffee-200 text-coffee-800 font-bold py-3 rounded-2xl text-xs transition-all"
-              >
-                {t.close}
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
+        // Info Modal Reader (Terms, Shipping, FAQ)
+        function showInfoModal(type) {
+            const modal = document.getElementById('info-modal');
+            const content = document.getElementById('info-modal-content');
+            
+            let data = {
+                terms: {
+                    title: "隱私權與網站使用條款",
+                    text: "VIEBUCKS 非常重視您的個人隱私。本網站所蒐集的個人資料僅用於訂單配送、會員服務與行銷活動通知。我們採用 SSL 256-bit 安全加密技術，確保您的交易與資料安全無虞。"
+                },
+                shipping: {
+                    title: "購物說明與物流配送",
+                    text: "全館消費滿 $800 即享免運費優惠。現貨商品將於完成付款後 2-3 個工作天內出貨（週末與國定假日順延）。支援超商取貨、宅配到府與 LINE Pay 快速付款。"
+                },
+                faq: {
+                    title: "常見問題 FAQ",
+                    text: "Q: 咖啡豆該如何保存？\nA: 建議放置於陰涼乾燥處，開封後請使用密封罐保存並於一個月內飲用完畢以確保最佳風味。\n\nQ: 可以開立統編發票嗎？\nA: 可以，結帳時於備註欄填寫統一編號與抬頭即可。"
+                }
+            };
 
-    ReactDOM.render(<App />, document.getElementById('root'));
-  </script>
+            const item = data[type];
+            content.innerHTML = `
+                <h3 class="font-serif text-2xl font-bold text-coffee-900">${item.title}</h3>
+                <p class="text-sm text-gray-600 leading-relaxed pt-2 whitespace-pre-line">${item.text}</p>
+                <div class="pt-4">
+                    <button onclick="closeInfoModal()" class="w-full bg-coffee-900 text-white py-3 rounded-xl font-bold text-sm">了解</button>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeInfoModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+
+        function openLineModal() {
+            showInfoModal('terms');
+            // Quick override for LINE modal simulation
+            document.getElementById('info-modal-content').innerHTML = `
+                <h3 class="font-serif text-2xl font-bold text-coffee-900">加入 VIEBUCKS LINE 好友</h3>
+                <p class="text-sm text-gray-600 leading-relaxed pt-2">請使用手機掃描首頁 QR Code 或搜尋 Line ID: <span class="font-bold text-gold-600">@viebucks_coffee</span>，加入後即可自動領取 $100 折價券與新會員專屬禮遇！</p>
+                <div class="pt-4">
+                    <button onclick="closeInfoModal()" class="w-full bg-coffee-900 text-white py-3 rounded-xl font-bold text-sm">我知道了</button>
+                </div>
+            `;
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Toast Notification Helper
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-5 right-5 z-50 bg-coffee-900 text-white text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-2xl border border-gold-500/30 transition-all transform translate-y-0 opacity-100 flex items-center space-x-2";
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-gold-500"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(1rem)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
