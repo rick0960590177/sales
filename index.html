@@ -3,800 +3,1051 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIEBUCKS COFFEE LAB - 頂級精品咖啡專賣</title>
+    <title>VIEBUCKS Cafe | 精品手作咖啡館</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        coffee: {
-                            50: '#fdfbf7',
-                            100: '#f5efe6',
-                            200: '#e8dcce',
-                            300: '#d5c2ab',
-                            600: '#8c6d53',
-                            800: '#4a3525',
-                            900: '#2b1d12',
-                            950: '#1a110a',
-                        },
-                        gold: {
-                            400: '#d4af37',
-                            500: '#c5a059',
-                            600: '#aa823c',
-                        }
+                        darkbg: '#121212',
+                        cardbg: '#1E1E1E',
+                        bordercolor: '#2A2A2A',
+                        goldaccent: '#D4AF37',
+                        goldhover: '#C5A028',
+                        coffeebrown: '#2C221E',
+                        warmcharcoal: '#252525'
                     },
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+    <!-- React 18 & ReactDOM & Babel CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-serif { font-family: 'Playfair Display', serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #E5E7EB;
+        }
         /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f5efe6; }
-        ::-webkit-scrollbar-thumb { background: #d5c2ab; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #8c6d53; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2A2A2A;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-receipt, #printable-receipt * {
+                visibility: visible;
+            }
+            #printable-receipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white !important;
+                color: black !important;
+            }
+        }
     </style>
 </head>
-<body class="bg-coffee-50 text-coffee-950 antialiased selection:bg-gold-500 selection:text-white">
+<body class="bg-[#121212] text-gray-100 antialiased selection:bg-[#D4AF37] selection:text-black">
+    <!-- Root Container -->
+    <div id="root"></div>
 
-    <!-- Top Announcement Bar -->
-    <div class="bg-coffee-950 text-gold-400 text-xs sm:text-sm text-center py-2.5 px-4 font-medium tracking-wide border-b border-coffee-900 flex items-center justify-center space-x-2">
-        <i class="fa-solid fa-crown text-gold-500"></i>
-        <span>【秋季咖啡賞】全館滿千免運 ｜ 首次註冊會員即贈 $100 專屬折價券</span>
-        <span class="hidden md:inline bg-gold-500/20 text-gold-400 px-2 py-0.5 rounded text-xs ml-2">限時優惠</span>
-    </div>
+    <!-- React Application Script -->
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
 
-    <!-- Navigation Header -->
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-coffee-100 shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-btn" class="md:hidden text-coffee-900 p-2 hover:bg-coffee-100 rounded-lg transition">
-                <i class="fa-solid fa-bars text-xl"></i>
-            </button>
+        // Google Apps Script Web App URL for Order Synchronization
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyb1TqV4uY2uU221wF24_b114_9921_x/exec'; 
 
-            <!-- Brand Logo -->
-            <div class="flex items-center space-x-3">
-                <a href="#" class="flex items-center space-x-2 group">
-                    <div class="w-10 h-10 rounded-full bg-coffee-900 flex items-center justify-center text-gold-400 shadow-md group-hover:scale-105 transition">
-                        <i class="fa-solid fa-mug-hot text-lg"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-xl sm:text-2xl font-serif font-bold tracking-wider text-coffee-900">OKLAO</span>
-                        <span class="text-[9px] tracking-[0.25em] text-coffee-600 font-semibold uppercase">Coffee Specialty</span>
-                    </div>
-                </a>
-            </div>
+        // Bilingual Dictionary
+        const dict = {
+            zh: {
+                brand: "VIEBUCKS Cafe",
+                tagline: "職人精神，極致精品咖啡",
+                heroTitle: "Artisanal Coffee, Crafted for Perfection",
+                heroDesc: "精選頂級莊園咖啡豆，融合完美烘焙工藝與獨家浸泡式包裝，隨時隨地享受咖啡館級的極致風味。",
+                shopNow: "立即選購",
+                exploreStory: "探索品牌理念",
+                featuredTitle: "精選精品咖啡系列",
+                featuredDesc: "滿足您對咖啡的高標準要求，提供極致便利與絕佳風味的完美結合。",
+                retail: "零售價",
+                wholesale: "批發價 (10包以上)",
+                packs: "包",
+                addToCart: "加入購物車",
+                viewDetails: "商品詳情",
+                cartTitle: "購物車",
+                emptyCart: "您的購物車目前是空的",
+                subtotal: "小計",
+                shipping: "運費",
+                freeShippingThreshold: "滿 500,000 VND 即享免運費！",
+                shippingRemaining: "還差 {amount} VND 即可享免運優惠",
+                free: "免運費",
+                total: "總計",
+                checkout: "前往結帳",
+                checkoutTitle: "填寫收件資訊",
+                fullName: "收件人姓名",
+                phone: "聯絡電話",
+                address: "配送地址",
+                note: "備註事項 (選填)",
+                submitOrder: "確認送出訂單",
+                orderSuccess: "訂單送出成功！感謝您的訂購。",
+                orderSuccessSub: "我們已收到您的訂單，將盡快為您安排出貨。",
+                orderHistory: "歷史訂單",
+                adminLogin: "管理員登入",
+                passwordPrompt: "請輸入管理密碼：",
+                passwordError: "密碼錯誤",
+                close: "關閉",
+                back: "返回",
+                printReceipt: "列印收據",
+                orderNo: "訂單編號",
+                orderDate: "訂單日期",
+                status: "狀態",
+                pending: "處理中",
+                items: "商品明細",
+                origin: "產地",
+                process: "處理法",
+                altitude: "海拔",
+                roast: "烘焙度",
+                tastingNotes: "風味描述",
+                storyTitle: "品牌故事與職人堅持",
+                story1Title: "嚴選全球頂級莊園",
+                story1Desc: "我們走訪世界各大知名產區，僅挑選品質卓越、風味獨具的高海拔原生咖啡豆。",
+                story2Title: "精湛烘焙與風味鎖鮮",
+                story2Desc: "透過職人精準的溫控烘焙曲線，完美展現每一款豆子的產地靈魂與獨特層次。",
+                story3Title: "革命性浸泡式包裝",
+                story3Desc: "結合茶包的便利與精品手沖的靈魂，專利濾袋設計讓您三分鐘即可享受完美一杯。",
+                contactTitle: "聯絡我們",
+                contactDesc: "有任何批發合作、企業送禮或咖啡諮詢需求嗎？歡迎與我們聯繫。",
+                sendMsg: "傳送訊息",
+                rights: "© 2026 VIEBUCKS Cafe. All rights reserved."
+            },
+            vi: {
+                brand: "VIEBUCKS Cafe",
+                tagline: "Cà phê thủ công tinh tế",
+                heroTitle: "Artisanal Coffee, Crafted for Perfection",
+                heroDesc: "Hạt cà phê hảo hạng được chọn lọc kỹ càng, kết hợp nghệ thuật rang xay đỉnh cao và túi lọc ngâm độc quyền để thưởng thức mọi lúc mọi nơi.",
+                shopNow: "Mua Ngay",
+                exploreStory: "Khám Phá Câu Chuyện",
+                featuredTitle: "Bộ Sưu Tập Cà Phê Đặc Sản",
+                featuredDesc: "Đáp ứng tiêu chuẩn khắt khe nhất của bạn, mang đến sự kết hợp hoàn hảo giữa tiện lợi và hương vị.",
+                retail: "Giá lẻ",
+                wholesale: "Giá sỉ (từ 10 gói)",
+                packs: "gói",
+                addToCart: "Thêm vào giỏ",
+                viewDetails: "Chi Tiết",
+                cartTitle: "Giỏ Hàng",
+                emptyCart: "Giỏ hàng của bạn đang trống",
+                subtotal: "Tạm tính",
+                shipping: "Phí vận chuyển",
+                freeShippingThreshold: "Miễn phí vận chuyển cho đơn từ 500,000 VND!",
+                shippingRemaining: "Mua thêm {amount} VND để được miễn phí vận chuyển",
+                free: "Miễn phí",
+                total: "Tổng cộng",
+                checkout: "Thanh Toán",
+                checkoutTitle: "Thông Tin Nhận Hàng",
+                fullName: "Họ và tên",
+                phone: "Số điện thoại",
+                address: "Địa chỉ giao hàng",
+                note: "Ghi chú (tùy chọn)",
+                submitOrder: "Xác Nhận Đặt Hàng",
+                orderSuccess: "Đặt hàng thành công! Cảm ơn quý khách.",
+                orderSuccessSub: "Chúng tôi đã nhận được đơn hàng và sẽ liên hệ giao hàng sớm nhất.",
+                orderHistory: "Lịch Sử Đơn Hàng",
+                adminLogin: "Đăng Nhập Quản Trị",
+                passwordPrompt: "Nhập mật khẩu quản trị:",
+                passwordError: "Sai mật khẩu",
+                close: "Đóng",
+                back: "Quay Lại",
+                printReceipt: "In Hóa Đơn",
+                orderNo: "Mã đơn hàng",
+                orderDate: "Ngày đặt",
+                status: "Trạng thái",
+                pending: "Đang xử lý",
+                items: "Chi tiết sản phẩm",
+                origin: "Xuất xứ",
+                process: "Phương pháp chế biến",
+                altitude: "Độ cao",
+                roast: "Mức độ rang",
+                tastingNotes: "Hương vị",
+                storyTitle: "Câu Chuyện & Tậm Tâm Nghề",
+                story1Title: "Chọn Lọc Vùng Trồng Hàng Đầu",
+                story1Desc: "Chúng tôi tìm kiếm những nông trại tốt nhất thế giới để chọn ra những hạt cà phê Arabica thượng hạng.",
+                story2Title: "Nghệ Thuật Rang Xay Tinh Xảo",
+                story2Desc: "Quy trình rang kiểm soát nhiệt độ nghiêm ngặt nhằm tôn vinh hương vị đặc trưng của từng hạt cà phê.",
+                story3Title: "Đổi Mới Với Túi Lọc Ngâm Tiện Lợi",
+                story3Desc: "Thiết kế túi lọc ngâm chuyên nghiệp giúp bạn pha một ly cà phê chuẩn vị thủ công chỉ trong 3 phút.",
+                contactTitle: "Liên Hệ Với Chúng Tôi",
+                contactDesc: "Bạn có nhu cầu mua sỉ, hợp tác doanh nghiệp hoặc cần tư vấn? Hãy liên hệ ngay.",
+                sendMsg: "Gửi Tin Nhắn",
+                rights: "© 2026 VIEBUCKS Cafe. Bảo lưu mọi quyền."
+            }
+        };
 
-            <!-- Desktop Navigation Links -->
-            <nav class="hidden md:flex items-center space-x-8 font-medium text-sm text-coffee-800">
-                <a href="#products" class="hover:text-gold-600 transition tracking-wide">精選咖啡豆</a>
-                <a href="#products" class="hover:text-gold-600 transition tracking-wide">濾掛/耳掛包</a>
-                <a href="#products" class="hover:text-gold-600 transition tracking-wide">世界莊園禮盒</a>
-                <a href="#story" class="hover:text-gold-600 transition tracking-wide">品牌溯源</a>
-                <a href="#reviews" class="hover:text-gold-600 transition tracking-wide">顧客評價</a>
-            </nav>
-
-            <!-- Action Icons -->
-            <div class="flex items-center space-x-4 sm:space-x-6 text-coffee-900">
-                <button onclick="openSearchModal()" class="w-10 h-10 rounded-full hover:bg-coffee-100 flex items-center justify-center transition" title="搜尋商品">
-                    <i class="fa-solid fa-search text-base"></i>
-                </button>
-                <button onclick="openUserModal()" class="w-10 h-10 rounded-full hover:bg-coffee-100 flex items-center justify-center transition hidden sm:flex" title="會員中心">
-                    <i class="fa-solid fa-user text-base"></i>
-                </button>
-                <button id="cart-btn" class="relative w-10 h-10 rounded-full bg-coffee-900 text-gold-400 hover:bg-coffee-800 flex items-center justify-center transition shadow-md" title="檢視購物車">
-                    <i class="fa-solid fa-cart-shopping text-sm"></i>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Navigation Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-coffee-100 px-4 pt-2 pb-6 space-y-3">
-            <a href="#products" class="block py-2 text-coffee-800 font-medium hover:text-gold-600 border-b border-coffee-50">精選咖啡豆</a>
-            <a href="#products" class="block py-2 text-coffee-800 font-medium hover:text-gold-600 border-b border-coffee-50">濾掛/耳掛包</a>
-            <a href="#products" class="block py-2 text-coffee-800 font-medium hover:text-gold-600 border-b border-coffee-50">世界莊園禮盒</a>
-            <a href="#story" class="block py-2 text-coffee-800 font-medium hover:text-gold-600 border-b border-coffee-50">品牌溯源</a>
-            <a href="#reviews" class="block py-2 text-coffee-800 font-medium hover:text-gold-600">顧客評價</a>
-        </div>
-    </header>
-
-    <!-- Hero Banner Section -->
-    <section class="relative bg-coffee-950 text-white overflow-hidden">
-        <div class="absolute inset-0 opacity-40 bg-[radial-gradient(#c5a059_1px,transparent_1px)] [background-size:24px_24px]"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-coffee-950 via-coffee-900/90 to-transparent z-10"></div>
-        <div class="absolute right-0 top-0 w-1/2 h-full hidden lg:block opacity-30 bg-cover bg-center mix-blend-luminosity" style="background-image: url('https://placehold.co/900x1200/2b1d12/d4af37?text=Coffee+Beans+Macro')"></div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 relative z-20 flex flex-col items-start justify-center">
-            <div class="inline-flex items-center space-x-2 bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs sm:text-sm px-4 py-1.5 rounded-full mb-6 font-medium tracking-widest backdrop-blur-sm">
-                <i class="fa-solid fa-award"></i>
-                <span>世界級莊園直營 ｜ 職人手工新鮮烘焙</span>
-            </div>
-            <h1 class="text-4xl sm:text-6xl md:text-7xl font-serif font-bold tracking-tight mb-6 leading-[1.1] max-w-3xl">
-                品味極致醇香<br>喚醒每一刻的美好
-            </h1>
-            <p class="text-coffee-200 text-base sm:text-lg max-w-xl mb-10 font-light leading-relaxed">
-                嚴選全球高海拔莊園咖啡豆，從生豆嚴格篩選、精準控溫烘焙到杯測把關，只為獻給對咖啡品質絕不妥協的您。
-            </p>
-            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                <a href="#products" class="bg-gold-500 hover:bg-gold-600 text-coffee-950 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-gold-500/20 transition-all text-center flex items-center justify-center space-x-2">
-                    <span>立即選購熱銷商品</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
-                <a href="#story" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium px-8 py-4 rounded-xl backdrop-blur-md transition-all text-center">
-                    探索品牌故事
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Category Highlights -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-30 mb-16">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            <div onclick="filterCategory('all')" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-coffee-100 hover:border-gold-500 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-coffee-100 group-hover:bg-gold-500 group-hover:text-white text-coffee-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl transition-all duration-300 shadow-inner">
-                    <i class="fa-solid fa-seedling"></i>
-                </div>
-                <h3 class="font-bold text-coffee-900 text-base sm:text-lg mb-1">全部商品</h3>
-                <p class="text-coffee-600 text-xs">探索所有精選咖啡</p>
-            </div>
-            <div onclick="filterCategory('bean')" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-coffee-100 hover:border-gold-500 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-coffee-100 group-hover:bg-gold-500 group-hover:text-white text-coffee-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl transition-all duration-300 shadow-inner">
-                    <i class="fa-solid fa-mug-hot"></i>
-                </div>
-                <h3 class="font-bold text-coffee-900 text-base sm:text-lg mb-1">精品咖啡豆</h3>
-                <p class="text-coffee-600 text-xs">單品、配方、世界莊園</p>
-            </div>
-            <div onclick="filterCategory('drip')" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-coffee-100 hover:border-gold-500 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-coffee-100 group-hover:bg-gold-500 group-hover:text-white text-coffee-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl transition-all duration-300 shadow-inner">
-                    <i class="fa-solid fa-box-open"></i>
-                </div>
-                <h3 class="font-bold text-coffee-900 text-base sm:text-lg mb-1">濾掛咖啡包</h3>
-                <p class="text-coffee-600 text-xs">隨身沖泡・便利首選</p>
-            </div>
-            <div onclick="filterCategory('gift')" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-coffee-100 hover:border-gold-500 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-coffee-100 group-hover:bg-gold-500 group-hover:text-white text-coffee-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl transition-all duration-300 shadow-inner">
-                    <i class="fa-solid fa-gift"></i>
-                </div>
-                <h3 class="font-bold text-coffee-900 text-base sm:text-lg mb-1">精美禮盒組</h3>
-                <p class="text-coffee-600 text-xs">節慶送禮、尊榮大方</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Products Grid Section -->
-    <section id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
-            <div>
-                <span class="text-gold-600 font-semibold text-xs sm:text-sm tracking-widest uppercase block mb-2">FEATURED SELECTION</span>
-                <h2 class="text-3xl sm:text-4xl font-serif font-bold text-coffee-950">館長推薦・熱銷商品</h2>
-            </div>
-            <!-- Category Filter Tabs -->
-            <div class="flex flex-wrap gap-2 mt-4 md:mt-0 bg-coffee-200/60 p-1.5 rounded-xl">
-                <button onclick="filterCategory('all')" id="tab-all" class="filter-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition bg-coffee-900 text-white shadow">全部</button>
-                <button onclick="filterCategory('bean')" id="tab-bean" class="filter-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition text-coffee-800 hover:text-coffee-950">咖啡豆</button>
-                <button onclick="filterCategory('drip')" id="tab-drip" class="filter-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition text-coffee-800 hover:text-coffee-950">濾掛包</button>
-                <button onclick="filterCategory('gift')" id="tab-gift" class="filter-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition text-coffee-800 hover:text-coffee-950">禮盒組</button>
-            </div>
-        </div>
-
-        <!-- Product Cards Container -->
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            <!-- Dynamic products rendered via JS -->
-        </div>
-    </section>
-
-    <!-- Brand Story & Origin Section -->
-    <section id="story" class="bg-coffee-900 text-white py-20 my-16 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-repeat" style="background-image: url('https://placehold.co/400x400/2b1d12/d4af37?text=OKLAO')"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <span class="text-gold-400 font-semibold text-xs sm:text-sm tracking-widest uppercase block mb-3">CRAFTED WITH PASSION</span>
-                <h2 class="text-3xl sm:text-5xl font-serif font-bold mb-6 leading-tight">堅持從生豆到杯中的<br>極致完美工藝</h2>
-                <p class="text-coffee-200 text-base leading-relaxed mb-6">
-                    OKLAO 歐客佬深耕精品咖啡多年，足跡遍佈世界各大頂級產區。我們親赴衣索比亞、巴拿馬、哥倫比亞等莊園，與當地農民契作，確保每一顆豆子都符合最高品質標準。
-                </p>
-                <div class="grid grid-cols-3 gap-6 pt-4 border-t border-coffee-800">
-                    <div>
-                        <div class="text-3xl sm:text-4xl font-serif font-bold text-gold-400 mb-1">100%</div>
-                        <div class="text-xs text-coffee-300">莊園頂級阿拉比卡</div>
-                    </div>
-                    <div>
-                        <div class="text-3xl sm:text-4xl font-serif font-bold text-gold-400 mb-1">36hr</div>
-                        <div class="text-xs text-coffee-300">新鮮烘焙快速出貨</div>
-                    </div>
-                    <div>
-                        <div class="text-3xl sm:text-4xl font-serif font-bold text-gold-400 mb-1">4.9★</div>
-                        <div class="text-xs text-coffee-300">十萬會員真實好評</div>
-                    </div>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="bg-coffee-800 rounded-3xl p-6 sm:p-8 border border-coffee-700 shadow-2xl relative">
-                    <h3 class="text-xl font-serif font-bold mb-4 text-gold-400 flex items-center">
-                        <i class="fa-solid fa-mug-saucer mr-3"></i>四大堅持
-                    </h3>
-                    <ul class="space-y-4 text-coffee-200 text-sm">
-                        <li class="flex items-start space-x-3">
-                            <i class="fa-solid fa-check-circle text-gold-400 mt-1"></i>
-                            <div><strong>產地直送：</strong>嚴選全球各產區高海拔卓越盃（CoE）得獎莊園。</div>
-                        </li>
-                        <li class="flex items-start space-x-3">
-                            <i class="fa-solid fa-check-circle text-gold-400 mt-1"></i>
-                            <div><strong>職人烘焙：</strong>配備頂級 Probat 烘豆機，精準掌握每個溫區與烘焙曲線。</div>
-                        </li>
-                        <li class="flex items-start space-x-3">
-                            <i class="fa-solid fa-check-circle text-gold-400 mt-1"></i>
-                            <div><strong>嚴格品管：</strong>杯測師嚴格把關，無瑕疵豆混入，確保杯中風味乾淨純粹。</div>
-                        </li>
-                        <li class="flex items-start space-x-3">
-                            <i class="fa-solid fa-check-circle text-gold-400 mt-1"></i>
-                            <div><strong>氮氣保鮮：</strong>濾掛及咖啡豆均採用頂級單向排氣閥與鋁箔包裝保鮮。</div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Customer Reviews Section -->
-    <section id="reviews" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="text-center max-w-2xl mx-auto mb-12">
-            <span class="text-gold-600 font-semibold text-xs sm:text-sm tracking-widest uppercase block mb-2">CUSTOMER TESTIMONIALS</span>
-            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-coffee-950">咖啡同好真實口碑</h2>
-            <p class="text-coffee-600 text-sm mt-2">聽聽看購買過 OKLAO 精品咖啡的朋友們怎麼說</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 flex flex-col justify-between">
-                <div>
-                    <div class="flex text-amber-500 mb-4 text-sm">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <p class="text-coffee-800 text-sm italic mb-6 leading-relaxed">
-                        「衣索比亞耶加雪菲的水洗風味真的太驚豔了！帶有乾淨的花香與柑橘酸值，早上手沖一杯整天都充滿精神，包裝非常有質感！」
-                    </p>
-                </div>
-                <div class="flex items-center space-x-3 pt-4 border-t border-coffee-50">
-                    <div class="w-10 h-10 rounded-full bg-coffee-200 flex items-center justify-center font-bold text-coffee-800">林</div>
-                    <div>
-                        <div class="font-bold text-sm text-coffee-900">林先生 (資深咖啡愛好者)</div>
-                        <div class="text-xs text-coffee-500">已購買 紅櫻桃計畫 水洗 G1</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 flex flex-col justify-between">
-                <div>
-                    <div class="flex text-amber-500 mb-4 text-sm">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <p class="text-coffee-800 text-sm italic mb-6 leading-relaxed">
-                        「辦公室同事一致推薦的濾掛咖啡包！隨時隨地只要有熱水就能享受精品等級的香氣，曼特寧綜合豆的濃郁口感完全不輸咖啡廳現煮。」
-                    </p>
-                </div>
-                <div class="flex items-center space-x-3 pt-4 border-t border-coffee-50">
-                    <div class="w-10 h-10 rounded-full bg-coffee-200 flex items-center justify-center font-bold text-coffee-800">張</div>
-                    <div>
-                        <div class="font-bold text-sm text-coffee-900">張小姐 (行銷總監)</div>
-                        <div class="text-xs text-coffee-500">已購買 精品手沖濾掛咖啡包</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 flex flex-col justify-between">
-                <div>
-                    <div class="flex text-amber-500 mb-4 text-sm">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <p class="text-coffee-800 text-sm italic mb-6 leading-relaxed">
-                        「過年送禮買了世界莊園禮盒組，長輩跟客戶都讚不絕口。出貨速度超快而且客服態度親切專業，已經回購好幾次了！」
-                    </p>
-                </div>
-                <div class="flex items-center space-x-3 pt-4 border-t border-coffee-50">
-                    <div class="w-10 h-10 rounded-full bg-coffee-200 flex items-center justify-center font-bold text-coffee-800">王</div>
-                    <div>
-                        <div class="font-bold text-sm text-coffee-900">王老闆 (企業採購)</div>
-                        <div class="text-xs text-coffee-500">已購買 頂級世界莊園咖啡禮盒</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Slide-out Shopping Cart Drawer -->
-    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
-        <div id="cart-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
-        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col transform transition-transform duration-300">
-                <!-- Drawer Header -->
-                <div class="flex items-center justify-between px-6 py-5 bg-coffee-950 text-white border-b border-coffee-900">
-                    <h2 class="text-lg font-bold flex items-center">
-                        <i class="fa-solid fa-cart-shopping mr-3 text-gold-400"></i>購物車明細
-                    </h2>
-                    <button id="close-cart" class="text-coffee-300 hover:text-white text-2xl w-8 h-8 rounded-full flex items-center justify-center hover:bg-coffee-800 transition">&times;</button>
-                </div>
-
-                <!-- Free Shipping Progress Bar -->
-                <div class="bg-coffee-100 px-6 py-3 border-b border-coffee-200">
-                    <div class="flex justify-between text-xs font-semibold text-coffee-800 mb-1">
-                        <span id="shipping-status-text">已達到免運門檻！</span>
-                        <span id="shipping-amount-text">享全館免運</span>
-                    </div>
-                    <div class="w-full bg-coffee-200 h-2 rounded-full overflow-hidden">
-                        <div id="shipping-progress" class="bg-gold-500 h-full w-full transition-all duration-300"></div>
-                    </div>
-                </div>
-
-                <!-- Drawer Items List -->
-                <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
-                    <!-- Populated via JS -->
-                </div>
-
-                <!-- Drawer Footer Summary -->
-                <div class="border-t border-coffee-200 p-6 bg-coffee-50 space-y-3">
-                    <div class="flex justify-between text-sm text-coffee-600">
-                        <span>商品小計</span>
-                        <span id="cart-subtotal">NT$ 0</span>
-                    </div>
-                    <div class="flex justify-between text-sm text-coffee-600">
-                        <span>運費</span>
-                        <span id="cart-shipping-fee">NT$ 0</span>
-                    </div>
-                    <div class="flex justify-between text-lg font-bold text-coffee-950 pt-2 border-t border-coffee-200">
-                        <span>總計金額</span>
-                        <span id="cart-total" class="text-gold-600 text-xl">NT$ 0</span>
-                    </div>
-                    <button onclick="checkout()" class="w-full bg-gold-500 hover:bg-gold-600 text-coffee-950 font-bold py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
-                        <span>前往安全結帳</span>
-                        <i class="fa-solid fa-lock text-xs"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Search Modal -->
-    <div id="search-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative">
-            <button onclick="closeSearchModal()" class="absolute top-4 right-4 text-coffee-400 hover:text-coffee-800 text-xl">&times;</button>
-            <h3 class="text-xl font-serif font-bold text-coffee-900 mb-4">搜尋商品</h3>
-            <div class="relative">
-                <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="輸入咖啡豆、產地或濾掛名稱..." class="w-full pl-12 pr-4 py-3 bg-coffee-50 border border-coffee-200 rounded-xl focus:outline-none focus:border-gold-500 text-coffee-900">
-                <i class="fa-solid fa-search absolute left-4 top-3.5 text-coffee-400"></i>
-            </div>
-            <div id="search-results" class="mt-4 max-h-60 overflow-y-auto space-y-2">
-                <!-- Search results rendered here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- User Modal -->
-    <div id="user-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
-            <button onclick="closeUserModal()" class="absolute top-4 right-4 text-coffee-400 hover:text-coffee-800 text-xl">&times;</button>
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-coffee-900 rounded-full flex items-center justify-center text-gold-400 text-2xl mx-auto mb-3 shadow">
-                    <i class="fa-solid fa-user-circle"></i>
-                </div>
-                <h3 class="text-2xl font-serif font-bold text-coffee-900">會員中心</h3>
-                <p class="text-xs text-coffee-600 mt-1">登入即可累積紅利點數並享有會員專屬折扣</p>
-            </div>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-coffee-800 mb-1">電子郵件 / 手機號碼</label>
-                    <input type="text" required placeholder="name@example.com" class="w-full px-4 py-3 bg-coffee-50 border border-coffee-200 rounded-xl focus:outline-none focus:border-gold-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-coffee-800 mb-1">密碼</label>
-                    <input type="password" required placeholder="••••••••" class="w-full px-4 py-3 bg-coffee-50 border border-coffee-200 rounded-xl focus:outline-none focus:border-gold-500 text-sm">
-                </div>
-                <button type="submit" class="w-full bg-coffee-900 hover:bg-coffee-800 text-white font-bold py-3.5 rounded-xl shadow transition">
-                    立即登入會員
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Footer Section -->
-    <footer class="bg-coffee-950 text-coffee-300 pt-16 pb-12 border-t border-coffee-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-            <div>
-                <div class="flex items-center space-x-2 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center text-coffee-950 font-bold">
-                        <i class="fa-solid fa-mug-hot"></i>
-                    </div>
-                    <span class="text-xl font-serif font-bold text-white tracking-wider">OKLAO COFFEE</span>
-                </div>
-                <p class="text-xs text-coffee-400 leading-relaxed mb-4">
-                    堅持新鮮烘焙，傳遞每一滴咖啡的溫暖與美好。我們致力於提供全球頂級精品咖啡豆與極致的品飲體驗。
-                </p>
-                <div class="flex space-x-3 text-lg text-gold-400">
-                    <a href="#" class="w-9 h-9 rounded-full bg-coffee-900 hover:bg-gold-500 hover:text-coffee-950 flex items-center justify-center transition"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-coffee-900 hover:bg-gold-500 hover:text-coffee-950 flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-coffee-900 hover:bg-gold-500 hover:text-coffee-950 flex items-center justify-center transition"><i class="fa-brands fa-line"></i></a>
-                </div>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4 text-sm tracking-wider uppercase">商品分類</h4>
-                <ul class="space-y-2.5 text-xs">
-                    <li><a href="#products" class="hover:text-gold-400 transition">單品精品咖啡豆</a></li>
-                    <li><a href="#products" class="hover:text-gold-400 transition">義式濃縮配方豆</a></li>
-                    <li><a href="#products" class="hover:text-gold-400 transition">手沖濾掛咖啡包</a></li>
-                    <li><a href="#products" class="hover:text-gold-400 transition">世界莊園禮盒組</a></li>
-                    <li><a href="#products" class="hover:text-gold-400 transition">咖啡沖煮器具</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4 text-sm tracking-wider uppercase">客戶服務</h4>
-                <ul class="space-y-2.5 text-xs">
-                    <li><a href="#" class="hover:text-gold-400 transition">會員制度與紅利</a></li>
-                    <li><a href="#" class="hover:text-gold-400 transition">物流配送說明</a></li>
-                    <li><a href="#" class="hover:text-gold-400 transition">退換貨政策</a></li>
-                    <li><a href="#" class="hover:text-gold-400 transition">常見問題 FAQ</a></li>
-                    <li><a href="#" class="hover:text-gold-400 transition">聯絡我們</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4 text-sm tracking-wider uppercase">訂閱咖啡快訊</h4>
-                <p class="text-xs text-coffee-400 mb-4 leading-relaxed">搶先獲得新品上市通知、烘豆師專欄與限時會員折扣碼。</p>
-                <form onsubmit="subscribeNewsletter(event)" class="space-y-2">
-                    <input type="email" required placeholder="請輸入您的電子郵件" class="w-full px-3.5 py-2.5 bg-coffee-900 border border-coffee-800 rounded-xl text-xs text-white focus:outline-none focus:border-gold-500">
-                    <button type="submit" class="w-full bg-gold-500 hover:bg-gold-600 text-coffee-950 font-bold py-2.5 rounded-xl text-xs transition">
-                        立即訂閱
-                    </button>
-                </form>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-coffee-900 text-center text-[11px] text-coffee-500">
-            © 2026 OKLAO COFFEE LAB All Rights Reserved. Designed for Professional Coffee E-Commerce Experience.
-        </div>
-    </footer>
-
-    <!-- Application JavaScript Logic -->
-    <script>
-        // Product dataset
-        const products = [
+        // Product Catalog Data
+        const productsData = [
             {
                 id: 1,
-                name: "衣索比亞 耶加雪菲 紅櫻桃計畫 水洗 G1",
-                category: "bean",
-                origin: "衣索比亞 ‧ 淺焙",
-                flavor: "帶有清新茉莉花香、檸檬柑橘與明亮果酸",
-                price: 450,
-                tag: "熱銷金牌",
-                tagColor: "bg-red-600",
-                icon: "fa-mug-hot"
+                name: { zh: "黃金曼特寧 浸泡式咖啡包 (10入)", vi: "Cà Phê Ngâm Mandheling Vàng (Hộp 10 Gói)" },
+                category: "immersion",
+                retailPrice: 220000,
+                wholesalePrice: 180000,
+                image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80",
+                origin: { zh: "印尼 蘇門答臘", vi: "Sumatra, Indonesia" },
+                process: { zh: "溼刨法", vi: "Wet-hulled" },
+                altitude: "1,200m - 1,500m",
+                roast: { zh: "深焙", vi: "Rang đậm" },
+                notes: { zh: "黑巧克力、焦糖、雪松木香氣、醇厚濃郁", vi: "Chocolate đen, caramel, gỗ tuyết tùng, đậm đà" },
+                desc: { zh: "嚴選印尼蘇門答臘頂級曼特寧豆，口感濃郁厚實，帶有迷人的藥草與黑巧克力餘韻。", vi: "Hạt Mandheling tuyển chọn từ Sumatra với body đậm đà, dư vị chocolate đen và thảo mộc." }
             },
             {
                 id: 2,
-                name: "黃金曼特寧 頂級三道手選 獨家配方豆",
-                category: "bean",
-                origin: "印尼 ‧ 中深焙",
-                flavor: "濃郁黑巧克力、藥草香與焦糖醇厚尾韻",
-                price: 380,
-                tag: "人氣首選",
-                tagColor: "bg-gold-600",
-                icon: "fa-mug-hot"
+                name: { zh: "耶加雪菲 經典浸泡式咖啡包 (10入)", vi: "Cà Phê Ngâm Yirgacheffe Cổ Điển (Hộp 10 Gói)" },
+                category: "immersion",
+                retailPrice: 240000,
+                wholesalePrice: 195000,
+                image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
+                origin: { zh: "衣索比亞 耶加雪菲", vi: "Yirgacheffe, Ethiopia" },
+                process: { zh: "水洗法", vi: "Washed" },
+                altitude: "1,900m - 2,100m",
+                roast: { zh: "淺中焙", vi: "Rang nhạt vừa" },
+                notes: { zh: "柑橘、茉莉花香、佛手柑、清爽明亮", vi: "Cam quýt, hoa nhài, bergamot, thanh mát" },
+                desc: { zh: "經典衣索比亞產區，帶有優雅的花香與明亮的柑橘酸質，口感如茶般細緻滑順。", vi: "Vùng Yirgacheffe kinh điển với hương hoa nhài thanh lịch và vị cam quýt sáng." }
             },
             {
                 id: 3,
-                name: "巴拿馬 翡翠莊園 藝妓 競標批次",
-                category: "bean",
-                origin: "巴拿馬 ‧ 極淺焙",
-                flavor: "強烈佛手柑香氣、白桃與卓越熱帶水果風味",
-                price: 980,
-                tag: "限量珍稀",
-                tagColor: "bg-purple-600",
-                icon: "fa-seedling"
+                name: { zh: "哥倫比亞 薇拉莊園 咖啡豆 (250g)", vi: "Hạt Cà Phê Colombia Huila (250g)" },
+                category: "beans",
+                retailPrice: 280000,
+                wholesalePrice: 230000,
+                image: "https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=600&q=80",
+                origin: { zh: "哥倫比亞 薇拉", vi: "Huila, Colombia" },
+                process: { zh: "水洗法", vi: "Washed" },
+                altitude: "1,500m - 1,800m",
+                roast: { zh: "中焙", vi: "Rang vừa" },
+                notes: { zh: "紅蘋果、烤堅果、焦糖甜香、平衡順口", vi: "Táo đỏ, hạt rang, caramel, cân bằng mượt mà" },
+                desc: { zh: "薇拉產區優質阿拉比卡豆，平衡感極佳，甜感飽滿，帶有溫潤的堅果與焦糖香氣。", vi: "Hạt Arabica vùng Huila với độ cân bằng tuyệt vời, vị ngọt ngào của hạt rang và caramel." }
             },
             {
                 id: 4,
-                name: "精品手沖濾掛咖啡包 (綜合風味 10入裝)",
-                category: "drip",
-                origin: "多國產區 ‧ 中焙",
-                flavor: "隨身便利包裝，完美還原手沖層次口感",
-                price: 299,
-                tag: "超值特惠",
-                tagColor: "bg-blue-600",
-                icon: "fa-box-open"
-            },
-            {
-                id: 5,
-                name: "哥倫比亞 薇拉小農 玫瑰茶香 水洗",
-                category: "bean",
-                origin: "哥倫比亞 ‧ 淺中焙",
-                flavor: "玫瑰花瓣氣息、草莓與紅茶般滑順口感",
-                price: 480,
-                tag: "新品上市",
-                tagColor: "bg-emerald-600",
-                icon: "fa-mug-hot"
-            },
-            {
-                id: 6,
-                name: "曼巴風味 氮氣保鮮濾掛咖啡盒 (15入)",
-                category: "drip",
-                origin: "印尼/巴西 ‧ 中深焙",
-                flavor: "口感溫潤平衡，核果香氣與焦糖甜感",
-                price: 399,
-                tag: "辦公室必備",
-                tagColor: "bg-gold-600",
-                icon: "fa-box-open"
-            },
-            {
-                id: 7,
-                name: "世界頂級莊園 精品咖啡豆禮盒組 (三入)",
-                category: "gift",
-                origin: "衣索比亞/瓜地馬拉/肯亞",
-                flavor: "送禮尊榮大方，一次品嚐三種卓越產區風味",
-                price: 1280,
-                tag: "送禮首選",
-                tagColor: "bg-coffee-800",
-                icon: "fa-gift"
-            },
-            {
-                id: 8,
-                name: "肯亞 AA 奧卡拉莊園 雙重厭氧發酵",
-                category: "bean",
-                origin: "肯亞 ‧ 淺中焙",
-                flavor: "濃郁黑醋栗、烏梅酒香與豐富水果調性",
-                price: 550,
-                tag: "職人推薦",
-                tagColor: "bg-amber-600",
-                icon: "fa-mug-hot"
+                name: { zh: "義式黃金比例 精品咖啡豆 (500g)", vi: "Hạt Cà Phê Espresso Ý Đậm Đà (500g)" },
+                category: "beans",
+                retailPrice: 380000,
+                wholesalePrice: 310000,
+                image: "https://images.unsplash.com/photo-1610632380989-68fef40dda67?auto=format&fit=crop&w=600&q=80",
+                origin: { zh: "衣索比亞 / 巴西 / 哥倫比亞 拼配", vi: "Blend Ethiopia / Brazil / Colombia" },
+                process: { zh: "綜合處理法", vi: "Mixed" },
+                altitude: "多產區綜合", vi: "Multi-region" },
+                roast: { zh: "中深焙", vi: "Rang đậm vừa" },
+                notes: { zh: "榛果、可可、香草、濃郁油脂", vi: "Hạt phỉ, cacao, vanilla, crema dày mịn" },
+                desc: { zh: "專為義式濃縮與拿鐵設計的黃金配方，油脂豐富、口感醇厚不苦澀。", vi: "Công thức pha chế Espresso và Latte hoàn hảo, nhiều lớp crema, đậm đà không đắng khét." }
             }
         ];
 
-        let cart = [];
-        let currentFilter = 'all';
+        function App() {
+            const [lang, setLang] = useState('zh');
+            const t = dict[lang];
 
-        // DOM Elements
-        const productGrid = document.getElementById('product-grid');
-        const cartBtn = document.getElementById('cart-btn');
-        const cartDrawer = document.getElementById('cart-drawer');
-        const closeCart = document.getElementById('close-cart');
-        const cartBackdrop = document.getElementById('cart-backdrop');
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        // Toggle mobile menu
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Cart Drawer toggle
-        cartBtn.addEventListener('click', () => cartDrawer.classList.remove('hidden'));
-        closeCart.addEventListener('click', () => cartDrawer.classList.add('hidden'));
-        cartBackdrop.addEventListener('click', () => cartDrawer.classList.add('hidden'));
-
-        // Render products
-        function renderProducts(filter = 'all') {
-            currentFilter = filter;
+            const [cart, setCart] = useState([]);
+            const [isCartOpen, setIsCartOpen] = useState(false);
+            const [activeCategory, setActiveCategory] = useState('all');
+            const [selectedProduct, setSelectedProduct] = useState(null);
             
-            // Update active tab styling
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('bg-coffee-900', 'text-white', 'shadow');
-                tab.classList.add('text-coffee-800');
+            // Checkout & Order state
+            const [isCheckingOut, setIsCheckingOut] = useState(false);
+            const [customerInfo, setCustomerInfo] = useState({ name: '', phone: '', address: '', note: '' });
+            const [orderCompleted, setOrderCompleted] = useState(null);
+            
+            // History & Admin state
+            const [ordersHistory, setOrdersHistory] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('viebucks_orders');
+                    return saved ? JSON.parse(saved) : [];
+                } catch(e) { return []; }
             });
-            const activeTab = document.getElementById(`tab-${filter}`);
-            if (activeTab) {
-                activeTab.classList.remove('text-coffee-800');
-                activeTab.classList.add('bg-coffee-900', 'text-white', 'shadow');
-            }
+            const [showHistoryModal, setShowHistoryModal] = useState(false);
+            const [receiptModalOrder, setReceiptModalOrder] = useState(null);
 
-            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
-            
-            productGrid.innerHTML = '';
-            filtered.forEach(p => {
-                productGrid.innerHTML += `
-                    <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-coffee-100 flex flex-col justify-between group">
-                        <div>
-                            <div class="bg-coffee-100 h-60 relative overflow-hidden flex items-center justify-center text-coffee-400 group-hover:bg-coffee-200 transition-colors">
-                                <i class="fa-solid ${p.icon} text-6xl text-coffee-800/20 group-hover:scale-110 transition-transform duration-500"></i>
-                                <span class="absolute top-3 left-3 ${p.tagColor} text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">${p.tag}</span>
-                            </div>
-                            <div class="p-6">
-                                <span class="text-xs text-gold-600 font-semibold tracking-wide uppercase">${p.origin}</span>
-                                <h3 class="font-serif font-bold text-lg text-coffee-950 mt-1 mb-2 group-hover:text-gold-600 transition-colors line-clamp-1">${p.name}</h3>
-                                <p class="text-xs text-coffee-600 line-clamp-2 leading-relaxed">${p.flavor}</p>
-                            </div>
-                        </div>
-                        <div class="p-6 pt-0 flex items-center justify-between border-t border-coffee-50 mt-4">
-                            <div>
-                                <span class="text-xs text-coffee-400 block">建議售價</span>
-                                <span class="text-xl font-serif font-bold text-coffee-950">NT$ ${p.price}</span>
-                            </div>
-                            <button onclick="addToCart(${p.id})" class="bg-coffee-900 hover:bg-gold-500 hover:text-coffee-950 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md flex items-center space-x-1.5">
-                                <i class="fa-solid fa-cart-plus"></i>
-                                <span>加入購物車</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
+            // Save orders to localStorage
+            useEffect(() => {
+                try {
+                    localStorage.setItem('viebucks_orders', JSON.stringify(ordersHistory));
+                } catch(e) {}
+            }, [ordersHistory]);
 
-        function filterCategory(cat) {
-            renderProducts(cat);
-        }
+            // Total cart items count
+            const cartCount = useMemo(() => {
+                return cart.reduce((sum, item) => sum + item.quantity, 0);
+            }, [cart]);
 
-        // Add to cart logic
-        function addToCart(id) {
-            const product = products.find(p => p.id === id);
-            const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.quantity += 1;
-            } else {
-                cart.push({ ...product, quantity: 1 });
-            }
-            updateCartUI();
-            
-            // Open cart drawer automatically for immediate feedback
-            cartDrawer.classList.remove('hidden');
-        }
+            // Cart subtotal calculation (applies wholesale price if item quantity >= 10)
+            const cartSubtotal = useMemo(() => {
+                return cart.reduce((sum, item) => {
+                    const price = item.quantity >= 10 ? item.wholesalePrice : item.retailPrice;
+                    return sum + (price * item.quantity);
+                }, 0);
+            }, [cart]);
 
-        // Update cart UI & totals
-        function updateCartUI() {
-            const cartCount = document.getElementById('cart-count');
-            const cartItemsContainer = document.getElementById('cart-items-container');
-            const cartSubtotal = document.getElementById('cart-subtotal');
-            const cartShippingFee = document.getElementById('cart-shipping-fee');
-            const cartTotal = document.getElementById('cart-total');
-            const shippingProgress = document.getElementById('shipping-progress');
-            const shippingStatusText = document.getElementById('shipping-status-text');
+            const shippingFee = cartSubtotal >= 500000 || cartSubtotal === 0 ? 0 : 30000;
+            const cartTotal = cartSubtotal + shippingFee;
 
-            let totalCount = 0;
-            let subtotal = 0;
-            const freeShippingThreshold = 1000;
-
-            if (cart.length === 0) {
-                cartItemsContainer.innerHTML = `
-                    <div class="text-center py-16 text-coffee-400">
-                        <i class="fa-solid fa-cart-shopping text-4xl mb-3 text-coffee-300"></i>
-                        <p class="text-sm font-medium">您的購物車目前是空的</p>
-                        <a href="#products" onclick="cartDrawer.classList.add('hidden')" class="inline-block mt-4 text-xs bg-coffee-900 text-gold-400 px-4 py-2 rounded-lg font-bold">去挑選熱銷商品</a>
-                    </div>
-                `;
-            } else {
-                cartItemsContainer.innerHTML = '';
-                cart.forEach((item, index) => {
-                    totalCount += item.quantity;
-                    subtotal += item.price * item.quantity;
-
-                    cartItemsContainer.innerHTML += `
-                        <div class="flex items-center justify-between border-b border-coffee-100 pb-4">
-                            <div class="flex-1 pr-4">
-                                <h4 class="font-bold text-sm text-coffee-900 line-clamp-1">${item.name}</h4>
-                                <p class="text-xs text-coffee-500 mt-0.5">NT$ ${item.price}</p>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="flex items-center border border-coffee-200 rounded-lg overflow-hidden bg-coffee-50">
-                                    <button onclick="updateQty(${index}, -1)" class="px-2 py-1 text-xs text-coffee-700 hover:bg-coffee-200 transition">-</button>
-                                    <span class="px-2 text-xs font-bold text-coffee-900">${item.quantity}</span>
-                                    <button onclick="updateQty(${index}, 1)" class="px-2 py-1 text-xs text-coffee-700 hover:bg-coffee-200 transition">+</button>
-                                </div>
-                                <button onclick="removeCartItem(${index})" class="text-red-500 hover:text-red-700 p-1 text-sm"><i class="fa-solid fa-trash-can"></i></button>
-                            </div>
-                        </div>
-                    `;
+            // Add to cart handler
+            const handleAddToCart = (product, qty = 1) => {
+                setCart(prev => {
+                    const existing = prev.find(item => item.id === product.id);
+                    if (existing) {
+                        return prev.map(item => 
+                            item.id === product.id ? { ...item, quantity: item.quantity + qty } : item
+                        );
+                    }
+                    return [...prev, { ...product, quantity: qty }];
                 });
-            }
+                setIsCartOpen(true);
+            };
 
-            const shippingFee = subtotal >= freeShippingThreshold || subtotal === 0 ? 0 : 100;
-            const total = subtotal + shippingFee;
+            const updateQuantity = (id, delta) => {
+                setCart(prev => prev.map(item => {
+                    if (item.id === id) {
+                        const newQ = item.quantity + delta;
+                        return newQ > 0 ? { ...item, quantity: newQ } : null;
+                    }
+                    return item;
+                }).filter(Boolean));
+            };
 
-            cartCount.innerText = totalCount;
-            cartSubtotal.innerText = `NT$ ${subtotal}`;
-            cartShippingFee.innerText = shippingFee === 0 ? 'NT$ 0 (免運)' : `NT$ ${shippingFee}`;
-            cartTotal.innerText = `NT$ ${total}`;
+            const removeFromCart = (id) => {
+                setCart(prev => prev.filter(item => item.id !== id));
+            };
 
-            // Free shipping progress calculation
-            const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
-            shippingProgress.style.width = `${progressPercent}%`;
-            if (subtotal >= freeShippingThreshold) {
-                shippingStatusText.innerText = '🎉 已達到全館免運門檻！';
-            } else {
-                const diff = freeShippingThreshold - subtotal;
-                shippingStatusText.innerText = `再消費 NT$ ${diff} 即可享免運優惠`;
-            }
-        }
+            // Checkout submission
+            const handleCheckoutSubmit = async (e) => {
+                e.preventDefault();
+                if (!customerInfo.name || !customerInfo.phone || !customerInfo.address) {
+                    alert(lang === 'zh' ? '請完整填寫收件資訊' : 'Vui lòng điền đầy đủ thông tin giao hàng');
+                    return;
+                }
 
-        function updateQty(index, delta) {
-            cart[index].quantity += delta;
-            if (cart[index].quantity <= 0) {
-                cart.splice(index, 1);
-            }
-            updateCartUI();
-        }
+                const newOrder = {
+                    orderNo: 'VB' + Date.now().toString().slice(-8),
+                    date: new Date().toLocaleString(),
+                    customer: customerInfo,
+                    items: cart.map(i => ({
+                        id: i.id,
+                        name: i.name[lang],
+                        quantity: i.quantity,
+                        unitPrice: i.quantity >= 10 ? i.wholesalePrice : i.retailPrice
+                    })),
+                    subtotal: cartSubtotal,
+                    shipping: shippingFee,
+                    total: cartTotal,
+                    status: 'pending'
+                };
 
-        function removeCartItem(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
+                // Sync with Google Sheets in background
+                try {
+                    fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newOrder)
+                    }).catch(err => console.log('Google Sheet sync note:', err));
+                } catch(err) {}
 
-        // Checkout simulation
-        function checkout() {
-            if (cart.length === 0) {
-                alert('您的購物車是空的，請先加入商品！');
-                return;
-            }
-            alert('感謝您的訂購！系統已成功接收您的訂單，將立即為您安排新鮮烘焙與出貨。');
-            cart = [];
-            updateCartUI();
-            cartDrawer.classList.add('hidden');
-        }
+                setOrdersHistory(prev => [newOrder, ...prev]);
+                setOrderCompleted(newOrder);
+                setCart([]);
+                setIsCheckingOut(false);
+            };
 
-        // Search modal functionality
-        function openSearchModal() {
-            document.getElementById('search-modal').classList.remove('hidden');
-            document.getElementById('search-modal').classList.add('flex');
-            document.getElementById('search-input').focus();
-        }
-        function closeSearchModal() {
-            document.getElementById('search-modal').classList.add('hidden');
-            document.getElementById('search-modal').classList.remove('flex');
-        }
-        function handleSearch(query) {
-            const resultsContainer = document.getElementById('search-results');
-            if (!query.trim()) {
-                resultsContainer.innerHTML = '';
-                return;
-            }
-            const filtered = products.filter(p => p.name.includes(query) || p.origin.includes(query) || p.flavor.includes(query));
-            resultsContainer.innerHTML = '';
-            if (filtered.length === 0) {
-                resultsContainer.innerHTML = '<p class="text-xs text-coffee-500 text-center py-4">找不到符合的咖啡商品</p>';
-                return;
-            }
-            filtered.forEach(p => {
-                resultsContainer.innerHTML += `
-                    <div onclick="closeSearchModal(); addToCart(${p.id});" class="p-3 hover:bg-coffee-50 rounded-xl cursor-pointer flex justify-between items-center transition">
-                        <div>
-                            <div class="font-bold text-sm text-coffee-900">${p.name}</div>
-                            <div class="text-xs text-coffee-500">${p.origin}</div>
-                        </div>
-                        <span class="font-serif font-bold text-gold-600">NT$ ${p.price}</span>
-                    </div>
-                `;
+            // Admin password prompt for order history
+            const handleOpenHistory = () => {
+                const pwd = prompt(t.passwordPrompt);
+                if (pwd === '0348246669') {
+                    setShowHistoryModal(true);
+                } else if (pwd !== null) {
+                    alert(t.passwordError);
+                }
+            };
+
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
             });
+
+            return (
+                <div className="min-h-screen bg-[#121212] text-gray-100 flex flex-col font-sans">
+                    {}
+                    {/* Sticky Navbar */}
+                    <header className="sticky top-0 z-50 bg-[#121212]/90 backdrop-blur-md border-b border-[#2A2A2A]">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <a href="#" className="flex items-center space-x-2">
+                                    <div className="w-10 h-10 rounded-full bg-[#D4AF37] flex items-center justify-center text-black font-bold text-xl">V</div>
+                                    <span className="text-xl font-bold tracking-wider text-white">VIEBUCKS <span className="text-[#D4AF37] font-light">CAFE</span></span>
+                                </a>
+                            </div>
+
+                            <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-300">
+                                <a href="#products" className="hover:text-[#D4AF37] transition">{lang === 'zh' ? '精品產品' : 'Sản Phẩm'}</a>
+                                <a href="#story" className="hover:text-[#D4AF37] transition">{lang === 'zh' ? '品牌理念' : 'Câu Chuyện'}</a>
+                                <a href="#contact" className="hover:text-[#D4AF37] transition">{lang === 'zh' ? '聯絡我們' : 'Liên Hệ'}</a>
+                            </nav>
+
+                            <div className="flex items-center space-x-4">
+                                {/* Language Switcher */}
+                                <button 
+                                    onClick={() => setLang(prev => prev === 'zh' ? 'vi' : 'zh')}
+                                    className="px-3 py-1.5 rounded-full border border-[#2A2A2A] bg-[#1E1E1E] text-xs font-medium hover:border-[#D4AF37] transition flex items-center space-x-1">
+                                    <i data-lucide="globe" className="w-3.5 h-3.5 text-[#D4AF37]"></i>
+                                    <span>{lang === 'zh' ? 'VIE' : '繁中'}</span>
+                                </button>
+
+                                {/* Order History / Admin */}
+                                <button 
+                                    onClick={handleOpenHistory}
+                                    title={t.orderHistory}
+                                    className="p-2 rounded-full hover:bg-[#1E1E1E] text-gray-300 hover:text-[#D4AF37] transition">
+                                    <i data-lucide="clipboard-list" className="w-5 h-5"></i>
+                                </button>
+
+                                {/* Shopping Cart Icon */}
+                                <button 
+                                    onClick={() => setIsCartOpen(true)}
+                                    className="relative p-2 rounded-full bg-[#1E1E1E] border border-[#2A2A2A] hover:border-[#D4AF37] text-gray-200 transition flex items-center justify-center">
+                                    <i data-lucide="shopping-bag" className="w-5 h-5 text-[#D4AF37]"></i>
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {}
+                    {/* Hero Section */}
+                    <section className="relative overflow-hidden py-24 md:py-32 border-b border-[#2A2A2A]">
+                        <div className="absolute inset-0 z-0">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-[#121212]/80 to-transparent z-10"></div>
+                            <img 
+                                src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=80" 
+                                alt="Coffee Hero" 
+                                className="w-full h-full object-cover opacity-30 transform scale-105 animate-pulse duration-1000"
+                            />
+                        </div>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+                            <div className="max-w-2xl">
+                                <span className="inline-block py-1 px-3 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold tracking-widest uppercase mb-4 border border-[#D4AF37]/20">
+                                    {t.tagline}
+                                </span>
+                                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+                                    Artisanal Coffee, <br/><span className="text-[#D4AF37]">Crafted for Perfection</span>
+                                </h1>
+                                <p className="text-lg text-gray-300 mb-8 font-light leading-relaxed">
+                                    {t.heroDesc}
+                                </p>
+                                <div className="flex flex-wrap gap-4">
+                                    <a 
+                                        href="#products" 
+                                        className="px-8 py-3.5 rounded-full bg-[#D4AF37] text-black font-semibold hover:bg-[#C5A028] transition shadow-lg shadow-[#D4AF37]/10 flex items-center space-x-2">
+                                        <span>{t.shopNow}</span>
+                                        <i data-lucide="arrow-right" className="w-4 h-4"></i>
+                                    </a>
+                                    <a 
+                                        href="#story" 
+                                        className="px-8 py-3.5 rounded-full border border-[#2A2A2A] bg-[#1E1E1E]/50 hover:bg-[#1E1E1E] text-gray-200 font-medium transition">
+                                        {t.exploreStory}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {}
+                    {/* Featured Products Section */}
+                    <section id="products" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+                        <div className="text-center max-w-3xl mx-auto mb-16">
+                            <h2 className="text-3xl font-bold text-white mb-4">{t.featuredTitle}</h2>
+                            <p className="text-gray-400 font-light">{t.featuredDesc}</p>
+                            
+                            {/* Category Filter */}
+                            <div className="flex justify-center space-x-2 mt-8">
+                                <button 
+                                    onClick={() => setActiveCategory('all')}
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition ${activeCategory === 'all' ? 'bg-[#D4AF37] text-black' : 'bg-[#1E1E1E] text-gray-300 border border-[#2A2A2A] hover:border-[#D4AF37]'}`}>
+                                    {lang === 'zh' ? '全部商品' : 'Tất Cả'}
+                                </button>
+                                <button 
+                                    onClick={() => setActiveCategory('immersion')}
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition ${activeCategory === 'immersion' ? 'bg-[#D4AF37] text-black' : 'bg-[#1E1E1E] text-gray-300 border border-[#2A2A2A] hover:border-[#D4AF37]'}`}>
+                                    {lang === 'zh' ? '浸泡式咖啡包' : 'Cà Phê Ngâm'}
+                                </button>
+                                <button 
+                                    onClick={() => setActiveCategory('beans')}
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition ${activeCategory === 'beans' ? 'bg-[#D4AF37] text-black' : 'bg-[#1E1E1E] text-gray-300 border border-[#2A2A2A] hover:border-[#D4AF37]'}`}>
+                                    {lang === 'zh' ? '精品咖啡豆' : 'Hạt Cà Phê'}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Product Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {productsData
+                                .filter(p => activeCategory === 'all' || p.category === activeCategory)
+                                .map(product => (
+                                    <div 
+                                        key={product.id}
+                                        className="bg-[#1E1E1E] border border-[#2A2A2A] rounded-2xl overflow-hidden group hover:border-[#D4AF37]/50 transition-all duration-300 flex flex-col justify-between shadow-xl">
+                                        <div>
+                                            <div className="relative h-64 overflow-hidden bg-[#252525]">
+                                                <img 
+                                                    src={product.image} 
+                                                    alt={product.name[lang]} 
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                                />
+                                                <div className="absolute top-3 right-3 bg-[#121212]/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-[#D4AF37] border border-[#2A2A2A]">
+                                                    {product.category === 'immersion' ? (lang === 'zh' ? '浸泡式' : 'Túi Ngâm') : (lang === 'zh' ? '咖啡豆' : 'Hạt')}
+                                                </div>
+                                            </div>
+                                            <div className="p-6">
+                                                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-[#D4AF37] transition">
+                                                    {product.name[lang]}
+                                                </h3>
+                                                <p className="text-sm text-gray-400 font-light mb-4 line-clamp-2">
+                                                    {product.desc[lang]}
+                                                </p>
+                                                <div className="space-y-1 mb-4 text-xs text-gray-400 border-t border-[#2A2A2A] pt-3">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-500">{t.origin}:</span>
+                                                        <span className="text-gray-300">{product.origin[lang]}</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-500">{t.roast}:</span>
+                                                        <span className="text-gray-300">{product.roast[lang]}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="p-6 pt-0">
+                                            <div className="flex items-baseline justify-between mb-4">
+                                                <div>
+                                                    <span className="text-xs text-gray-500 block">{t.retail}</span>
+                                                    <span className="text-lg font-bold text-white">
+                                                        {product.retailPrice.toLocaleString()} <span className="text-xs font-normal text-gray-400">VND</span>
+                                                    </span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="text-xs text-[#D4AF37] block">{t.wholesale}</span>
+                                                    <span className="text-sm font-semibold text-[#D4AF37]">
+                                                        {product.wholesalePrice.toLocaleString()} <span className="text-xs font-normal text-gray-400">VND</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <button 
+                                                    onClick={() => setSelectedProduct(product)}
+                                                    className="w-full py-2.5 rounded-xl border border-[#2A2A2A] bg-[#252525] text-gray-200 text-xs font-medium hover:border-[#D4AF37] transition">
+                                                    {t.viewDetails}
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleAddToCart(product)}
+                                                    className="w-full py-2.5 rounded-xl bg-[#D4AF37] text-black text-xs font-semibold hover:bg-[#C5A028] transition flex items-center justify-center space-x-1">
+                                                    <i data-lucide="plus" className="w-3.5 h-3.5"></i>
+                                                    <span>{t.addToCart}</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                        }
+                    </section>
+
+                    {}
+                    {/* Brand Story / Features Section */}
+                    <section id="story" className="py-24 bg-[#181818] border-t border-b border-[#2A2A2A]">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center max-w-3xl mx-auto mb-16">
+                                <h2 className="text-3xl font-bold text-white mb-4">{t.storyTitle}</h2>
+                                <p className="text-gray-400 font-light">
+                                    {lang === 'zh' ? '我們堅持對品質的追求，為每位咖啡愛好者帶來純粹的感動。' : 'Cam kết về chất lượng mang đến cảm xúc thuần khiết nhất cho người yêu cà phê.'}
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                                <div className="bg-[#1E1E1E] border border-[#2A2A2A] p-8 rounded-2xl relative">
+                                    <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] mb-6">
+                                        <i data-lucide="mountain" className="w-6 h-6"></i>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-white mb-3">{t.story1Title}</h3>
+                                    <p className="text-gray-400 text-sm font-light leading-relaxed">{t.story1Desc}</p>
+                                </div>
+                                <div className="bg-[#1E1E1E] border border-[#2A2A2A] p-8 rounded-2xl relative">
+                                    <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] mb-6">
+                                        <i data-lucide="flame" className="w-6 h-6"></i>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-white mb-3">{t.story2Title}</h3>
+                                    <p className="text-gray-400 text-sm font-light leading-relaxed">{t.story2Desc}</p>
+                                </div>
+                                <div className="bg-[#1E1E1E] border border-[#2A2A2A] p-8 rounded-2xl relative">
+                                    <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] mb-6">
+                                        <i data-lucide="coffee" className="w-6 h-6"></i>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-white mb-3">{t.story3Title}</h3>
+                                    <p className="text-gray-400 text-sm font-light leading-relaxed">{t.story3Desc}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {}
+                    {/* Contact Section */}
+                    <section id="contact" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            <div>
+                                <h2 className="text-3xl font-bold text-white mb-4">{t.contactTitle}</h2>
+                                <p className="text-gray-400 font-light mb-8">{t.contactDesc}</p>
+                                <div className="space-y-4 text-gray-300">
+                                    <div className="flex items-center space-x-3">
+                                        <i data-lucide="map-pin" className="w-5 h-5 text-[#D4AF37]"></i>
+                                        <span>District 1, Ho Chi Minh City, Vietnam</span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <i data-lucide="phone" className="w-5 h-5 text-[#D4AF37]"></i>
+                                        <span>+84 348 246 669</span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <i data-lucide="mail" className="w-5 h-5 text-[#D4AF37]"></i>
+                                        <span>contact@viebuckscafe.com</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-[#1E1E1E] border border-[#2A2A2A] p-8 rounded-2xl">
+                                <form onSubmit={(e) => { e.preventDefault(); alert(lang === 'zh' ? '訊息已送出，我們將盡快回覆您！' : 'Đã gửi tin nhắn thành công!'); }} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-400 mb-1">{lang === 'zh' ? '您的姓名' : 'Họ tên'}</label>
+                                        <input required type="text" className="w-full bg-[#121212] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-400 mb-1">{lang === 'zh' ? '電子郵件' : 'Email'}</label>
+                                        <input required type="email" className="w-full bg-[#121212] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-400 mb-1">{lang === 'zh' ? '留言內容' : 'Nội dung'}</label>
+                                        <textarea required rows="4" className="w-full bg-[#121212] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]"></textarea>
+                                    </div>
+                                    <button type="submit" className="w-full py-3.5 rounded-xl bg-[#D4AF37] text-black font-semibold hover:bg-[#C5A028] transition">
+                                        {t.sendMsg}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="bg-[#181818] border-t border-[#2A2A2A] py-12 text-center text-sm text-gray-500">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between">
+                            <div className="flex items-center space-x-2 mb-4 sm:mb-0">
+                                <div className="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center text-black font-bold">V</div>
+                                <span className="font-bold text-white tracking-wider">VIEBUCKS CAFE</span>
+                            </div>
+                            <p>{t.rights}</p>
+                        </div>
+                    </footer>
+
+                    {}
+                    {/* Shopping Cart Drawer */}
+                    {isCartOpen && (
+                        <div className="fixed inset-0 z-50 overflow-hidden">
+                            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsCartOpen(false)}></div>
+                            <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+                                <div className="w-screen max-w-md bg-[#181818] border-l border-[#2A2A2A] flex flex-col">
+                                    <div className="p-6 border-b border-[#2A2A2A] flex items-center justify-between">
+                                        <h2 className="text-xl font-bold text-white flex items-center space-x-2">
+                                            <i data-lucide="shopping-bag" className="w-5 h-5 text-[#D4AF37]"></i>
+                                            <span>{t.cartTitle}</span>
+                                        </h2>
+                                        <button onClick={() => setIsCartOpen(false)} className="text-gray-400 hover:text-white">
+                                            <i data-lucide="x" className="w-6 h-6"></i>
+                                        </button>
+                                    </div>
+
+                                    {/* Free shipping progress bar */}
+                                    <div className="bg-[#1E1E1E] p-4 border-b border-[#2A2A2A]">
+                                        {cartSubtotal >= 500000 ? (
+                                            <p className="text-xs text-[#D4AF37] font-semibold text-center flex items-center justify-center space-x-1">
+                                                <i data-lucide="check-circle" className="w-4 h-4"></i>
+                                                <span>{t.freeShippingThreshold}</span>
+                                            </p>
+                                        ) : (
+                                            <div>
+                                                <p className="text-xs text-gray-300 mb-2 text-center">
+                                                    {t.shippingRemaining.replace('{amount}', (500000 - cartSubtotal).toLocaleString())}
+                                                </p>
+                                                <div className="w-full bg-[#2A2A2A] rounded-full h-2 overflow-hidden">
+                                                    <div 
+                                                        className="bg-[#D4AF37] h-full transition-all duration-300"
+                                                        style={{ width: `${Math.min(100, (cartSubtotal / 500000) * 100)}%` }}>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Cart Items List */}
+                                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                                        {cart.length === 0 ? (
+                                            <div className="text-center py-20 text-gray-500">
+                                                <i data-lucide="shopping-cart" className="w-12 h-12 mx-auto mb-3 opacity-30"></i>
+                                                <p>{t.emptyCart}</p>
+                                            </div>
+                                        ) : (
+                                            cart.map(item => {
+                                                const isWholesale = item.quantity >= 10;
+                                                const unitPrice = isWholesale ? item.wholesalePrice : item.retailPrice;
+                                                return (
+                                                    <div key={item.id} className="bg-[#1E1E1E] border border-[#2A2A2A] p-4 rounded-xl flex items-center justify-between">
+                                                        <div className="flex items-center space-x-4">
+                                                            <img src={item.image} alt={item.name[lang]} className="w-16 h-16 object-cover rounded-lg bg-[#252525]" />
+                                                            <div>
+                                                                <h4 className="text-sm font-semibold text-white">{item.name[lang]}</h4>
+                                                                <p className="text-xs text-[#D4AF37] mt-0.5">
+                                                                    {unitPrice.toLocaleString()} VND {isWholesale && `(${lang === 'zh' ? '批發價' : 'Giá sỉ'})`}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center space-x-3">
+                                                            <div className="flex items-center border border-[#2A2A2A] rounded-lg bg-[#121212]">
+                                                                <button onClick={() => updateQuantity(item.id, -1)} className="px-2 py-1 text-gray-400 hover:text-white">-</button>
+                                                                <span className="px-2 text-xs font-bold text-white">{item.quantity}</span>
+                                                                <button onClick={() => updateQuantity(item.id, 1)} className="px-2 py-1 text-gray-400 hover:text-white">+</button>
+                                                            </div>
+                                                            <button onClick={() => removeFromCart(item.id)} className="text-gray-500 hover:text-red-400">
+                                                                <i data-lucide="trash-2" className="w-4 h-4"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+
+                                    {/* Cart Footer */}
+                                    {cart.length > 0 && (
+                                        <div className="p-6 border-t border-[#2A2A2A] bg-[#181818]">
+                                            <div className="space-y-2 mb-4 text-sm">
+                                                <div className="flex justify-between text-gray-400">
+                                                    <span>{t.subtotal}</span>
+                                                    <span>{cartSubtotal.toLocaleString()} VND</span>
+                                                </div>
+                                                <div className="flex justify-between text-gray-400">
+                                                    <span>{t.shipping}</span>
+                                                    <span>{shippingFee === 0 ? t.free : `${shippingFee.toLocaleString()} VND`}</span>
+                                                </div>
+                                                <div className="flex justify-between text-lg font-bold text-white border-t border-[#2A2A2A] pt-2">
+                                                    <span>{t.total}</span>
+                                                    <span className="text-[#D4AF37]">{cartTotal.toLocaleString()} VND</span>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={() => { setIsCartOpen(false); setIsCheckingOut(true); }}
+                                                className="w-full py-3.5 rounded-xl bg-[#D4AF37] text-black font-semibold hover:bg-[#C5A028] transition flex items-center justify-center space-x-2">
+                                                <span>{t.checkout}</span>
+                                                <i data-lucide="arrow-right" className="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Checkout Modal */}
+                    {isCheckingOut && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl max-w-lg w-full p-6 relative">
+                                <button onClick={() => setIsCheckingOut(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                                    <i data-lucide="x" className="w-6 h-6"></i>
+                                </button>
+                                <h3 className="text-xl font-bold text-white mb-6 flex items-center space-x-2">
+                                    <i data-lucide="credit-card" className="w-5 h-5 text-[#D4AF37]"></i>
+                                    <span>{t.checkoutTitle}</span>
+                                </h3>
+                                <form onSubmit={handleCheckoutSubmit} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-400 mb-1">{t.fullName}</label>
+                                        <input 
+                                            required 
+                                            type="text" 
+                                            value={customerInfo.name}
+                                            onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})}
+                                            className="w-full bg-[#121212] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]" 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-400 mb-1">{t.phone}</label>
+                                        <input 
+                                            required 
+                                            type="tel" 
+                                            value={customerInfo.phone}
+                                            onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                                            className="w-full bg-[#121212] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]" 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-400 mb-1">{t.address}</label>
+                                        <textarea 
+                                            required 
+                                            rows="2"
+                                            value={customerInfo.address}
+                                            onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})}
+                                            className="w-full bg-[#121212] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]" 
+                                        ></textarea>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-400 mb-1">{t.note}</label>
+                                        <input 
+                                            type="text" 
+                                            value={customerInfo.note}
+                                            onChange={e => setCustomerInfo({...customerInfo, note: e.target.value})}
+                                            className="w-full bg-[#121212] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D4AF37]" 
+                                        />
+                                    </div>
+                                    <div className="pt-4 border-t border-[#2A2A2A] flex justify-between items-center">
+                                        <span className="text-gray-400 text-sm">{t.total}: <strong className="text-[#D4AF37] text-lg">{cartTotal.toLocaleString()} VND</strong></span>
+                                        <button type="submit" className="px-6 py-3 rounded-xl bg-[#D4AF37] text-black font-semibold hover:bg-[#C5A028] transition">
+                                            {t.submitOrder}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Order Success Modal */}
+                    {orderCompleted && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl max-w-md w-full p-8 text-center relative">
+                                <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] flex items-center justify-center mx-auto mb-6">
+                                    <i data-lucide="check" className="w-8 h-8"></i>
+                                </div>
+                                <h3 className="text-2xl font-bold text-white mb-2">{t.orderSuccess}</h3>
+                                <p className="text-gray-400 text-sm mb-6">{t.orderSuccessSub}</p>
+                                <div className="bg-[#121212] p-4 rounded-xl mb-6 text-left text-xs space-y-2 border border-[#2A2A2A]">
+                                    <div className="flex justify-between"><span className="text-gray-500">{t.orderNo}:</span> <span className="text-white font-mono">{orderCompleted.orderNo}</span></div>
+                                    <div className="flex justify-between"><span className="text-gray-500">{t.fullName}:</span> <span className="text-white">{orderCompleted.customer.name}</span></div>
+                                    <div className="flex justify-between"><span className="text-gray-500">{t.total}:</span> <span className="text-[#D4AF37] font-bold">{orderCompleted.total.toLocaleString()} VND</span></div>
+                                </div>
+                                <div className="flex space-x-3">
+                                    <button 
+                                        onClick={() => { setReceiptModalOrder(orderCompleted); setOrderCompleted(null); }}
+                                        className="flex-1 py-3 rounded-xl border border-[#2A2A2A] bg-[#252525] text-gray-200 text-xs font-medium hover:border-[#D4AF37] transition">
+                                        {t.printReceipt}
+                                    </button>
+                                    <button 
+                                        onClick={() => setOrderCompleted(null)}
+                                        className="flex-1 py-3 rounded-xl bg-[#D4AF37] text-black text-xs font-semibold hover:bg-[#C5A028] transition">
+                                        {t.close}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Product Details Modal */}
+                    {selectedProduct && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl max-w-2xl w-full overflow-hidden relative">
+                                <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 z-10 text-gray-400 hover:text-white bg-[#121212]/80 p-2 rounded-full">
+                                    <i data-lucide="x" className="w-5 h-5"></i>
+                                </button>
+                                <div className="grid grid-cols-1 md:grid-cols-2">
+                                    <div className="bg-[#252525] h-72 md:h-full">
+                                        <img src={selectedProduct.image} alt={selectedProduct.name[lang]} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="p-6 flex flex-col justify-between">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white mb-2">{selectedProduct.name[lang]}</h3>
+                                            <p className="text-sm text-gray-400 mb-6">{selectedProduct.desc[lang]}</p>
+                                            
+                                            <div className="space-y-2 text-xs text-gray-300 border-t border-b border-[#2A2A2A] py-4 mb-6">
+                                                <div className="flex justify-between"><span className="text-gray-500">{t.origin}:</span> <span>{selectedProduct.origin[lang]}</span></div>
+                                                <div className="flex justify-between"><span className="text-gray-500">{t.process}:</span> <span>{selectedProduct.process[lang]}</span></div>
+                                                <div className="flex justify-between"><span className="text-gray-500">{t.altitude}:</span> <span>{selectedProduct.altitude}</span></div>
+                                                <div className="flex justify-between"><span className="text-gray-500">{t.roast}:</span> <span>{selectedProduct.roast[lang]}</span></div>
+                                                <div className="flex justify-between"><span className="text-gray-500">{t.tastingNotes}:</span> <span className="text-[#D4AF37]">{selectedProduct.notes[lang]}</span></div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div className="flex justify-between items-baseline mb-4">
+                                                <div>
+                                                    <span className="text-xs text-gray-500 block">{t.retail}</span>
+                                                    <span className="text-xl font-bold text-white">{selectedProduct.retailPrice.toLocaleString()} VND</span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="text-xs text-[#D4AF37] block">{t.wholesale}</span>
+                                                    <span className="text-sm font-semibold text-[#D4AF37]">{selectedProduct.wholesalePrice.toLocaleString()} VND</span>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={() => { handleAddToCart(selectedProduct); setSelectedProduct(null); }}
+                                                className="w-full py-3 rounded-xl bg-[#D4AF37] text-black font-semibold hover:bg-[#C5A028] transition flex items-center justify-center space-x-2">
+                                                <i data-lucide="shopping-bag" className="w-4 h-4"></i>
+                                                <span>{t.addToCart}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Order History Modal */}
+                    {showHistoryModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl max-w-3xl w-full p-6 max-h-[90vh] flex flex-col relative">
+                                <div className="flex items-center justify-between pb-4 border-b border-[#2A2A2A]">
+                                    <h3 className="text-xl font-bold text-white flex items-center space-x-2">
+                                        <i data-lucide="clipboard-list" className="w-5 h-5 text-[#D4AF37]"></i>
+                                        <span>{t.orderHistory}</span>
+                                    </h3>
+                                    <button onClick={() => setShowHistoryModal(false)} className="text-gray-400 hover:text-white">
+                                        <i data-lucide="x" className="w-6 h-6"></i>
+                                    </button>
+                                </div>
+
+                                <div className="flex-1 overflow-y-auto py-4 space-y-4">
+                                    {ordersHistory.length === 0 ? (
+                                        <div className="text-center py-16 text-gray-500">
+                                            <p>{lang === 'zh' ? '目前尚無歷史訂單紀錄' : 'Chưa có lịch sử đơn hàng'}</p>
+                                        </div>
+                                    ) : (
+                                        ordersHistory.map(ord => (
+                                            <div key={ord.orderNo} className="bg-[#1E1E1E] border border-[#2A2A2A] p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                <div>
+                                                    <div className="flex items-center space-x-3 mb-1">
+                                                        <span className="font-mono font-bold text-white text-sm">{ord.orderNo}</span>
+                                                        <span className="px-2 py-0.5 rounded text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">{t.pending}</span>
+                                                    </div>
+                                                    <p className="text-xs text-gray-400">{ord.customer.name} | {ord.customer.phone}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">{ord.date}</p>
+                                                </div>
+                                                <div className="flex items-center space-x-4">
+                                                    <div className="text-right">
+                                                        <span className="text-xs text-gray-500 block">{t.total}</span>
+                                                        <span className="text-sm font-bold text-[#D4AF37]">{ord.total.toLocaleString()} VND</span>
+                                                    </div>
+                                                    <button 
+                                                        onClick={() => setReceiptModalOrder(ord)}
+                                                        className="px-4 py-2 rounded-lg bg-[#252525] border border-[#2A2A2A] text-gray-200 text-xs font-medium hover:border-[#D4AF37] transition">
+                                                        {t.printReceipt}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Printable Receipt Modal */}
+                    {receiptModalOrder && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl max-w-md w-full p-6 relative">
+                                <button onClick={() => setReceiptModalOrder(null)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                                    <i data-lucide="x" className="w-6 h-6"></i>
+                                </button>
+                                
+                                {/* Printable Area */}
+                                <div id="printable-receipt" className="bg-white text-black p-6 rounded-xl font-sans mb-6">
+                                    <div className="text-center mb-6 border-b pb-4">
+                                        <h2 className="text-xl font-bold tracking-wider">VIEBUCKS CAFE</h2>
+                                        <p className="text-xs text-gray-500">Artisanal Coffee Shop</p>
+                                        <p className="text-xs text-gray-500 mt-1">{receiptModalOrder.date}</p>
+                                    </div>
+                                    <div className="mb-4 text-xs space-y-1">
+                                        <p><strong>{t.orderNo}:</strong> {receiptModalOrder.orderNo}</p>
+                                        <p><strong>{t.fullName}:</strong> {receiptModalOrder.customer.name}</p>
+                                        <p><strong>{t.phone}:</strong> {receiptModalOrder.customer.phone}</p>
+                                        <p><strong>{t.address}:</strong> {receiptModalOrder.customer.address}</p>
+                                    </div>
+                                    <div className="border-t border-b py-2 mb-4">
+                                        <table className="w-full text-xs">
+                                            <thead>
+                                                <tr className="border-b">
+                                                    <th className="text-left pb-1">Item</th>
+                                                    <th className="text-center pb-1">Qty</th>
+                                                    <th className="text-right pb-1">Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y">
+                                                {receiptModalOrder.items.map((it, idx) => (
+                                                    <tr key={idx}>
+                                                        <td className="py-1">{it.name}</td>
+                                                        <td className="text-center py-1">{it.quantity}</td>
+                                                        <td className="text-right py-1">{(it.unitPrice * it.quantity).toLocaleString()}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="text-xs space-y-1">
+                                        <div className="flex justify-between"><span>{t.subtotal}:</span> <span>{receiptModalOrder.subtotal.toLocaleString()} VND</span></div>
+                                        <div className="flex justify-between"><span>{t.shipping}:</span> <span>{receiptModalOrder.shipping.toLocaleString()} VND</span></div>
+                                        <div className="flex justify-between font-bold text-sm border-t pt-1"><span>{t.total}:</span> <span>{receiptModalOrder.total.toLocaleString()} VND</span></div>
+                                    </div>
+                                    <div className="text-center mt-6 text-[10px] text-gray-500">
+                                        <p>Thank you for choosing VIEBUCKS Cafe!</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex space-x-3">
+                                    <button 
+                                        onClick={() => window.print()}
+                                        className="flex-1 py-3 rounded-xl bg-[#D4AF37] text-black text-xs font-semibold hover:bg-[#C5A028] transition flex items-center justify-center space-x-1">
+                                        <i data-lucide="printer" className="w-4 h-4"></i>
+                                        <span>{t.printReceipt}</span>
+                                    </button>
+                                    <button 
+                                        onClick={() => setReceiptModalOrder(null)}
+                                        className="px-6 py-3 rounded-xl border border-[#2A2A2A] bg-[#252525] text-gray-200 text-xs font-medium hover:border-[#D4AF37] transition">
+                                        {t.close}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
         }
 
-        // User modal functionality
-        function openUserModal() {
-            document.getElementById('user-modal').classList.remove('hidden');
-            document.getElementById('user-modal').classList.add('flex');
-        }
-        function closeUserModal() {
-            document.getElementById('user-modal').classList.add('hidden');
-            document.getElementById('user-modal').classList.remove('flex');
-        }
-        function handleLogin(e) {
-            e.preventDefault();
-            alert('登入成功！歡迎回到 OKLAO COFFEE 會員中心。');
-            closeUserModal();
-        }
-
-        // Newsletter subscription
-        function subscribeNewsletter(e) {
-            e.preventDefault();
-            alert('感謝您的訂閱！專屬優惠券已寄送至您的電子信箱。');
-            e.target.reset();
-        }
-
-        // Initialize on load
-        window.onload = function() {
-            renderProducts('all');
-            updateCartUI();
-        }
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
 </html>
