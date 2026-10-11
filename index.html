@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraSound AI - 頂級 AI 音樂生成工作室</title>
+    <title>AuraSound AI - Web Audio Synth Studio</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -26,52 +26,33 @@
         }
     </script>
     <style>
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #09090b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #27272a;
-            border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3f3f46;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
         @keyframes pulseGlow {
             0%, 100% { opacity: 0.4; filter: blur(40px); }
             50% { opacity: 0.8; filter: blur(60px); }
         }
-        .glow-effect {
-            animation: pulseGlow 6s infinite ease-in-out;
-        }
+        .glow-effect { animation: pulseGlow 6s infinite ease-in-out; }
         @keyframes waveAnimation {
             0% { height: 6px; }
             50% { height: 28px; }
             100% { height: 6px; }
         }
-        .waveform-bar {
-            animation: waveAnimation 1.2s infinite ease-in-out;
-        }
-        /* 自定義模態對話框動畫 */
+        .waveform-bar { animation: waveAnimation 1.2s infinite ease-in-out; }
         @keyframes fadeInScale {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .modal-animation {
-            animation: fadeInScale 0.25s ease-out forwards;
-        }
+        .modal-animation { animation: fadeInScale 0.25s ease-out forwards; }
     </style>
 </head>
 <body class="bg-darkBg text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-purple-500 selection:text-white">
 
-    <!-- 背景裝飾光暈 -->
     <div class="fixed top-0 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full pointer-events-none glow-effect z-0"></div>
     <div class="fixed bottom-1/3 right-10 w-96 h-96 bg-pink-600/15 rounded-full pointer-events-none glow-effect z-0"></div>
 
-    <!-- 頂部導航列 -->
     <header class="sticky top-0 z-40 bg-darkBg/80 backdrop-blur-md border-b border-zinc-800/80 px-4 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
@@ -81,25 +62,21 @@
         </div>
 
         <div class="flex items-center space-x-4">
-            <!-- 無限暢玩標籤 -->
             <div class="hidden sm:flex items-center space-x-2 bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-purple-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-inner text-purple-300">
-                <i class="fa-solid fa-infinity text-pink-400 animate-pulse"></i>
-                <span>無限暢玩模式 (Unlimited)</span>
+                <i class="fa-solid fa-volume-high text-pink-400 animate-pulse"></i>
+                <span>Web Audio Synth 引擎就緒</span>
             </div>
-            <!-- 使用者頭像與資訊 -->
             <div class="flex items-center space-x-3 pl-2 border-l border-zinc-800">
                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120" alt="Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-purple-500/50">
                 <div class="hidden md:block text-left">
                     <div class="text-sm font-semibold text-zinc-200">Alex Chen</div>
-                    <div class="text-xs text-zinc-400">Pro Creator</div>
+                    <div class="text-xs text-zinc-400">Audio Creator</div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- 主要內容佈局 -->
     <div class="flex-1 flex overflow-hidden relative z-10 pb-28">
-        <!-- 側邊欄 -->
         <aside class="w-20 lg:w-64 bg-cardBg/60 backdrop-blur-md border-r border-zinc-800/80 flex flex-col justify-between py-6 px-3 lg:px-4">
             <nav class="space-y-2">
                 <button onclick="switchTab('explore')" id="nav-explore" class="sidebar-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl transition text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50">
@@ -125,30 +102,18 @@
                     <i class="fa-solid fa-gear text-lg w-6 text-center"></i>
                     <span class="hidden lg:inline font-medium">系統設定</span>
                 </button>
-                <div class="hidden lg:block bg-gradient-to-br from-purple-900/20 to-pink-900/20 border border-purple-500/20 p-3.5 rounded-2xl">
-                    <div class="flex items-center space-x-2 text-xs font-semibold text-purple-300 mb-1">
-                        <i class="fa-solid fa-crown text-amber-400"></i>
-                        <span>無限生成權限</span>
-                    </div>
-                    <p class="text-xs text-zinc-400 leading-relaxed mb-3">享受全功能免點數限制的高音質單曲創作。</p>
-                    <button onclick="showCustomModal('系統提示', '您目前已享有 AuraSound AI 的無限創作特權，盡情發揮您的音樂靈感吧！')" class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold py-2 rounded-lg transition shadow-md shadow-purple-600/30">
-                        查看詳情
-                    </button>
-                </div>
             </div>
         </aside>
 
-        <!-- 主內容視窗 -->
         <main class="flex-1 overflow-y-auto p-4 lg:p-8">
 
-            <!-- TAB 1: 創作中心 (CREATE CENTER) -->
+            <!-- TAB 1: 創作中心 -->
             <div id="tab-create" class="tab-content max-w-4xl mx-auto space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-cardBg/40 border border-zinc-800/80 p-6 rounded-2xl backdrop-blur-md">
                     <div>
                         <h1 class="text-2xl font-bold tracking-tight text-white mb-1">AI 智慧音樂生成</h1>
-                        <p class="text-sm text-zinc-400">運用次世代音訊生成模型，將你的靈感化為高音質單曲。</p>
+                        <p class="text-sm text-zinc-400">透過即時 Web Audio 合成引擎，將你的提示詞化為獨一無二的即時旋律。</p>
                     </div>
-                    <!-- 自訂進階模式切換 -->
                     <div class="flex items-center space-x-3 bg-zinc-900/80 border border-zinc-800 px-4 py-2 rounded-xl">
                         <span class="text-xs font-medium text-zinc-300">自訂進階模式 (Custom)</span>
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -158,20 +123,17 @@
                     </div>
                 </div>
 
-                <!-- 生成表單卡片 -->
                 <div class="bg-cardBg/60 border border-zinc-800/80 rounded-2xl p-6 lg:p-8 space-y-6 backdrop-blur-md shadow-xl">
-                    
-                    <!-- 提示詞輸入 -->
                     <div class="space-y-2">
                         <div class="flex justify-between items-center">
                             <label class="text-sm font-semibold text-zinc-200 flex items-center space-x-2">
                                 <i class="fa-solid fa-sliders text-purple-400"></i>
                                 <span>音樂風格與提示詞 (Style of Music)</span>
                             </label>
-                            <span class="text-xs text-zinc-500">支援英文描述效果最佳</span>
+                            <span class="text-xs text-zinc-500">將影響即時合成音色</span>
                         </div>
                         <div class="relative">
-                            <textarea id="prompt-input" rows="3" class="w-full bg-zinc-900/90 border border-zinc-700/60 rounded-xl p-4 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition resize-none" placeholder="例如：Dreamy lofi hip hop, cozy piano chords, vinyl crackle, gentle rhythmic drums, relaxing study vibe..."></textarea>
+                            <textarea id="prompt-input" rows="3" class="w-full bg-zinc-900/90 border border-zinc-700/60 rounded-xl p-4 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition resize-none" placeholder="例如：Dreamy lofi synth, ambient chord progression, relaxing study vibes..."></textarea>
                             <div class="absolute bottom-3 right-3 flex space-x-2">
                                 <button onclick="fillRandomPrompt()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs px-2.5 py-1.5 rounded-lg border border-zinc-700 transition flex items-center space-x-1.5">
                                     <i class="fa-solid fa-dice text-purple-400"></i>
@@ -181,40 +143,31 @@
                         </div>
                     </div>
 
-                    <!-- 曲風快速標籤 -->
                     <div class="space-y-2">
-                        <label class="text-xs font-medium text-zinc-400">熱門風格標籤快速點選：</label>
+                        <label class="text-xs font-medium text-zinc-400">曲風標籤快速點選：</label>
                         <div class="flex flex-wrap gap-2">
-                            <button onclick="appendGenre('Lofi Hip Hop')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">Lofi 療癒</button>
-                            <button onclick="appendGenre('Cyberpunk Synthwave')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">賽博朋克電音</button>
-                            <button onclick="appendGenre('Cinematic Epic Orchestral')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">史詩交響樂</button>
-                            <button onclick="appendGenre('Acoustic Indie Pop')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">民謠流行</button>
-                            <button onclick="appendGenre('Chill Ambient Relaxing')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">輕柔環境音</button>
+                            <button onclick="appendGenre('Lofi Synth Ambient')" class="bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 text-xs px-3 py-1.5 rounded-lg transition">Lofi 療癒琴音</button>
+                            <button onclick="appendGenre('Cyberpunk Bass Wave')" class="bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 text-xs px-3 py-1.5 rounded-lg transition">賽博龐克重低音</button>
+                            <button onclick="appendGenre('Cinematic Orchestral Strings')" class="bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 text-xs px-3 py-1.5 rounded-lg transition">史詩交響弦樂</button>
+                            <button onclick="appendGenre('Chill Acoustic Melody')" class="bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 text-xs px-3 py-1.5 rounded-lg transition">民謠輕柔旋律</button>
                         </div>
                     </div>
 
-                    <!-- 自訂模式歌詞區塊 -->
                     <div id="custom-lyrics-section" class="space-y-3 pt-4 border-t border-zinc-800/80">
                         <div class="flex justify-between items-center">
                             <label class="text-sm font-semibold text-zinc-200 flex items-center space-x-2">
                                 <i class="fa-solid fa-microphone-lines text-pink-400"></i>
                                 <span>歌詞與段落結構 (Lyrics & Structure)</span>
                             </label>
-                            <button onclick="generateAiLyrics()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs px-3.5 py-1.5 rounded-lg transition flex items-center space-x-1.5 shadow-md shadow-purple-600/20 font-medium">
+                            <button onclick="generateAiLyrics()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white text-xs px-3.5 py-1.5 rounded-lg transition flex items-center space-x-1.5 shadow-md shadow-purple-600/20 font-medium">
                                 <i class="fa-solid fa-wand-magic"></i>
                                 <span>AI 幫我寫歌詞</span>
                             </button>
                         </div>
                         <textarea id="lyrics-input" rows="5" class="w-full bg-zinc-900/90 border border-zinc-700/60 rounded-xl p-4 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition font-mono resize-none" placeholder="[Verse 1]
-深夜的城市 霓虹閃爍著微光
-你在哪裡呢 是否也一樣在看月亮
-
-[Chorus]
-就讓音樂帶走所有的憂傷
-在這片星空下自由地飛翔..."></textarea>
+深夜的城市 霓虹閃爍著微光..."></textarea>
                     </div>
 
-                    <!-- 純音樂切換與生成按鈕 -->
                     <div class="pt-4 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="flex items-center space-x-4">
                             <label class="flex items-center space-x-2 cursor-pointer">
@@ -224,114 +177,79 @@
                         </div>
                         <button onclick="startGeneration()" class="w-full sm:w-auto bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 hover:opacity-95 text-white font-semibold px-8 py-3.5 rounded-xl shadow-lg shadow-purple-600/30 transition flex items-center justify-center space-x-2 group">
                             <i class="fa-solid fa-bolt text-amber-300 group-hover:scale-110 transition-transform"></i>
-                            <span>立即免費生成音樂</span>
+                            <span>立即合成 AI 音樂</span>
                         </button>
                     </div>
-
                 </div>
 
-                <!-- 3 階段生成動畫進度對話框 -->
+                <!-- 生成進度對話框 -->
                 <div id="generation-loader" class="hidden bg-cardBg/90 border border-purple-500/40 rounded-2xl p-8 backdrop-blur-xl text-center space-y-6 shadow-2xl relative overflow-hidden">
-                    <div class="absolute -top-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/50 animate-bounce">
                         <i class="fa-solid fa-compact-disc text-white text-2xl animate-spin"></i>
                     </div>
                     <div class="space-y-2">
-                        <h3 id="loader-title" class="text-xl font-bold text-white">正在分析您的提示詞...</h3>
-                        <p id="loader-desc" class="text-sm text-zinc-400">AI 正在建立編曲風格、和弦進行與情感基調</p>
+                        <h3 id="loader-title" class="text-xl font-bold text-white">正在初始化音頻合成...</h3>
+                        <p id="loader-desc" class="text-sm text-zinc-400">Web Audio 引擎正在建立和弦與旋律架構</p>
                     </div>
-                    <!-- 進度條 -->
                     <div class="max-w-md mx-auto bg-zinc-900 rounded-full h-2.5 overflow-hidden border border-zinc-800">
                         <div id="loader-progress" class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                    <div id="loader-steps" class="flex justify-center space-x-6 text-xs text-zinc-500 pt-2">
-                        <span id="step-1" class="text-purple-400 font-semibold">1. 提示詞解析</span>
-                        <span id="step-2">2. 譜曲與和聲合成</span>
-                        <span id="step-3">3. 智慧母帶後製</span>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 2: 探索發現 (EXPLORE) -->
+            <!-- TAB 2: 探索發現 -->
             <div id="tab-explore" class="tab-content hidden max-w-6xl mx-auto space-y-8">
                 <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-purple-900/50 via-zinc-900 to-indigo-900/40 border border-purple-500/20 p-8 lg:p-12">
                     <div class="max-w-xl space-y-4">
-                        <span class="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs px-3.5 py-1 rounded-full font-medium">🔥 本週熱門精選</span>
+                        <span class="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs px-3.5 py-1 rounded-full font-medium">🔥 Web Audio 即時合成推薦</span>
                         <h1 class="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">探索未來感 AI 聲景</h1>
-                        <p class="text-zinc-300 text-sm leading-relaxed">聆聽來自全球創作者使用 AuraSound AI 產出的頂級神曲，激發你的下一首靈感。</p>
+                        <p class="text-zinc-300 text-sm leading-relaxed">點擊播放任意預設單曲，瀏覽器將會即時演算並彈奏出動人的合成音樂。</p>
                         <button onclick="switchTab('create')" class="bg-white text-zinc-900 font-semibold px-6 py-3 rounded-xl shadow-lg hover:bg-zinc-200 transition text-sm">
-                            開始創作你的音樂
+                            開始創作音樂
                         </button>
                     </div>
                 </div>
 
                 <div class="space-y-4">
-                    <h2 class="text-xl font-bold text-white">熱門社群單曲</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="explore-grid">
-                        <!-- 動態渲染 -->
-                    </div>
+                    <h2 class="text-xl font-bold text-white">精選即時合成單曲</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="explore-grid"></div>
                 </div>
             </div>
 
-            <!-- TAB 3: 我的音樂庫 (MY LIBRARY) -->
+            <!-- TAB 3: 我的音樂庫 -->
             <div id="tab-library" class="tab-content hidden max-w-5xl mx-auto space-y-6">
                 <div class="flex justify-between items-center bg-cardBg/40 border border-zinc-800/80 p-6 rounded-2xl backdrop-blur-md">
                     <div>
                         <h1 class="text-2xl font-bold text-white mb-1">我的音樂庫</h1>
-                        <p class="text-sm text-zinc-400">管理所有由你生成的 AI 音樂作品與草稿。</p>
+                        <p class="text-sm text-zinc-400">管理所有由你生成的即時音樂作品。</p>
                     </div>
-                    <button onclick="switchTab('create')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-purple-600/30 transition">
+                    <button onclick="switchTab('create')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg transition">
                         + 新增創作
                     </button>
                 </div>
-
-                <div class="space-y-4" id="library-list">
-                    <!-- 動態渲染 -->
-                </div>
+                <div class="space-y-4" id="library-list"></div>
             </div>
 
-            <!-- TAB 4: 我喜歡的 (LIKES) -->
+            <!-- TAB 4: 我喜歡的 -->
             <div id="tab-likes" class="tab-content hidden max-w-5xl mx-auto space-y-6">
                 <div class="bg-cardBg/40 border border-zinc-800/80 p-6 rounded-2xl backdrop-blur-md">
                     <h1 class="text-2xl font-bold text-white mb-1">我喜歡的音樂</h1>
-                    <p class="text-sm text-zinc-400">你收藏的精選 AI 音樂作品列表。</p>
+                    <p class="text-sm text-zinc-400">你收藏的精選音樂作品列表。</p>
                 </div>
-                <div class="space-y-4" id="likes-list">
-                    <!-- 動態渲染 -->
-                </div>
+                <div class="space-y-4" id="likes-list"></div>
             </div>
 
-            <!-- TAB 5: 系統設定 (SETTINGS) -->
+            <!-- TAB 5: 系統設定 -->
             <div id="tab-settings" class="tab-content hidden max-w-3xl mx-auto space-y-6">
                 <div class="bg-cardBg/60 border border-zinc-800/80 rounded-2xl p-8 backdrop-blur-md space-y-6">
-                    <h1 class="text-2xl font-bold text-white">帳號與系統設定</h1>
+                    <h1 class="text-2xl font-bold text-white">音訊與系統設定</h1>
                     <div class="space-y-4 pt-4 border-t border-zinc-800">
                         <div class="flex justify-between items-center">
                             <div>
-                                <div class="font-medium text-white">預設生成音質</div>
-                                <div class="text-xs text-zinc-400">選擇高解析度音頻輸出 (48kHz / 24-bit)</div>
+                                <div class="font-medium text-white">Web Audio 合成波形</div>
+                                <div class="text-xs text-zinc-400">預設使用 Sine 與 Triangle 複合振盪器</div>
                             </div>
-                            <select class="bg-zinc-900 border border-zinc-700 text-zinc-200 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                <option>Ultra HD (最高音質)</option>
-                                <option>Standard (標準音質)</option>
-                            </select>
-                        </div>
-                        <div class="flex justify-between items-center pt-4 border-t border-zinc-800">
-                            <div>
-                                <div class="font-medium text-white">AI 模型版本</div>
-                                <div class="text-xs text-zinc-400">當前使用 AuraSound v4.5 Pro 模型</div>
-                            </div>
-                            <span class="bg-purple-500/20 text-purple-300 text-xs px-3 py-1 rounded-full font-medium border border-purple-500/30">已解鎖全部功能</span>
-                        </div>
-                        <div class="flex justify-between items-center pt-4 border-t border-zinc-800">
-                            <div>
-                                <div class="font-medium text-white">自動儲存草稿</div>
-                                <div class="text-xs text-zinc-400">在本地暫存您的歌詞與提示詞設定</div>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" checked class="sr-only peer">
-                                <div class="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                            </label>
+                            <span class="bg-purple-500/20 text-purple-300 text-xs px-3 py-1 rounded-full font-medium border border-purple-500/30">運行正常</span>
                         </div>
                     </div>
                 </div>
@@ -340,20 +258,18 @@
         </main>
     </div>
 
-    <!-- 底部音樂播放器 -->
     <div id="bottom-player" class="fixed bottom-0 left-0 right-0 z-50 bg-cardBg/95 backdrop-blur-xl border-t border-zinc-800 px-4 lg:px-8 py-3 flex items-center justify-between shadow-2xl">
         <div class="flex items-center space-x-3 w-1/4 min-w-[200px]">
             <img id="player-img" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=120" class="w-12 h-12 rounded-xl object-cover shadow-md" alt="Album Cover">
             <div class="overflow-hidden">
-                <div id="player-title" class="text-sm font-bold text-white truncate">選擇一首歌曲開始播放</div>
-                <div id="player-genre" class="text-xs text-zinc-400 truncate">AuraSound AI Studio</div>
+                <div id="player-title" class="text-sm font-bold text-white truncate">選擇一首歌曲開始即時播放</div>
+                <div id="player-genre" class="text-xs text-zinc-400 truncate">Web Audio Synth Studio</div>
             </div>
             <button onclick="toggleLikeCurrent()" class="text-zinc-400 hover:text-pink-500 transition pl-2">
                 <i id="player-like-icon" class="fa-regular fa-heart text-lg"></i>
             </button>
         </div>
 
-        <!-- 播放控制與進度條 -->
         <div class="flex flex-col items-center w-2/4 max-w-xl space-y-1.5">
             <div class="flex items-center space-x-6">
                 <button onclick="playPreviousSong()" class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-backward-step"></i></button>
@@ -362,24 +278,20 @@
                 </button>
                 <button onclick="playNextSong()" class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-forward-step"></i></button>
             </div>
-            <!-- 進度條 -->
             <div class="w-full flex items-center space-x-3 text-xs text-zinc-500">
                 <span id="current-time">0:00</span>
                 <div class="flex-1 bg-zinc-800 h-1.5 rounded-full overflow-hidden cursor-pointer" onclick="seekSong(event)">
                     <div id="song-progress" class="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 w-0 rounded-full"></div>
                 </div>
-                <span id="total-time">3:24</span>
+                <span id="total-time">3:00</span>
             </div>
         </div>
 
-        <!-- 音量與波形視覺化 -->
         <div class="hidden md:flex items-center justify-end space-x-4 w-1/4">
             <div class="flex items-center space-x-1 h-6 px-3 bg-zinc-900/80 border border-zinc-800 rounded-lg">
                 <div class="w-1 bg-purple-500 rounded-full waveform-bar" style="animation-delay: 0s;"></div>
                 <div class="w-1 bg-pink-500 rounded-full waveform-bar" style="animation-delay: 0.2s;"></div>
                 <div class="w-1 bg-purple-400 rounded-full waveform-bar" style="animation-delay: 0.4s;"></div>
-                <div class="w-1 bg-indigo-500 rounded-full waveform-bar" style="animation-delay: 0.1s;"></div>
-                <div class="w-1 bg-pink-400 rounded-full waveform-bar" style="animation-delay: 0.3s;"></div>
             </div>
             <div class="flex items-center space-x-2 text-zinc-400">
                 <i class="fa-solid fa-volume-high text-sm"></i>
@@ -388,7 +300,7 @@
         </div>
     </div>
 
-    <!-- 自定義訊息對話框 (Modal) 取代原生 alert -->
+    <!-- 自定義訊息對話框 -->
     <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
         <div class="bg-cardBg border border-zinc-800 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl modal-animation space-y-4">
             <div class="flex items-center space-x-3">
@@ -397,58 +309,117 @@
                 </div>
                 <h3 id="modal-title" class="text-lg font-bold text-white">系統提示</h3>
             </div>
-            <p id="modal-desc" class="text-sm text-zinc-300 leading-relaxed">提示訊息內容...</p>
+            <p id="modal-desc" class="text-sm text-zinc-300 leading-relaxed">提示內容...</p>
             <div class="flex justify-end pt-2">
-                <button onclick="closeCustomModal()" class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition shadow-md shadow-purple-600/30">
+                <button onclick="closeCustomModal()" class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition shadow-md">
                     確定
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript 邏輯 -->
     <script>
+        // Web Audio API 合成器核心
+        let audioCtx = null;
+        let synthInterval = null;
+        let isPlaying = false;
+        let currentPlayingId = null;
+        let currentProgressSec = 0;
+        let totalDurationSec = 180;
+        let masterGain = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioCtx.createGain();
+                masterGain.gain.value = 0.3;
+                masterGain.connect(audioCtx.destination);
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 播放一組和弦旋律 (C大調 / A小調柔和琶音)
+        const chordNotes = [
+            [261.63, 329.63, 392.00], // C
+            [220.00, 261.63, 329.63], // Am
+            [349.23, 440.00, 523.25], // F
+            [392.00, 493.88, 587.33]  // G
+        ];
+        let noteStep = 0;
+
+        function playSynthChordLoop() {
+            if (!isPlaying || !audioCtx) return;
+
+            const chords = chordNotes[Math.floor(noteStep / 4) % chordNotes.length];
+            const freq = chords[noteStep % chords.length];
+            noteStep++;
+
+            try {
+                // 建立雙振盪器創造溫暖的合成音色
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc1.type = 'sine';
+                osc2.type = 'triangle';
+                osc1.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc2.frequency.setValueAtTime(freq * 1.005, audioCtx.currentTime); // 微幅detune增添空間感
+
+                // 貝斯低音烘托
+                const bassOsc = audioCtx.createOscillator();
+                const bassGain = audioCtx.createGain();
+                bassOsc.type = 'sine';
+                bassOsc.frequency.setValueAtTime(chords[0] / 2, audioCtx.currentTime);
+                bassGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                bassGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+                bassOsc.connect(bassGain);
+                bassGain.connect(masterGain);
+                bassOsc.start();
+                bassOsc.stop(audioCtx.currentTime + 0.8);
+
+                // 旋律包絡線 (Envelope)
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
+
+                osc1.connect(gainNode);
+                osc2.connect(gainNode);
+                gainNode.connect(masterGain);
+
+                osc1.start();
+                osc2.start();
+                osc1.stop(audioCtx.currentTime + 0.9);
+                osc2.stop(audioCtx.currentTime + 0.9);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         // 音樂資料庫
         let musicLibrary = [
             {
                 id: 1,
-                title: "Midnight Tokyo Lofi",
-                genre: "Lofi Hip Hop",
-                duration: "2:45",
+                title: "Midnight Tokyo Synth",
+                genre: "Lofi Synth Ambient",
+                duration: "3:00",
                 createdAt: "10 分鐘前",
                 cover: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&q=80&w=300",
                 liked: true,
-                lyrics: "[Verse]\n深夜的東京雨滴落下\n街燈映照著濕潤的步伐\n\n[Chorus]\n只想沉浸在這段旋律裡\n找回最初的自己"
+                lyrics: "[Verse]\n深夜的東京雨滴落下\nWeb Audio 正在即時演奏\n\n[Chorus]\n享受純粹的 AI 數位旋律"
             },
             {
                 id: 2,
-                title: "Neon Cyber Runner",
-                genre: "Cyberpunk Synthwave",
-                duration: "3:12",
-                createdAt: "2 小時前",
+                title: "Cyber Neon Wave",
+                genre: "Cyberpunk Bass Wave",
+                duration: "2:45",
+                createdAt: "1 小時前",
                 cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=300",
                 liked: false,
-                lyrics: "[Intro]\nSystem booting...\n\n[Verse]\n奔馳在數位邊境的光速高架橋\n心跳與重拍同步燃燒"
-            },
-            {
-                id: 3,
-                title: "Starlight Galaxy Anthem",
-                genre: "Cinematic Orchestral",
-                duration: "4:05",
-                createdAt: "昨天",
-                cover: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=300",
-                liked: true,
-                lyrics: "[Chorus]\n穿梭星際的彼端\n見證永恆的浪漫"
+                lyrics: "[Intro]\nSystem audio online...\n\n[Verse]\n奔馳在數位邊境的高架橋"
             }
         ];
 
-        let currentPlayingId = null;
-        let isPlaying = false;
-        let playInterval = null;
-        let currentProgressSec = 0;
-        let totalDurationSec = 204; // 預設 3:24
-
-        // 自定義對話框控制
         function showCustomModal(title, desc) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-desc').innerText = desc;
@@ -459,7 +430,6 @@
             document.getElementById('custom-modal').classList.add('hidden');
         }
 
-        // 分頁切換邏輯
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const targetTab = document.getElementById(`tab-${tabName}`);
@@ -478,47 +448,35 @@
             if(tabName === 'explore') renderExplore();
         }
 
-        // 自訂進階模式切換
         function toggleCustomMode() {
             const isChecked = document.getElementById('custom-mode-toggle').checked;
             const lyricSection = document.getElementById('custom-lyrics-section');
-            if(isChecked) {
-                lyricSection.classList.remove('hidden');
-            } else {
-                lyricSection.classList.add('hidden');
-            }
+            if(isChecked) lyricSection.classList.remove('hidden');
+            else lyricSection.classList.add('hidden');
         }
 
-        // 快速加入風格標籤
-        function appendGenre(genreText) {
+        function appendGenre(text) {
             const promptInput = document.getElementById('prompt-input');
-            promptInput.value = promptInput.value ? promptInput.value + ", " + genreText : genreText;
+            promptInput.value = promptInput.value ? promptInput.value + ", " + text : text;
         }
 
-        // 隨機提示詞
         function fillRandomPrompt() {
             const prompts = [
-                "Cozy lofi hip hop with vinyl crackle, warm rhodes piano, relaxing rainy day atmosphere",
-                "Epic cinematic orchestral theme with powerful brass, soaring strings and choir, heroic adventure",
-                "Futuristic cyberpunk synthwave with heavy basslines, analog synth leads and driving cyberpunk drums",
-                "Dreamy acoustic indie pop with soft fingerstyle guitar, warm male vocals and gentle percussion"
+                "Cozy lofi synth ambient, warm chords, relaxing study atmosphere",
+                "Cinematic orchestral strings with epic mood and digital resonance",
+                "Cyberpunk bass wave with heavy rhythmic synthesizer beats"
             ];
-            const randomIndex = Math.floor(Math.random() * prompts.length);
-            document.getElementById('prompt-input').value = prompts[randomIndex];
+            document.getElementById('prompt-input').value = prompts[Math.floor(Math.random() * prompts.length)];
         }
 
-        // AI 歌詞生成
         function generateAiLyrics() {
-            const sampleLyrics = [
-                "[Verse 1]\n微風吹過無人的街道\n記憶在深夜悄悄發酵\n\n[Chorus]\n就讓音樂帶走所有煩惱\n在音符裡擁抱美好",
-                "[Verse 1]\n時針滴答滴劃過寂寞\n霓虹燈光映出你的輪廓\n\n[Chorus]\n愛是一首未完成的歌\n在星空下輕輕唱著",
-                "[Verse 1]\n翻閱泛黃的照片與信件\n彷彿回到那年的夏天\n\n[Chorus]\n時間雖然不斷向前\n感動永遠不變"
+            const sample = [
+                "[Verse 1]\n微風吹過無人的街道\n記憶在深夜悄悄發酵\n\n[Chorus]\n就讓 Web Audio 帶走所有煩惱",
+                "[Verse 1]\n時針滴答滴劃過寂寞\n霓虹燈光映出你的輪廓"
             ];
-            const randomLyric = sampleLyrics[Math.floor(Math.random() * sampleLyrics.length)];
-            document.getElementById('lyrics-input').value = randomLyric;
+            document.getElementById('lyrics-input').value = sample[Math.floor(Math.random() * sample.length)];
         }
 
-        // 3 階段音樂生成動畫模擬
         function startGeneration() {
             const prompt = document.getElementById('prompt-input').value.trim();
             if(!prompt) {
@@ -533,58 +491,39 @@
             const progressBar = document.getElementById('loader-progress');
             const loaderTitle = document.getElementById('loader-title');
             const loaderDesc = document.getElementById('loader-desc');
-            const step1 = document.getElementById('step-1');
-            const step2 = document.getElementById('step-2');
-            const step3 = document.getElementById('step-3');
 
-            progressBar.style.width = '10%';
-            loaderTitle.innerText = "正在分析您的提示詞...";
-            loaderDesc.innerText = "AI 正在解構音樂風格、樂器配置與情感基調";
-            step1.className = "text-purple-400 font-semibold";
-            step2.className = "";
-            step3.className = "";
+            progressBar.style.width = '20%';
+            loaderTitle.innerText = "正在分析提示詞與合成參數...";
 
             setTimeout(() => {
-                progressBar.style.width = '55%';
-                loaderTitle.innerText = "譜曲與和聲合成中...";
-                loaderDesc.innerText = "神經網路正在生成旋律、和弦進展與歌聲音軌";
-                step1.className = "text-zinc-400";
-                step2.className = "text-purple-400 font-semibold";
-            }, 1800);
-
-            setTimeout(() => {
-                progressBar.style.width = '90%';
-                loaderTitle.innerText = "進行智慧母帶後製...";
-                loaderDesc.innerText = "正在優化動態範圍、空間混音與音質解析度";
-                step2.className = "text-zinc-400";
-                step3.className = "text-purple-400 font-semibold";
-            }, 3600);
+                progressBar.style.width = '70%';
+                loaderTitle.innerText = "建構 Web Audio 合成音色...";
+            }, 1200);
 
             setTimeout(() => {
                 progressBar.style.width = '100%';
                 loaderTitle.innerText = "音樂生成完畢！";
-                loaderDesc.innerText = "已自動新增至您的音樂庫中";
 
                 const newSong = {
                     id: Date.now(),
                     title: prompt.length > 25 ? prompt.substring(0, 25) + "..." : prompt,
-                    genre: document.getElementById('instrumental-check').checked ? "Instrumental Mix" : "AI Custom Mix",
-                    duration: "3:15",
+                    genre: "AI Synth Custom",
+                    duration: "3:00",
                     createdAt: "剛剛",
                     cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=300",
                     liked: false,
-                    lyrics: document.getElementById('instrumental-check').checked ? "[Instrumental Track]" : (document.getElementById('lyrics-input').value || "[Instrumental Track]")
+                    lyrics: document.getElementById('lyrics-input').value || "[Instrumental Synth]"
                 };
                 musicLibrary.unshift(newSong);
 
                 setTimeout(() => {
                     loader.classList.add('hidden');
                     switchTab('library');
-                }, 1000);
-            }, 5000);
+                    playSong(newSong.id);
+                }, 800);
+            }, 2500);
         }
 
-        // 渲染音樂庫
         function renderLibrary() {
             const container = document.getElementById('library-list');
             if(musicLibrary.length === 0) {
@@ -613,7 +552,7 @@
                         <button onclick="toggleLike(${song.id})" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-pink-500 transition">
                             <i class="${song.liked ? 'fa-solid text-pink-500' : 'fa-regular'} fa-heart"></i>
                         </button>
-                        <button onclick="playSong(${song.id})" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md shadow-purple-600/30 transition flex items-center space-x-1.5">
+                        <button onclick="playSong(${song.id})" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md transition flex items-center space-x-1.5">
                             <i class="fa-solid fa-play"></i>
                             <span>播放</span>
                         </button>
@@ -622,7 +561,6 @@
             `).join('');
         }
 
-        // 渲染收藏喜歡列表
         function renderLikes() {
             const container = document.getElementById('likes-list');
             const likedSongs = musicLibrary.filter(s => s.liked);
@@ -647,12 +585,11 @@
             `).join('');
         }
 
-        // 渲染探索發現列表
         function renderExplore() {
             const exploreSongs = [
-                { id: 101, title: "Nebula Chillwave", genre: "Synthwave", duration: "3:40", cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=300" },
+                { id: 101, title: "Nebula Synthwave", genre: "Synthwave", duration: "3:10", cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=300" },
                 { id: 102, title: "Autumn Coffee Lofi", genre: "Lofi Beats", duration: "2:50", cover: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&q=80&w=300" },
-                { id: 103, title: "Cyber Samurai", genre: "Electro", duration: "3:25", cover: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&q=80&w=300" }
+                { id: 103, title: "Cyber Samurai Beats", genre: "Electro Synth", duration: "3:25", cover: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&q=80&w=300" }
             ];
             const container = document.getElementById('explore-grid');
             container.innerHTML = exploreSongs.map(song => `
@@ -671,8 +608,8 @@
             `).join('');
         }
 
-        // 播放音樂控制
         function playSong(id) {
+            initAudioContext();
             const song = musicLibrary.find(s => s.id === id);
             if(!song) return;
             currentPlayingId = id;
@@ -687,37 +624,46 @@
             likeIcon.className = song.liked ? "fa-solid fa-heart text-pink-500 text-lg" : "fa-regular fa-heart text-lg";
 
             updatePlayButtonUI();
-            startPlaybackTimer();
+            startSynthLoop();
         }
 
         function playExploreSong(title, genre, cover) {
+            initAudioContext();
             document.getElementById('player-title').innerText = title;
             document.getElementById('player-genre').innerText = genre;
             document.getElementById('player-img').src = cover;
             isPlaying = true;
             currentProgressSec = 0;
             updatePlayButtonUI();
-            startPlaybackTimer();
+            startSynthLoop();
         }
 
         function togglePlayPause() {
+            initAudioContext();
             isPlaying = !isPlaying;
             updatePlayButtonUI();
+            if(isPlaying) {
+                startSynthLoop();
+            } else {
+                if(synthInterval) clearInterval(synthInterval);
+            }
         }
 
         function updatePlayButtonUI() {
             const icon = document.getElementById('play-pause-icon');
-            if(isPlaying) {
-                icon.className = "fa-solid fa-pause";
-            } else {
-                icon.className = "fa-solid fa-play";
-            }
+            icon.className = isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
         }
 
-        function startPlaybackTimer() {
-            if(playInterval) clearInterval(playInterval);
-            playInterval = setInterval(() => {
+        function startSynthLoop() {
+            if(synthInterval) clearInterval(synthInterval);
+            
+            // 立即彈奏第一下
+            playSynthChordLoop();
+
+            // 每 600ms 自動彈奏下一個音符
+            synthInterval = setInterval(() => {
                 if(isPlaying) {
+                    playSynthChordLoop();
                     currentProgressSec++;
                     if(currentProgressSec > totalDurationSec) currentProgressSec = 0;
                     
@@ -728,7 +674,7 @@
                     const percent = (currentProgressSec / totalDurationSec) * 100;
                     document.getElementById('song-progress').style.width = `${percent}%`;
                 }
-            }, 1000);
+            }, 600);
         }
 
         function seekSong(event) {
@@ -744,16 +690,13 @@
             document.getElementById('song-progress').style.width = `${percent * 100}%`;
         }
 
-        function playPreviousSong() {
-            showCustomModal('播放提示', '已切換至上一首單曲');
-        }
-
-        function playNextSong() {
-            showCustomModal('播放提示', '已切換至下一首單曲');
-        }
+        function playPreviousSong() { showCustomModal('播放提示', '已切換至上一首單曲'); }
+        function playNextSong() { showCustomModal('播放提示', '已切換至下一首單曲'); }
 
         function adjustVolume(val) {
-            // 模擬音量調節
+            if(masterGain && audioCtx) {
+                masterGain.gain.setValueAtTime(val / 100 * 0.4, audioCtx.currentTime);
+            }
         }
 
         function toggleLike(id) {
@@ -775,7 +718,6 @@
             }
         }
 
-        // 初始化預設頁面
         renderExplore();
     </script>
 </body>
