@@ -1,913 +1,782 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="scroll-smooth">
+<html lang="zh-TW" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIEBUCKS 官方購物與品牌資訊網站</title>
+    <title>AuraSound AI - 頂級 AI 音樂生成工作室</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter & Playfair Display -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        coffee: {
-                            50: '#fdfbf7',
-                            100: '#f4ebd0',
-                            200: '#e5d1a3',
-                            600: '#8b5a2b',
-                            700: '#6f441d',
-                            800: '#4a2e12',
-                            900: '#2c1808',
-                        },
-                        gold: {
-                            500: '#c5a059',
-                            600: '#b08b43',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif'],
+                        darkBg: '#09090b',
+                        cardBg: '#121216',
+                        cardHover: '#1a1a24',
+                        primary: '#8b5cf6',
+                        primaryHover: '#7c3aed',
+                        accent: '#ec4899',
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .hero-title { font-family: 'Playfair Display', serif; }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #fdfbf7; }
-        ::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 4px; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; filter: blur(40px); }
+            50% { opacity: 0.8; filter: blur(60px); }
+        }
+        .glow-effect {
+            animation: pulseGlow 6s infinite ease-in-out;
+        }
+        @keyframes waveAnimation {
+            0% { height: 6px; }
+            50% { height: 28px; }
+            100% { height: 6px; }
+        }
+        .waveform-bar {
+            animation: waveAnimation 1.2s infinite ease-in-out;
+        }
+        /* 自定義模態對話框動畫 */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-animation {
+            animation: fadeInScale 0.25s ease-out forwards;
+        }
     </style>
 </head>
-<body class="bg-coffee-50 text-coffee-900 antialiased selection:bg-gold-500 selection:text-white">
+<body class="bg-darkBg text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-purple-500 selection:text-white">
 
-    <div class="bg-coffee-900 text-gold-500 text-xs sm:text-sm py-2 px-4 text-center font-medium tracking-wide">
-        <i class="fa-solid fa-mug-hot mr-2"></i>歡慶 VIEBUCKS 10週年，全館下載APP享 9 折優惠！滿 $800 免運費
-    </div>
+    <!-- 背景裝飾光暈 -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full pointer-events-none glow-effect z-0"></div>
+    <div class="fixed bottom-1/3 right-10 w-96 h-96 bg-pink-600/15 rounded-full pointer-events-none glow-effect z-0"></div>
 
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-coffee-100 shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <!-- Brand Logo -->
-                <div class="flex items-center space-x-3">
-                    <a href="#" class="flex items-center space-x-2">
-                        <div class="w-10 h-10 rounded-full bg-coffee-900 flex items-center justify-center text-gold-500 font-serif font-bold text-xl shadow-md">V</div>
-                        <div>
-                            <span class="font-serif text-2xl font-bold tracking-wider text-coffee-900 block leading-none">VIEBUCKS</span>
-                            <span class="text-[10px] tracking-widest text-gold-600 font-semibold uppercase">Coffee Roasters</span>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Desktop Navigation Links -->
-                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-coffee-800">
-                    <a href="#promotions" class="hover:text-gold-600 transition-colors">限時特惠</a>
-                    <a href="#shop" class="hover:text-gold-600 transition-colors">精選商品</a>
-                    <a href="#knowledge" class="hover:text-gold-600 transition-colors">咖啡知識</a>
-                    <a href="#stores" class="hover:text-gold-600 transition-colors">門市據點</a>
-                    <a href="#franchise" class="hover:text-gold-600 transition-colors font-semibold text-gold-600">加盟專區</a>
-                    <a href="#about" class="hover:text-gold-600 transition-colors">關於我們</a>
-                </nav>
-
-                <!-- Actions: Cart & Mobile Menu Button -->
-                <div class="flex items-center space-x-4">
-                    <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-full bg-coffee-100 text-coffee-900 hover:bg-gold-500 hover:text-white transition-all shadow-sm">
-                        <i class="fa-solid fa-bag-shopping text-lg"></i>
-                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
-                    </button>
-                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-lg text-coffee-800 hover:bg-coffee-100">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                </div>
+    <!-- 頂部導航列 -->
+    <header class="sticky top-0 z-40 bg-darkBg/80 backdrop-blur-md border-b border-zinc-800/80 px-4 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                <i class="fa-solid fa-wand-magic-sparkles text-white text-lg"></i>
             </div>
+            <span class="text-xl font-bold bg-gradient-to-r from-white via-zinc-200 to-purple-400 bg-clip-text text-transparent tracking-wide">AuraSound AI</span>
         </div>
 
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-coffee-100 px-6 py-4 space-y-3 shadow-lg">
-            <a href="#promotions" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">限時特惠</a>
-            <a href="#shop" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">精選商品</a>
-            <a href="#knowledge" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">咖啡知識</a>
-            <a href="#stores" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">門市據點</a>
-            <a href="#franchise" onclick="toggleMobileMenu()" class="block text-gold-600 font-semibold py-1">加盟專區</a>
-            <a href="#about" onclick="toggleMobileMenu()" class="block text-coffee-800 font-medium py-1">關於我們</a>
+        <div class="flex items-center space-x-4">
+            <!-- 無限暢玩標籤 -->
+            <div class="hidden sm:flex items-center space-x-2 bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-purple-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-inner text-purple-300">
+                <i class="fa-solid fa-infinity text-pink-400 animate-pulse"></i>
+                <span>無限暢玩模式 (Unlimited)</span>
+            </div>
+            <!-- 使用者頭像與資訊 -->
+            <div class="flex items-center space-x-3 pl-2 border-l border-zinc-800">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120" alt="Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-purple-500/50">
+                <div class="hidden md:block text-left">
+                    <div class="text-sm font-semibold text-zinc-200">Alex Chen</div>
+                    <div class="text-xs text-zinc-400">Pro Creator</div>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section class="relative bg-coffee-900 text-white overflow-hidden">
-        <div class="absolute inset-0 opacity-40 bg-[radial-gradient(#c5a059_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6">
-                    <span class="inline-block bg-gold-500/20 text-gold-500 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase border border-gold-500/30">
-                        10週年慶典・藝伎藏寶盒上市
-                    </span>
-                    <h1 class="hero-title text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                        品味世界頂級莊園，<br>喚醒每一刻的<span class="text-gold-500">醇香記憶</span>。
-                    </h1>
-                    <p class="text-coffee-100/80 text-base sm:text-lg max-w-lg leading-relaxed">
-                        嚴選巴拿馬藝伎、衣索比亞耶加雪菲與頂級越南阿拉比卡豆。職人手作烘焙，完美封存產地靈魂。
-                    </p>
-                    <div class="flex flex-wrap gap-4 pt-4">
-                        <a href="#shop" class="bg-gold-500 hover:bg-gold-600 text-coffee-900 font-bold px-8 py-3.5 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5">
-                            立即選購商品 <i class="fa-solid fa-arrow-right ml-2"></i>
-                        </a>
-                        <a href="#franchise" class="bg-white/10 hover:bg-white/20 text-white border border-white/30 font-semibold px-8 py-3.5 rounded-xl transition-all">
-                            品牌加盟諮詢
-                        </a>
+    <!-- 主要內容佈局 -->
+    <div class="flex-1 flex overflow-hidden relative z-10 pb-28">
+        <!-- 側邊欄 -->
+        <aside class="w-20 lg:w-64 bg-cardBg/60 backdrop-blur-md border-r border-zinc-800/80 flex flex-col justify-between py-6 px-3 lg:px-4">
+            <nav class="space-y-2">
+                <button onclick="switchTab('explore')" id="nav-explore" class="sidebar-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl transition text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50">
+                    <i class="fa-solid fa-compass text-lg w-6 text-center"></i>
+                    <span class="hidden lg:inline font-medium">探索發現</span>
+                </button>
+                <button onclick="switchTab('create')" id="nav-create" class="sidebar-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl transition text-purple-400 bg-purple-500/10 border border-purple-500/20">
+                    <i class="fa-solid fa-wand-magic-sparkles text-lg w-6 text-center"></i>
+                    <span class="hidden lg:inline font-medium">AI 創作中心</span>
+                </button>
+                <button onclick="switchTab('library')" id="nav-library" class="sidebar-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl transition text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50">
+                    <i class="fa-solid fa-music text-lg w-6 text-center"></i>
+                    <span class="hidden lg:inline font-medium">我的音樂庫</span>
+                </button>
+                <button onclick="switchTab('likes')" id="nav-likes" class="sidebar-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl transition text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50">
+                    <i class="fa-solid fa-heart text-lg w-6 text-center"></i>
+                    <span class="hidden lg:inline font-medium">我喜歡的</span>
+                </button>
+            </nav>
+
+            <div class="space-y-2 pt-6 border-t border-zinc-800/80">
+                <button onclick="switchTab('settings')" id="nav-settings" class="sidebar-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl transition text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50">
+                    <i class="fa-solid fa-gear text-lg w-6 text-center"></i>
+                    <span class="hidden lg:inline font-medium">系統設定</span>
+                </button>
+                <div class="hidden lg:block bg-gradient-to-br from-purple-900/20 to-pink-900/20 border border-purple-500/20 p-3.5 rounded-2xl">
+                    <div class="flex items-center space-x-2 text-xs font-semibold text-purple-300 mb-1">
+                        <i class="fa-solid fa-crown text-amber-400"></i>
+                        <span>無限生成權限</span>
+                    </div>
+                    <p class="text-xs text-zinc-400 leading-relaxed mb-3">享受全功能免點數限制的高音質單曲創作。</p>
+                    <button onclick="showCustomModal('系統提示', '您目前已享有 AuraSound AI 的無限創作特權，盡情發揮您的音樂靈感吧！')" class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold py-2 rounded-lg transition shadow-md shadow-purple-600/30">
+                        查看詳情
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主內容視窗 -->
+        <main class="flex-1 overflow-y-auto p-4 lg:p-8">
+
+            <!-- TAB 1: 創作中心 (CREATE CENTER) -->
+            <div id="tab-create" class="tab-content max-w-4xl mx-auto space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-cardBg/40 border border-zinc-800/80 p-6 rounded-2xl backdrop-blur-md">
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight text-white mb-1">AI 智慧音樂生成</h1>
+                        <p class="text-sm text-zinc-400">運用次世代音訊生成模型，將你的靈感化為高音質單曲。</p>
+                    </div>
+                    <!-- 自訂進階模式切換 -->
+                    <div class="flex items-center space-x-3 bg-zinc-900/80 border border-zinc-800 px-4 py-2 rounded-xl">
+                        <span class="text-xs font-medium text-zinc-300">自訂進階模式 (Custom)</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="custom-mode-toggle" class="sr-only peer" checked onchange="toggleCustomMode()">
+                            <div class="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
                     </div>
                 </div>
-                <div class="relative">
-                    <div class="relative mx-auto max-w-md lg:max-w-none rounded-2xl overflow-hidden shadow-2xl border-4 border-gold-500/30">
-                        <img src="https://placehold.co/600x450/4a2e12/f4ebd0?text=VIEBUCKS+Signature+Coffee" alt="VIEBUCKS Signature Coffee" class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700">
+
+                <!-- 生成表單卡片 -->
+                <div class="bg-cardBg/60 border border-zinc-800/80 rounded-2xl p-6 lg:p-8 space-y-6 backdrop-blur-md shadow-xl">
+                    
+                    <!-- 提示詞輸入 -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label class="text-sm font-semibold text-zinc-200 flex items-center space-x-2">
+                                <i class="fa-solid fa-sliders text-purple-400"></i>
+                                <span>音樂風格與提示詞 (Style of Music)</span>
+                            </label>
+                            <span class="text-xs text-zinc-500">支援英文描述效果最佳</span>
+                        </div>
+                        <div class="relative">
+                            <textarea id="prompt-input" rows="3" class="w-full bg-zinc-900/90 border border-zinc-700/60 rounded-xl p-4 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition resize-none" placeholder="例如：Dreamy lofi hip hop, cozy piano chords, vinyl crackle, gentle rhythmic drums, relaxing study vibe..."></textarea>
+                            <div class="absolute bottom-3 right-3 flex space-x-2">
+                                <button onclick="fillRandomPrompt()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs px-2.5 py-1.5 rounded-lg border border-zinc-700 transition flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-dice text-purple-400"></i>
+                                    <span>隨機範例</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Floating Badge -->
-                    <div class="absolute -bottom-6 -left-6 bg-white text-coffee-900 p-4 rounded-xl shadow-2xl border border-coffee-100 flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-gold-500 rounded-lg flex items-center justify-center text-white text-xl font-bold">
-                            <i class="fa-solid fa-award"></i>
+
+                    <!-- 曲風快速標籤 -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-zinc-400">熱門風格標籤快速點選：</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="appendGenre('Lofi Hip Hop')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">Lofi 療癒</button>
+                            <button onclick="appendGenre('Cyberpunk Synthwave')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">賽博朋克電音</button>
+                            <button onclick="appendGenre('Cinematic Epic Orchestral')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">史詩交響樂</button>
+                            <button onclick="appendGenre('Acoustic Indie Pop')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">民謠流行</button>
+                            <button onclick="appendGenre('Chill Ambient Relaxing')" class="genre-tag bg-zinc-900 hover:bg-purple-600/20 text-zinc-300 hover:text-purple-300 border border-zinc-800 hover:border-purple-500/40 text-xs px-3 py-1.5 rounded-lg transition">輕柔環境音</button>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-medium">國際咖啡大獎肯定</p>
-                            <p class="text-sm font-bold text-coffee-900">2026 頂級金賞烘焙認證</p>
+                    </div>
+
+                    <!-- 自訂模式歌詞區塊 -->
+                    <div id="custom-lyrics-section" class="space-y-3 pt-4 border-t border-zinc-800/80">
+                        <div class="flex justify-between items-center">
+                            <label class="text-sm font-semibold text-zinc-200 flex items-center space-x-2">
+                                <i class="fa-solid fa-microphone-lines text-pink-400"></i>
+                                <span>歌詞與段落結構 (Lyrics & Structure)</span>
+                            </label>
+                            <button onclick="generateAiLyrics()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs px-3.5 py-1.5 rounded-lg transition flex items-center space-x-1.5 shadow-md shadow-purple-600/20 font-medium">
+                                <i class="fa-solid fa-wand-magic"></i>
+                                <span>AI 幫我寫歌詞</span>
+                            </button>
                         </div>
+                        <textarea id="lyrics-input" rows="5" class="w-full bg-zinc-900/90 border border-zinc-700/60 rounded-xl p-4 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition font-mono resize-none" placeholder="[Verse 1]
+深夜的城市 霓虹閃爍著微光
+你在哪裡呢 是否也一樣在看月亮
+
+[Chorus]
+就讓音樂帶走所有的憂傷
+在這片星空下自由地飛翔..."></textarea>
+                    </div>
+
+                    <!-- 純音樂切換與生成按鈕 -->
+                    <div class="pt-4 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="instrumental-check" class="w-4 h-4 rounded bg-zinc-900 border-zinc-700 text-purple-600 focus:ring-purple-500">
+                                <span class="text-sm text-zinc-300">純音樂 (Instrumental Only)</span>
+                            </label>
+                        </div>
+                        <button onclick="startGeneration()" class="w-full sm:w-auto bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 hover:opacity-95 text-white font-semibold px-8 py-3.5 rounded-xl shadow-lg shadow-purple-600/30 transition flex items-center justify-center space-x-2 group">
+                            <i class="fa-solid fa-bolt text-amber-300 group-hover:scale-110 transition-transform"></i>
+                            <span>立即免費生成音樂</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- 3 階段生成動畫進度對話框 -->
+                <div id="generation-loader" class="hidden bg-cardBg/90 border border-purple-500/40 rounded-2xl p-8 backdrop-blur-xl text-center space-y-6 shadow-2xl relative overflow-hidden">
+                    <div class="absolute -top-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/50 animate-bounce">
+                        <i class="fa-solid fa-compact-disc text-white text-2xl animate-spin"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 id="loader-title" class="text-xl font-bold text-white">正在分析您的提示詞...</h3>
+                        <p id="loader-desc" class="text-sm text-zinc-400">AI 正在建立編曲風格、和弦進行與情感基調</p>
+                    </div>
+                    <!-- 進度條 -->
+                    <div class="max-w-md mx-auto bg-zinc-900 rounded-full h-2.5 overflow-hidden border border-zinc-800">
+                        <div id="loader-progress" class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div id="loader-steps" class="flex justify-center space-x-6 text-xs text-zinc-500 pt-2">
+                        <span id="step-1" class="text-purple-400 font-semibold">1. 提示詞解析</span>
+                        <span id="step-2">2. 譜曲與和聲合成</span>
+                        <span id="step-3">3. 智慧母帶後製</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section class="bg-white border-b border-coffee-100 shadow-sm py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                <a href="#shop" class="p-4 rounded-xl hover:bg-coffee-50 transition-all border border-transparent hover:border-gold-500/30 group">
-                    <div class="w-12 h-12 mx-auto mb-2 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center group-hover:bg-gold-500 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-seedling text-lg"></i>
+            <!-- TAB 2: 探索發現 (EXPLORE) -->
+            <div id="tab-explore" class="tab-content hidden max-w-6xl mx-auto space-y-8">
+                <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-purple-900/50 via-zinc-900 to-indigo-900/40 border border-purple-500/20 p-8 lg:p-12">
+                    <div class="max-w-xl space-y-4">
+                        <span class="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs px-3.5 py-1 rounded-full font-medium">🔥 本週熱門精選</span>
+                        <h1 class="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">探索未來感 AI 聲景</h1>
+                        <p class="text-zinc-300 text-sm leading-relaxed">聆聽來自全球創作者使用 AuraSound AI 產出的頂級神曲，激發你的下一首靈感。</p>
+                        <button onclick="switchTab('create')" class="bg-white text-zinc-900 font-semibold px-6 py-3 rounded-xl shadow-lg hover:bg-zinc-200 transition text-sm">
+                            開始創作你的音樂
+                        </button>
                     </div>
-                    <h3 class="font-bold text-coffee-900 text-sm">精品咖啡豆</h3>
-                    <p class="text-xs text-gray-500">莊園單品與配方豆</p>
-                </a>
-                <a href="#shop" class="p-4 rounded-xl hover:bg-coffee-50 transition-all border border-transparent hover:border-gold-500/30 group">
-                    <div class="w-12 h-12 mx-auto mb-2 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center group-hover:bg-gold-500 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-mug-saucer text-lg"></i>
-                    </div>
-                    <h3 class="font-bold text-coffee-900 text-sm">濾掛咖啡</h3>
-                    <p class="text-xs text-gray-500">隨沖即飲職人口感</p>
-                </a>
-                <a href="#shop" class="p-4 rounded-xl hover:bg-coffee-50 transition-all border border-transparent hover:border-gold-500/30 group">
-                    <div class="w-12 h-12 mx-auto mb-2 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center group-hover:bg-gold-500 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-gift text-lg"></i>
-                    </div>
-                    <h3 class="font-bold text-coffee-900 text-sm">中秋/十週年禮盒</h3>
-                    <p class="text-xs text-gray-500">企業送禮首選推薦</p>
-                </a>
-                <a href="#stores" class="p-4 rounded-xl hover:bg-coffee-50 transition-all border border-transparent hover:border-gold-500/30 group">
-                    <div class="w-12 h-12 mx-auto mb-2 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center group-hover:bg-gold-500 group-hover:text-white transition-all">
-                        <i class="fa-solid fa-store text-lg"></i>
-                    </div>
-                    <h3 class="font-bold text-coffee-900 text-sm">門市據點與菜單</h3>
-                    <p class="text-xs text-gray-500">全台實體店鋪查詢</p>
-                </a>
-            </div>
-        </div>
-    </section>
+                </div>
 
-    <section id="shop" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-12">
-            <span class="text-gold-600 font-semibold text-xs tracking-widest uppercase bg-gold-500/10 px-3 py-1 rounded-full">
-                Featured Products
-            </span>
-            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-coffee-900 mt-3">熱銷及主打商品牆</h2>
-            <p class="text-gray-600 text-sm sm:text-base mt-2">嚴選頂級莊園豆、限量禮盒與人氣濾掛，滿足您的挑剔味蕾。</p>
-            
-            <!-- Category Filter Buttons -->
-            <div class="flex flex-wrap justify-center gap-2 mt-6">
-                <button onclick="filterProducts('all')" class="category-btn active px-4 py-2 rounded-full text-xs font-semibold bg-coffee-900 text-white transition-all">全部商品</button>
-                <button onclick="filterProducts('bean')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-coffee-100 text-coffee-800 hover:bg-coffee-200 transition-all">精品咖啡豆</button>
-                <button onclick="filterProducts('drip')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-coffee-100 text-coffee-800 hover:bg-coffee-200 transition-all">濾掛/浸泡式</button>
-                <button onclick="filterProducts('gift')" class="category-btn px-4 py-2 rounded-full text-xs font-semibold bg-coffee-100 text-coffee-800 hover:bg-coffee-200 transition-all">限定禮盒</button>
-            </div>
-        </div>
-
-        <!-- Product Grid -->
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Products will be injected via JavaScript -->
-        </div>
-    </section>
-
-    <section class="bg-gradient-to-r from-coffee-900 to-coffee-800 text-white py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-coffee-800/50 p-8 sm:p-12 rounded-3xl border border-gold-500/20 shadow-xl">
                 <div class="space-y-4">
-                    <div class="inline-flex items-center space-x-2 bg-gold-500 text-coffee-900 px-3 py-1 rounded-full text-xs font-bold">
-                        <i class="fa-brands fa-line text-base"></i><span>LINE@ 好友專屬福利</span>
-                    </div>
-                    <h3 class="font-serif text-2xl sm:text-3xl font-bold">立即加入 LINE 好友，領取 $100 折價券</h3>
-                    <p class="text-coffee-100/80 text-sm leading-relaxed">
-                        綁定 VIEBUCKS 會員卡，享首購 9 折、生日專屬禮遇，以及不定期拿鐵買一送一優惠券！
-                    </p>
-                    <div class="pt-2">
-                        <button onclick="openLineModal()" class="bg-gold-500 hover:bg-gold-600 text-coffee-900 font-bold px-6 py-3 rounded-xl shadow-md transition-all">
-                            立即加入官方 LINE <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="text-center md:text-right">
-                    <div class="inline-block bg-white p-6 rounded-2xl shadow-lg text-coffee-900 max-w-xs mx-auto">
-                        <div class="w-32 h-32 mx-auto bg-coffee-100 rounded-xl flex items-center justify-center mb-3 border-2 border-dashed border-gold-500">
-                            <i class="fa-solid fa-qrcode text-6xl text-coffee-800"></i>
-                        </div>
-                        <p class="text-xs font-bold text-coffee-800">掃描 QR Code 加入好友</p>
-                        <p class="text-[10px] text-gray-500 mt-1">ID: @viebucks_coffee</p>
+                    <h2 class="text-xl font-bold text-white">熱門社群單曲</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="explore-grid">
+                        <!-- 動態渲染 -->
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section id="knowledge" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-12">
-            <span class="text-gold-600 font-semibold text-xs tracking-widest uppercase bg-gold-500/10 px-3 py-1 rounded-full">
-                Coffee Education
-            </span>
-            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-coffee-900 mt-3">咖啡知識與風味專欄</h2>
-            <p class="text-gray-600 text-sm sm:text-base mt-2">探索咖啡豆的奧秘，從產地處理法到手沖黃金比例，成為您的咖啡品鑑指南。</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Article 1 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-coffee-100 flex flex-col">
-                <img src="https://placehold.co/400x250/6f441d/f4ebd0?text=Hand+Drip+Guide" alt="Hand Drip Guide" class="w-full h-48 object-cover">
-                <div class="p-6 flex-1 flex flex-col justify-between">
+            <!-- TAB 3: 我的音樂庫 (MY LIBRARY) -->
+            <div id="tab-library" class="tab-content hidden max-w-5xl mx-auto space-y-6">
+                <div class="flex justify-between items-center bg-cardBg/40 border border-zinc-800/80 p-6 rounded-2xl backdrop-blur-md">
                     <div>
-                        <span class="text-xs font-semibold text-gold-600 uppercase tracking-wide">沖煮學堂</span>
-                        <h3 class="font-serif text-xl font-bold text-coffee-900 mt-2">手沖咖啡黃金比例與注水技巧全解析</h3>
-                        <p class="text-gray-600 text-sm mt-2 line-clamp-2">水溫 92 度、粉水比 1:15，如何透過三段式注水完美萃取花香與果酸？</p>
+                        <h1 class="text-2xl font-bold text-white mb-1">我的音樂庫</h1>
+                        <p class="text-sm text-zinc-400">管理所有由你生成的 AI 音樂作品與草稿。</p>
                     </div>
-                    <div class="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs text-gray-400">2026-03-15</span>
-                        <button onclick="openKnowledgeModal('handDrip')" class="text-xs font-bold text-coffee-900 hover:text-gold-600 flex items-center">
-                            閱讀文章 <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
+                    <button onclick="switchTab('create')" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-purple-600/30 transition">
+                        + 新增創作
+                    </button>
+                </div>
+
+                <div class="space-y-4" id="library-list">
+                    <!-- 動態渲染 -->
                 </div>
             </div>
 
-            <!-- Article 2 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-coffee-100 flex flex-col">
-                <img src="https://placehold.co/400x250/4a2e12/f4ebd0?text=Processing+Methods" alt="Processing Methods" class="w-full h-48 object-cover">
-                <div class="p-6 flex-1 flex flex-col justify-between">
-                    <div>
-                        <span class="text-xs font-semibold text-gold-600 uppercase tracking-wide">產地風味</span>
-                        <h3 class="font-serif text-xl font-bold text-coffee-900 mt-2">日曬 vs 水洗 vs 蜜處理：風味差異在哪裡？</h3>
-                        <p class="text-gray-600 text-sm mt-2 line-clamp-2">深入探討咖啡豆處理法如何影響風味，挑選專屬於您的命定咖啡豆。</p>
-                    </div>
-                    <div class="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs text-gray-400">2026-03-10</span>
-                        <button onclick="openKnowledgeModal('processing')" class="text-xs font-bold text-coffee-900 hover:text-gold-600 flex items-center">
-                            閱讀文章 <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
+            <!-- TAB 4: 我喜歡的 (LIKES) -->
+            <div id="tab-likes" class="tab-content hidden max-w-5xl mx-auto space-y-6">
+                <div class="bg-cardBg/40 border border-zinc-800/80 p-6 rounded-2xl backdrop-blur-md">
+                    <h1 class="text-2xl font-bold text-white mb-1">我喜歡的音樂</h1>
+                    <p class="text-sm text-zinc-400">你收藏的精選 AI 音樂作品列表。</p>
+                </div>
+                <div class="space-y-4" id="likes-list">
+                    <!-- 動態渲染 -->
                 </div>
             </div>
 
-            <!-- Article 3 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-coffee-100 flex flex-col">
-                <img src="https://placehold.co/400x250/2c1808/f4ebd0?text=Roast+Levels" alt="Roast Levels" class="w-full h-48 object-cover">
-                <div class="p-6 flex-1 flex flex-col justify-between">
-                    <div>
-                        <span class="text-xs font-semibold text-gold-600 uppercase tracking-wide">烘焙科學</span>
-                        <h3 class="font-serif text-xl font-bold text-coffee-900 mt-2">淺焙、中焙與深焙：烘焙度如何決定咖啡靈魂</h3>
-                        <p class="text-gray-600 text-sm mt-2 line-clamp-2">淺焙的水果酸香與深焙的濃厚焦糖苦甜，哪一款最能打動你的味蕾？</p>
-                    </div>
-                    <div class="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between">
-                        <span class="text-xs text-gray-400">2026-03-01</span>
-                        <button onclick="openKnowledgeModal('roasting')" class="text-xs font-bold text-coffee-900 hover:text-gold-600 flex items-center">
-                            閱讀文章 <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="franchise" class="bg-coffee-100/50 py-16 sm:py-24 border-t border-b border-coffee-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6">
-                    <span class="text-gold-600 font-semibold text-xs tracking-widest uppercase bg-gold-500/20 px-3 py-1 rounded-full">
-                        Business Partnership
-                    </span>
-                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-coffee-900">VIEBUCKS 加盟招募與企業合作</h2>
-                    <p class="text-gray-700 text-base leading-relaxed">
-                        我們提供完整的品牌授權、專業烘焙技術支援、門市營運輔導與原物料直供。誠摯邀請認同品牌理念的夥伴加入，攜手共創精品咖啡事業新高峰。
-                    </p>
-                    <ul class="space-y-3 text-sm text-coffee-800 font-medium">
-                        <li class="flex items-center space-x-3"><i class="fa-solid fa-circle-check text-gold-600"></i><span>完善的開店教育訓練與技術轉移</span></li>
-                        <li class="flex items-center space-x-3"><i class="fa-solid fa-circle-check text-gold-600"></i><span>嚴謹的商圈保障與營運數據支援</span></li>
-                        <li class="flex items-center space-x-3"><i class="fa-solid fa-circle-check text-gold-600"></i><span>企業特約合作與客製化掛耳包 B2B 業務</span></li>
-                    </ul>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-xl border border-coffee-100">
-                    <h3 class="font-serif text-xl font-bold text-coffee-900 mb-6">線上加盟與企業諮詢表單</h3>
-                    <form id="franchise-form" onsubmit="handleFranchiseSubmit(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-coffee-800 mb-1">您的姓名 / 聯絡人</label>
-                            <input type="text" id="f-name" required class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- TAB 5: 系統設定 (SETTINGS) -->
+            <div id="tab-settings" class="tab-content hidden max-w-3xl mx-auto space-y-6">
+                <div class="bg-cardBg/60 border border-zinc-800/80 rounded-2xl p-8 backdrop-blur-md space-y-6">
+                    <h1 class="text-2xl font-bold text-white">帳號與系統設定</h1>
+                    <div class="space-y-4 pt-4 border-t border-zinc-800">
+                        <div class="flex justify-between items-center">
                             <div>
-                                <label class="block text-xs font-bold text-coffee-800 mb-1">聯絡電話</label>
-                                <input type="tel" id="f-phone" required class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm">
+                                <div class="font-medium text-white">預設生成音質</div>
+                                <div class="text-xs text-zinc-400">選擇高解析度音頻輸出 (48kHz / 24-bit)</div>
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-coffee-800 mb-1">電子信箱</label>
-                                <input type="email" id="f-email" required class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-coffee-800 mb-1">預計發展區域 / 諮詢項目</label>
-                            <select id="f-type" class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm bg-white">
-                                <option value="franchise">實體門市加盟</option>
-                                <option value="corporate">企業禮盒 / 企業特約採購</option>
-                                <option value="beans">B2B 營業豆批發供貨</option>
+                            <select class="bg-zinc-900 border border-zinc-700 text-zinc-200 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option>Ultra HD (最高音質)</option>
+                                <option>Standard (標準音質)</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold text-coffee-800 mb-1">備註說明 / 創業規劃</label>
-                            <textarea id="f-message" rows="3" class="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:ring-2 focus:ring-gold-500 focus:outline-none text-sm" placeholder="請簡述您的開店預算或具體需求..."></textarea>
+                        <div class="flex justify-between items-center pt-4 border-t border-zinc-800">
+                            <div>
+                                <div class="font-medium text-white">AI 模型版本</div>
+                                <div class="text-xs text-zinc-400">當前使用 AuraSound v4.5 Pro 模型</div>
+                            </div>
+                            <span class="bg-purple-500/20 text-purple-300 text-xs px-3 py-1 rounded-full font-medium border border-purple-500/30">已解鎖全部功能</span>
                         </div>
-                        <button type="submit" class="w-full bg-coffee-900 hover:bg-gold-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-md">
-                            送出諮詢申請
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="stores" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-12">
-            <span class="text-gold-600 font-semibold text-xs tracking-widest uppercase bg-gold-500/10 px-3 py-1 rounded-full">
-                Store Locations
-            </span>
-            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-coffee-900 mt-3">全台直營與概念門市</h2>
-            <p class="text-gray-600 text-sm sm:text-base mt-2">歡迎蒞臨門市品嘗手沖咖啡，享受美好的咖啡時光。</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 space-y-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-serif text-lg font-bold text-coffee-900">台北旗艦概念店</h3>
-                    <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-1 rounded-full">營業中</span>
-                </div>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-location-dot text-gold-600 mr-2"></i>台北市信義區松高路 12 號 1 樓</p>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-phone text-gold-600 mr-2"></i>(02) 2345-6789</p>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-clock text-gold-600 mr-2"></i>週一至週日 08:00 - 21:30</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 space-y-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-serif text-lg font-bold text-coffee-900">台中歌劇院烘焙店</h3>
-                    <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-1 rounded-full">營業中</span>
-                </div>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-location-dot text-gold-600 mr-2"></i>台中市西屯區惠來路二段 101 號</p>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-phone text-gold-600 mr-2"></i>(04) 2255-8888</p>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-clock text-gold-600 mr-2"></i>週一至週日 09:00 - 22:00</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-coffee-100 space-y-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-serif text-lg font-bold text-coffee-900">高雄美術館概念館</h3>
-                    <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-1 rounded-full">營業中</span>
-                </div>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-location-dot text-gold-600 mr-2"></i>高雄市鼓山區美術東二路 88 號</p>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-phone text-gold-600 mr-2"></i>(07) 555-1234</p>
-                <p class="text-xs text-gray-600"><i class="fa-solid fa-clock text-gold-600 mr-2"></i>週一至週日 08:30 - 21:00</p>
-            </div>
-        </div>
-    </section>
-
-    <footer id="about" class="bg-coffee-900 text-white pt-16 pb-12 border-t border-coffee-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
-                <!-- Col 1: Brand Info -->
-                <div class="col-span-2 space-y-4">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center text-coffee-900 font-serif font-bold text-lg">V</div>
-                        <span class="font-serif text-2xl font-bold tracking-wider">VIEBUCKS</span>
-                    </div>
-                    <p class="text-coffee-100/70 text-xs sm:text-sm leading-relaxed max-w-sm">
-                        VIEBUCKS 致力於提供世界頂級莊園咖啡豆與職人手作濾掛系列。堅持永續環保與公平貿易，讓每一杯咖啡都充滿溫度與故事。
-                    </p>
-                    <div class="flex space-x-3 text-gold-500 text-lg">
-                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-line"></i></a>
+                        <div class="flex justify-between items-center pt-4 border-t border-zinc-800">
+                            <div>
+                                <div class="font-medium text-white">自動儲存草稿</div>
+                                <div class="text-xs text-zinc-400">在本地暫存您的歌詞與提示詞設定</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                            </label>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Col 2: Quick Links -->
-                <div>
-                    <h4 class="font-bold text-sm text-gold-500 uppercase tracking-wider mb-4">商品分類</h4>
-                    <ul class="space-y-2.5 text-xs text-coffee-100/80">
-                        <li><a href="#shop" class="hover:text-gold-500 transition-colors">精品咖啡豆</a></li>
-                        <li><a href="#shop" class="hover:text-gold-500 transition-colors">職人濾掛咖啡</a></li>
-                        <li><a href="#shop" class="hover:text-gold-500 transition-colors">十週年限定禮盒</a></li>
-                        <li><a href="#shop" class="hover:text-gold-500 transition-colors">極萃咖啡液</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 3: About & Support -->
-                <div>
-                    <h4 class="font-bold text-sm text-gold-500 uppercase tracking-wider mb-4">關於與服務</h4>
-                    <ul class="space-y-2.5 text-xs text-coffee-100/80">
-                        <li><a href="#about" class="hover:text-gold-500 transition-colors">品牌故事與理念</a></li>
-                        <li><a href="#stores" class="hover:text-gold-500 transition-colors">全台門市據點</a></li>
-                        <li><a href="#knowledge" class="hover:text-gold-500 transition-colors">咖啡知識專欄</a></li>
-                        <li><a href="#franchise" class="hover:text-gold-500 transition-colors">加盟招募與企業合作</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 4: Legal & Contact -->
-                <div>
-                    <h4 class="font-bold text-sm text-gold-500 uppercase tracking-wider mb-4">客戶服務</h4>
-                    <ul class="space-y-2.5 text-xs text-coffee-100/80">
-                        <li><a href="#" onclick="showInfoModal('terms')" class="hover:text-gold-500 transition-colors">隱私權與服務條款</a></li>
-                        <li><a href="#" onclick="showInfoModal('shipping')" class="hover:text-gold-500 transition-colors">購物說明與物流配送</a></li>
-                        <li><a href="#" onclick="showInfoModal('faq')" class="hover:text-gold-500 transition-colors">常見問題 FAQ</a></li>
-                    </ul>
-                </div>
             </div>
 
-            <div class="border-t border-coffee-800 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-coffee-100/60">
-                <p>&copy; 2026 VIEBUCKS Coffee Roasters. All rights reserved.</p>
-                <p class="mt-2 sm:mt-0">Designed with Passion & Precision for Coffee Lovers.</p>
-            </div>
-        </div>
-    </footer>
-
-    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleCartDrawer()"></div>
-        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
-                <div class="flex items-center justify-between px-6 py-4 bg-coffee-900 text-white">
-                    <h3 class="font-serif text-lg font-bold flex items-center">
-                        <i class="fa-solid fa-bag-shopping mr-2 text-gold-500"></i> 您的購物車
-                    </h3>
-                    <button onclick="toggleCartDrawer()" class="text-coffee-100 hover:text-white p-2">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-
-                <!-- Cart Items List -->
-                <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-gray-100">
-                    <!-- Dynamic cart items -->
-                </div>
-
-                <!-- Cart Summary & Checkout -->
-                <div class="p-6 bg-coffee-50 border-t border-coffee-200 space-y-4">
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>小計</span>
-                        <span id="cart-subtotal">$0</span>
-                    </div>
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>運費 (滿$800免運)</span>
-                        <span id="cart-shipping">$0</span>
-                    </div>
-                    <div class="flex justify-between text-lg font-bold text-coffee-900 pt-2 border-t border-coffee-200">
-                        <span>總計金額</span>
-                        <span id="cart-total" class="text-gold-600">$0</span>
-                    </div>
-                    <button onclick="openCheckoutModal()" id="checkout-btn" class="w-full bg-gold-500 hover:bg-gold-600 text-coffee-900 font-bold py-3.5 rounded-xl shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                        前往安全結帳 <i class="fa-solid fa-lock ml-1 text-xs"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 
-    <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-coffee-900 p-2">
-                <i class="fa-solid fa-xmark text-xl"></i>
+    <!-- 底部音樂播放器 -->
+    <div id="bottom-player" class="fixed bottom-0 left-0 right-0 z-50 bg-cardBg/95 backdrop-blur-xl border-t border-zinc-800 px-4 lg:px-8 py-3 flex items-center justify-between shadow-2xl">
+        <div class="flex items-center space-x-3 w-1/4 min-w-[200px]">
+            <img id="player-img" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=120" class="w-12 h-12 rounded-xl object-cover shadow-md" alt="Album Cover">
+            <div class="overflow-hidden">
+                <div id="player-title" class="text-sm font-bold text-white truncate">選擇一首歌曲開始播放</div>
+                <div id="player-genre" class="text-xs text-zinc-400 truncate">AuraSound AI Studio</div>
+            </div>
+            <button onclick="toggleLikeCurrent()" class="text-zinc-400 hover:text-pink-500 transition pl-2">
+                <i id="player-like-icon" class="fa-regular fa-heart text-lg"></i>
             </button>
-            <h3 class="font-serif text-2xl font-bold text-coffee-900 mb-2">模擬結帳填寫</h3>
-            <p class="text-xs text-gray-500 mb-6">請填寫收件資訊以完成您的 VIEBUCKS 訂單。</p>
-            
-            <form id="order-form" onsubmit="handleOrderSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-coffee-800 mb-1">收件人姓名</label>
-                    <input type="text" id="o-name" required class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm focus:ring-2 focus:ring-gold-500 focus:outline-none">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-coffee-800 mb-1">手機號碼</label>
-                        <input type="tel" id="o-phone" required class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm focus:ring-2 focus:ring-gold-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-coffee-800 mb-1">電子郵件</label>
-                        <input type="email" id="o-email" required class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm focus:ring-2 focus:ring-gold-500 focus:outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-coffee-800 mb-1">收件地址</label>
-                    <input type="text" id="o-address" required class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm focus:ring-2 focus:ring-gold-500 focus:outline-none" placeholder="例如：台北市信義區忠孝東路五段100號">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-coffee-800 mb-1">付款方式</label>
-                    <select class="w-full px-4 py-2.5 rounded-xl border border-coffee-200 text-sm bg-white focus:ring-2 focus:ring-gold-500 focus:outline-none">
-                        <option value="credit">信用卡線上一次付清</option>
-                        <option value="linepay">LINE Pay 行動支付</option>
-                        <option value="cod">超商取貨付款</option>
-                    </select>
-                </div>
-                <div class="pt-4">
-                    <button type="submit" class="w-full bg-coffee-900 hover:bg-gold-600 text-white font-bold py-3.5 rounded-xl shadow-lg transition-all">
-                        確認送出訂單
-                    </button>
-                </div>
-            </form>
         </div>
-    </div>
 
-    <div id="info-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-gray-400 hover:text-coffee-900 p-2">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            <div id="info-modal-content" class="space-y-4">
-                <!-- Dynamic Content -->
+        <!-- 播放控制與進度條 -->
+        <div class="flex flex-col items-center w-2/4 max-w-xl space-y-1.5">
+            <div class="flex items-center space-x-6">
+                <button onclick="playPreviousSong()" class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-backward-step"></i></button>
+                <button onclick="togglePlayPause()" id="play-pause-btn" class="w-10 h-10 rounded-full bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center shadow-lg shadow-purple-600/30 transition transform hover:scale-105">
+                    <i id="play-pause-icon" class="fa-solid fa-play"></i>
+                </button>
+                <button onclick="playNextSong()" class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-forward-step"></i></button>
+            </div>
+            <!-- 進度條 -->
+            <div class="w-full flex items-center space-x-3 text-xs text-zinc-500">
+                <span id="current-time">0:00</span>
+                <div class="flex-1 bg-zinc-800 h-1.5 rounded-full overflow-hidden cursor-pointer" onclick="seekSong(event)">
+                    <div id="song-progress" class="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 w-0 rounded-full"></div>
+                </div>
+                <span id="total-time">3:24</span>
+            </div>
+        </div>
+
+        <!-- 音量與波形視覺化 -->
+        <div class="hidden md:flex items-center justify-end space-x-4 w-1/4">
+            <div class="flex items-center space-x-1 h-6 px-3 bg-zinc-900/80 border border-zinc-800 rounded-lg">
+                <div class="w-1 bg-purple-500 rounded-full waveform-bar" style="animation-delay: 0s;"></div>
+                <div class="w-1 bg-pink-500 rounded-full waveform-bar" style="animation-delay: 0.2s;"></div>
+                <div class="w-1 bg-purple-400 rounded-full waveform-bar" style="animation-delay: 0.4s;"></div>
+                <div class="w-1 bg-indigo-500 rounded-full waveform-bar" style="animation-delay: 0.1s;"></div>
+                <div class="w-1 bg-pink-400 rounded-full waveform-bar" style="animation-delay: 0.3s;"></div>
+            </div>
+            <div class="flex items-center space-x-2 text-zinc-400">
+                <i class="fa-solid fa-volume-high text-sm"></i>
+                <input type="range" min="0" max="100" value="80" class="w-20 accent-purple-500 bg-zinc-800 h-1 rounded-lg cursor-pointer" oninput="adjustVolume(this.value)">
             </div>
         </div>
     </div>
 
+    <!-- 自定義訊息對話框 (Modal) 取代原生 alert -->
+    <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+        <div class="bg-cardBg border border-zinc-800 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl modal-animation space-y-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                    <i class="fa-solid fa-bell text-lg"></i>
+                </div>
+                <h3 id="modal-title" class="text-lg font-bold text-white">系統提示</h3>
+            </div>
+            <p id="modal-desc" class="text-sm text-zinc-300 leading-relaxed">提示訊息內容...</p>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeCustomModal()" class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition shadow-md shadow-purple-600/30">
+                    確定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 邏輯 -->
     <script>
-        // Product Catalog Data
-        const products = [
+        // 音樂資料庫
+        let musicLibrary = [
             {
                 id: 1,
-                name: "【10週年限定】巴拿馬藝伎藏寶盒",
-                category: "gift",
-                price: 1680,
-                originalPrice: 1980,
-                image: "https://placehold.co/400x300/4a2e12/f4ebd0?text=Geisha+Gift+Box",
-                badge: "限量100組",
-                desc: "水洗巴拿馬藝伎咖啡豆 200g，帶有強烈茉莉花香與柑橘香氣，尊榮木盒包裝。"
+                title: "Midnight Tokyo Lofi",
+                genre: "Lofi Hip Hop",
+                duration: "2:45",
+                createdAt: "10 分鐘前",
+                cover: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&q=80&w=300",
+                liked: true,
+                lyrics: "[Verse]\n深夜的東京雨滴落下\n街燈映照著濕潤的步伐\n\n[Chorus]\n只想沉浸在這段旋律裡\n找回最初的自己"
             },
             {
                 id: 2,
-                name: "衣索比亞 耶加雪菲 經典濾掛包 (10入)",
-                category: "drip",
-                price: 420,
-                originalPrice: 500,
-                image: "https://placehold.co/400x300/6f441d/f4ebd0?text=Yirgacheffe+Drip",
-                badge: "熱銷冠軍",
-                desc: "帶有佛手柑、檸檬皮與白花香調，口感清爽明亮，隨時隨地享受手沖風味。"
+                title: "Neon Cyber Runner",
+                genre: "Cyberpunk Synthwave",
+                duration: "3:12",
+                createdAt: "2 小時前",
+                cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=300",
+                liked: false,
+                lyrics: "[Intro]\nSystem booting...\n\n[Verse]\n奔馳在數位邊境的光速高架橋\n心跳與重拍同步燃燒"
             },
             {
                 id: 3,
-                name: "黃金曼特寧 頂級精品咖啡豆 (半磅)",
-                category: "bean",
-                price: 550,
-                originalPrice: 620,
-                image: "https://placehold.co/400x300/2c1808/f4ebd0?text=Mandheling+Beans",
-                badge: "職人推薦",
-                desc: "濃郁的草本香氣、黑巧克力尾韻，厚實飽滿，義式濃縮與手沖皆宜。"
-            },
-            {
-                id: 4,
-                name: "VIEBUCKS 極萃冷萃咖啡液 (6入裝)",
-                category: "drip",
-                price: 360,
-                originalPrice: 420,
-                image: "https://placehold.co/400x300/8b5a2b/f4ebd0?text=Cold+Brew+Liquid",
-                badge: "新品上市",
-                desc: "18小時低溫慢速萃取，加牛奶或水即刻還原精品冷萃咖啡。"
-            },
-            {
-                id: 5,
-                name: "哥倫比亞 天堂莊園 雙重發酵蜜處理 (半磅)",
-                category: "bean",
-                price: 680,
-                originalPrice: 780,
-                image: "https://placehold.co/400x300/4a2e12/f4ebd0?text=Colombia+Honey",
-                badge: "限量莊園",
-                desc: "充滿熱帶水果、水蜜桃與酒香風味，層次豐富迷人。"
-            },
-            {
-                id: 6,
-                name: "世界甜點系列 綜合濾掛咖啡 (12入)",
-                category: "drip",
-                price: 480,
-                originalPrice: 560,
-                image: "https://placehold.co/400x300/6f441d/f4ebd0?text=Dessert+Drip+Pack",
-                badge: "人氣組合",
-                desc: "專為搭配甜點設計的三款配方，核果、焦糖與莓果風味交織。"
-            },
-            {
-                id: 7,
-                name: "馬卡龍綜合手作禮盒 (咖啡豆+濾掛)",
-                category: "gift",
-                price: 980,
-                originalPrice: 1200,
-                image: "https://placehold.co/400x300/2c1808/f4ebd0?text=Macaron+Gift+Set",
-                badge: "送禮首選",
-                desc: "精選兩款招牌咖啡豆搭配精美陶瓷濾杯與濾掛包，送禮大方體面。"
-            },
-            {
-                id: 8,
-                name: "越南頂級阿拉比卡 典藏配方豆 (半磅)",
-                category: "bean",
-                price: 450,
-                originalPrice: 520,
-                image: "https://placehold.co/400x300/8b5a2b/f4ebd0?text=Vietnam+Arabica",
-                badge: "產地直營",
-                desc: "高海拔火山土壤孕育，甜感高、低酸度，帶有烤堅果與焦糖香氣。"
+                title: "Starlight Galaxy Anthem",
+                genre: "Cinematic Orchestral",
+                duration: "4:05",
+                createdAt: "昨天",
+                cover: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=300",
+                liked: true,
+                lyrics: "[Chorus]\n穿梭星際的彼端\n見證永恆的浪漫"
             }
         ];
 
-        // Cart State
-        let cart = [];
+        let currentPlayingId = null;
+        let isPlaying = false;
+        let playInterval = null;
+        let currentProgressSec = 0;
+        let totalDurationSec = 204; // 預設 3:24
 
-        // Initialize App on DOM Load
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProducts('all');
-            updateCartUI();
-        });
+        // 自定義對話框控制
+        function showCustomModal(title, desc) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
 
-        // Render Products Function
-        function renderProducts(category) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
+        function closeCustomModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
 
-            const filtered = category === 'all' ? products : products.filter(p => p.category === category);
+        // 分頁切換邏輯
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if (targetTab) targetTab.classList.remove('hidden');
 
-            filtered.forEach(product => {
-                const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-coffee-100 flex flex-col group";
-                card.innerHTML = `
-                    <div class="relative overflow-hidden bg-coffee-50 aspect-4/3">
-                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-coffee-900 text-gold-500 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
-                            ${product.badge}
-                        </span>
-                    </div>
-                    <div class="p-5 flex-1 flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-serif font-bold text-coffee-900 text-base group-hover:text-gold-600 transition-colors">${product.name}</h3>
-                            <p class="text-xs text-gray-500 mt-1 line-clamp-2">${product.desc}</p>
-                        </div>
-                        <div class="mt-4 pt-4 border-t border-coffee-100 flex items-center justify-between">
-                            <div>
-                                <span class="text-lg font-bold text-coffee-900">$${product.price}</span>
-                                <span class="text-xs text-gray-400 line-through ml-1.5">$${product.originalPrice}</span>
-                            </div>
-                            <button onclick="addToCart(${product.id})" class="bg-coffee-900 hover:bg-gold-500 hover:text-coffee-900 text-white p-2.5 rounded-xl transition-all shadow-sm">
-                                <i class="fa-solid fa-cart-plus text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.className = "sidebar-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl transition text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50";
             });
-
-            // Update Active Category Button Style
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.className = "category-btn px-4 py-2 rounded-full text-xs font-semibold bg-coffee-100 text-coffee-800 hover:bg-coffee-200 transition-all";
-            });
-            event && event.target && (event.target.className = "category-btn active px-4 py-2 rounded-full text-xs font-semibold bg-coffee-900 text-white transition-all");
-        }
-
-        // Filter Function wrapper
-        function filterProducts(cat) {
-            renderProducts(cat);
-        }
-
-        // Cart Drawer Toggle
-        function toggleCartDrawer() {
-            const drawer = document.getElementById('cart-drawer');
-            drawer.classList.toggle('hidden');
-        }
-
-        // Add to Cart Logic
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            const existing = cart.find(item => item.id === productId);
-
-            if (existing) {
-                existing.quantity += 1;
-            } else {
-                cart.push({ ...product, quantity: 1 });
+            const activeBtn = document.getElementById(`nav-${tabName}`);
+            if(activeBtn) {
+                activeBtn.className = "sidebar-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl transition text-purple-400 bg-purple-500/10 border border-purple-500/20";
             }
 
-            updateCartUI();
-            showToast(`已將 ${product.name} 加入購物車`);
+            if(tabName === 'library') renderLibrary();
+            if(tabName === 'likes') renderLikes();
+            if(tabName === 'explore') renderExplore();
         }
 
-        // Update Cart UI & Calculations
-        function updateCartUI() {
-            const container = document.getElementById('cart-items-container');
-            const badge = document.getElementById('cart-badge');
-            const subtotalEl = document.getElementById('cart-subtotal');
-            const shippingEl = document.getElementById('cart-shipping');
-            const totalEl = document.getElementById('cart-total');
-            const checkoutBtn = document.getElementById('checkout-btn');
+        // 自訂進階模式切換
+        function toggleCustomMode() {
+            const isChecked = document.getElementById('custom-mode-toggle').checked;
+            const lyricSection = document.getElementById('custom-lyrics-section');
+            if(isChecked) {
+                lyricSection.classList.remove('hidden');
+            } else {
+                lyricSection.classList.add('hidden');
+            }
+        }
 
-            badge.innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
+        // 快速加入風格標籤
+        function appendGenre(genreText) {
+            const promptInput = document.getElementById('prompt-input');
+            promptInput.value = promptInput.value ? promptInput.value + ", " + genreText : genreText;
+        }
 
-            if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 text-gray-400 space-y-3">
-                        <i class="fa-solid fa-bag-shopping text-4xl"></i>
-                        <p class="text-sm">您的購物車目前是空的</p>
-                    </div>
-                `;
-                subtotalEl.innerText = '$0';
-                shippingEl.innerText = '$0';
-                totalEl.innerText = '$0';
-                checkoutBtn.disabled = true;
+        // 隨機提示詞
+        function fillRandomPrompt() {
+            const prompts = [
+                "Cozy lofi hip hop with vinyl crackle, warm rhodes piano, relaxing rainy day atmosphere",
+                "Epic cinematic orchestral theme with powerful brass, soaring strings and choir, heroic adventure",
+                "Futuristic cyberpunk synthwave with heavy basslines, analog synth leads and driving cyberpunk drums",
+                "Dreamy acoustic indie pop with soft fingerstyle guitar, warm male vocals and gentle percussion"
+            ];
+            const randomIndex = Math.floor(Math.random() * prompts.length);
+            document.getElementById('prompt-input').value = prompts[randomIndex];
+        }
+
+        // AI 歌詞生成
+        function generateAiLyrics() {
+            const sampleLyrics = [
+                "[Verse 1]\n微風吹過無人的街道\n記憶在深夜悄悄發酵\n\n[Chorus]\n就讓音樂帶走所有煩惱\n在音符裡擁抱美好",
+                "[Verse 1]\n時針滴答滴劃過寂寞\n霓虹燈光映出你的輪廓\n\n[Chorus]\n愛是一首未完成的歌\n在星空下輕輕唱著",
+                "[Verse 1]\n翻閱泛黃的照片與信件\n彷彿回到那年的夏天\n\n[Chorus]\n時間雖然不斷向前\n感動永遠不變"
+            ];
+            const randomLyric = sampleLyrics[Math.floor(Math.random() * sampleLyrics.length)];
+            document.getElementById('lyrics-input').value = randomLyric;
+        }
+
+        // 3 階段音樂生成動畫模擬
+        function startGeneration() {
+            const prompt = document.getElementById('prompt-input').value.trim();
+            if(!prompt) {
+                showCustomModal('提醒', '請先輸入音樂風格與提示詞！');
                 return;
             }
 
-            checkoutBtn.disabled = false;
-            container.innerHTML = '';
-            let subtotal = 0;
+            const loader = document.getElementById('generation-loader');
+            loader.classList.remove('hidden');
+            loader.scrollIntoView({ behavior: 'smooth' });
 
-            cart.forEach(item => {
-                subtotal += item.price * item.quantity;
-                const itemEl = document.createElement('div');
-                itemEl.className = "flex items-center py-4 space-x-4";
-                itemEl.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-xl border border-gray-100">
-                    <div class="flex-1">
-                        <h4 class="font-bold text-coffee-900 text-xs sm:text-sm">${item.name}</h4>
-                        <p class="text-xs text-gold-600 font-semibold mt-0.5">$${item.price}</p>
-                        <div class="flex items-center space-x-2 mt-2">
-                            <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center text-xs">-</button>
-                            <span class="text-xs font-bold">${item.quantity}</span>
-                            <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center text-xs">+</button>
-                        </div>
-                    </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-red-600 p-2 text-sm">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                `;
-                container.appendChild(itemEl);
-            });
+            const progressBar = document.getElementById('loader-progress');
+            const loaderTitle = document.getElementById('loader-title');
+            const loaderDesc = document.getElementById('loader-desc');
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const step3 = document.getElementById('step-3');
 
-            const shipping = subtotal >= 800 || subtotal === 0 ? 0 : 80;
-            const total = subtotal + shipping;
+            progressBar.style.width = '10%';
+            loaderTitle.innerText = "正在分析您的提示詞...";
+            loaderDesc.innerText = "AI 正在解構音樂風格、樂器配置與情感基調";
+            step1.className = "text-purple-400 font-semibold";
+            step2.className = "";
+            step3.className = "";
 
-            subtotalEl.innerText = `$${subtotal}`;
-            shippingEl.innerText = shipping === 0 ? '免運費' : `$${shipping}`;
-            totalEl.innerText = `$${total}`;
+            setTimeout(() => {
+                progressBar.style.width = '55%';
+                loaderTitle.innerText = "譜曲與和聲合成中...";
+                loaderDesc.innerText = "神經網路正在生成旋律、和弦進展與歌聲音軌";
+                step1.className = "text-zinc-400";
+                step2.className = "text-purple-400 font-semibold";
+            }, 1800);
+
+            setTimeout(() => {
+                progressBar.style.width = '90%';
+                loaderTitle.innerText = "進行智慧母帶後製...";
+                loaderDesc.innerText = "正在優化動態範圍、空間混音與音質解析度";
+                step2.className = "text-zinc-400";
+                step3.className = "text-purple-400 font-semibold";
+            }, 3600);
+
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+                loaderTitle.innerText = "音樂生成完畢！";
+                loaderDesc.innerText = "已自動新增至您的音樂庫中";
+
+                const newSong = {
+                    id: Date.now(),
+                    title: prompt.length > 25 ? prompt.substring(0, 25) + "..." : prompt,
+                    genre: document.getElementById('instrumental-check').checked ? "Instrumental Mix" : "AI Custom Mix",
+                    duration: "3:15",
+                    createdAt: "剛剛",
+                    cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=300",
+                    liked: false,
+                    lyrics: document.getElementById('instrumental-check').checked ? "[Instrumental Track]" : (document.getElementById('lyrics-input').value || "[Instrumental Track]")
+                };
+                musicLibrary.unshift(newSong);
+
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    switchTab('library');
+                }, 1000);
+            }, 5000);
         }
 
-        // Update Item Quantity
-        function updateQuantity(productId, delta) {
-            const item = cart.find(i => i.id === productId);
-            if (item) {
-                item.quantity += delta;
-                if (item.quantity <= 0) {
-                    cart = cart.filter(i => i.id !== productId);
-                }
-                updateCartUI();
+        // 渲染音樂庫
+        function renderLibrary() {
+            const container = document.getElementById('library-list');
+            if(musicLibrary.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-zinc-500">尚無生成的音樂，快去創作中心開始吧！</div>`;
+                return;
+            }
+            container.innerHTML = musicLibrary.map(song => `
+                <div class="bg-cardBg/60 border border-zinc-800/80 hover:border-zinc-700 p-4 rounded-2xl flex items-center justify-between backdrop-blur-md transition group">
+                    <div class="flex items-center space-x-4">
+                        <div class="relative w-14 h-14 rounded-xl overflow-hidden shadow-md flex-shrink-0">
+                            <img src="${song.cover}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" alt="Cover" onerror="this.src='https://placehold.co/120x120/121216/8b5cf6?text=Aura'">
+                            <button onclick="playSong(${song.id})" class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                <i class="fa-solid fa-play text-white text-sm"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-base">${song.title}</h4>
+                            <div class="flex items-center space-x-3 text-xs text-zinc-400 mt-1">
+                                <span class="bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded border border-purple-500/20">${song.genre}</span>
+                                <span><i class="fa-regular fa-clock mr-1"></i>${song.duration}</span>
+                                <span>${song.createdAt}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="toggleLike(${song.id})" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-pink-500 transition">
+                            <i class="${song.liked ? 'fa-solid text-pink-500' : 'fa-regular'} fa-heart"></i>
+                        </button>
+                        <button onclick="playSong(${song.id})" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md shadow-purple-600/30 transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-play"></i>
+                            <span>播放</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染收藏喜歡列表
+        function renderLikes() {
+            const container = document.getElementById('likes-list');
+            const likedSongs = musicLibrary.filter(s => s.liked);
+            if(likedSongs.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-zinc-500">你還沒有收藏任何音樂。</div>`;
+                return;
+            }
+            container.innerHTML = likedSongs.map(song => `
+                <div class="bg-cardBg/60 border border-zinc-800/80 p-4 rounded-2xl flex items-center justify-between backdrop-blur-md">
+                    <div class="flex items-center space-x-4">
+                        <img src="${song.cover}" class="w-14 h-14 rounded-xl object-cover shadow-md" alt="Cover" onerror="this.src='https://placehold.co/120x120/121216/8b5cf6?text=Aura'">
+                        <div>
+                            <h4 class="font-bold text-white text-base">${song.title}</h4>
+                            <div class="flex items-center space-x-3 text-xs text-zinc-400 mt-1">
+                                <span class="text-purple-300">${song.genre}</span>
+                                <span>${song.duration}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="playSong(${song.id})" class="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-semibold">播放</button>
+                </div>
+            `).join('');
+        }
+
+        // 渲染探索發現列表
+        function renderExplore() {
+            const exploreSongs = [
+                { id: 101, title: "Nebula Chillwave", genre: "Synthwave", duration: "3:40", cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=300" },
+                { id: 102, title: "Autumn Coffee Lofi", genre: "Lofi Beats", duration: "2:50", cover: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&q=80&w=300" },
+                { id: 103, title: "Cyber Samurai", genre: "Electro", duration: "3:25", cover: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&q=80&w=300" }
+            ];
+            const container = document.getElementById('explore-grid');
+            container.innerHTML = exploreSongs.map(song => `
+                <div class="bg-cardBg/60 border border-zinc-800/80 rounded-2xl overflow-hidden group hover:border-purple-500/40 transition">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${song.cover}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Cover" onerror="this.src='https://placehold.co/400x300/121216/8b5cf6?text=Aura'">
+                        <button onclick="playExploreSong('${song.title}', '${song.genre}', '${song.cover}')" class="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-lg shadow-purple-600/50 opacity-0 group-hover:opacity-100 transition transform hover:scale-110">
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 space-y-1">
+                        <h4 class="font-bold text-white">${song.title}</h4>
+                        <div class="text-xs text-purple-400 font-medium">${song.genre}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 播放音樂控制
+        function playSong(id) {
+            const song = musicLibrary.find(s => s.id === id);
+            if(!song) return;
+            currentPlayingId = id;
+            isPlaying = true;
+            currentProgressSec = 0;
+
+            document.getElementById('player-title').innerText = song.title;
+            document.getElementById('player-genre').innerText = song.genre;
+            document.getElementById('player-img').src = song.cover;
+            
+            const likeIcon = document.getElementById('player-like-icon');
+            likeIcon.className = song.liked ? "fa-solid fa-heart text-pink-500 text-lg" : "fa-regular fa-heart text-lg";
+
+            updatePlayButtonUI();
+            startPlaybackTimer();
+        }
+
+        function playExploreSong(title, genre, cover) {
+            document.getElementById('player-title').innerText = title;
+            document.getElementById('player-genre').innerText = genre;
+            document.getElementById('player-img').src = cover;
+            isPlaying = true;
+            currentProgressSec = 0;
+            updatePlayButtonUI();
+            startPlaybackTimer();
+        }
+
+        function togglePlayPause() {
+            isPlaying = !isPlaying;
+            updatePlayButtonUI();
+        }
+
+        function updatePlayButtonUI() {
+            const icon = document.getElementById('play-pause-icon');
+            if(isPlaying) {
+                icon.className = "fa-solid fa-pause";
+            } else {
+                icon.className = "fa-solid fa-play";
             }
         }
 
-        // Remove from Cart
-        function removeFromCart(productId) {
-            cart = cart.filter(i => i.id !== productId);
-            updateCartUI();
-        }
-
-        // Checkout Modal Actions
-        function openCheckoutModal() {
-            toggleCartDrawer();
-            document.getElementById('checkout-modal').classList.remove('hidden');
-        }
-
-        function closeCheckoutModal() {
-            document.getElementById('checkout-modal').classList.add('hidden');
-        }
-
-        function handleOrderSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('o-name').value;
-            closeCheckoutModal();
-            cart = [];
-            updateCartUI();
-            showToast(`感謝 ${name}！您的訂單已成功建立，系統已發送確認信至您的信箱。`);
-        }
-
-        // Franchise Form Submission
-        function handleFranchiseSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('f-name').value;
-            document.getElementById('franchise-form').reset();
-            showToast(`感謝 ${name}！您的加盟諮詢已送出，專人將於 24 小時內與您聯繫。`);
-        }
-
-        // Knowledge Modal Reader
-        function openKnowledgeModal(type) {
-            const modal = document.getElementById('info-modal');
-            const content = document.getElementById('info-modal-content');
-            
-            let data = {
-                handDrip: {
-                    title: "手沖咖啡黃金比例與注水技巧全解析",
-                    text: "手沖咖啡看似簡單，卻包含了水溫、研磨度、粉水比與注水手法四大核心變數。建議粉水比為 1:15，使用 92°C 左右的純淨水。悶蒸 30 秒釋放二氧化碳後，以細水流由內而外畫圓注水，能完美帶出花香與豐富層次。"
-                },
-                processing: {
-                    title: "日曬 vs 水洗 vs 蜜處理：風味差異在哪裡？",
-                    text: "日曬法保留了較多果肉發酵氣息，帶有熱帶水果與濃郁甜感；水洗法則展現乾淨明亮的酸質與花香；蜜處理介於兩者之間，保留了果膠層的黏稠感與焦糖甜香。了解不同處理法，能幫您精準挑選喜愛的風味。"
-                },
-                roasting: {
-                    title: "淺焙、中焙與深焙：烘焙度如何決定咖啡靈魂",
-                    text: "淺焙保留最多產地原生果酸與花香；中焙平衡了酸度與醇厚感，帶有堅果與焦糖香氣；深焙則呈現濃厚醇厚度與黑巧克力尾韻，幾乎無酸感。依據您的沖煮器具與口味偏好選擇最適烘焙度。"
+        function startPlaybackTimer() {
+            if(playInterval) clearInterval(playInterval);
+            playInterval = setInterval(() => {
+                if(isPlaying) {
+                    currentProgressSec++;
+                    if(currentProgressSec > totalDurationSec) currentProgressSec = 0;
+                    
+                    const min = Math.floor(currentProgressSec / 60);
+                    const sec = currentProgressSec % 60;
+                    document.getElementById('current-time').innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+                    
+                    const percent = (currentProgressSec / totalDurationSec) * 100;
+                    document.getElementById('song-progress').style.width = `${percent}%`;
                 }
-            };
-
-            const item = data[type];
-            content.innerHTML = `
-                <h3 class="font-serif text-2xl font-bold text-coffee-900">${item.title}</h3>
-                <p class="text-sm text-gray-600 leading-relaxed pt-2">${item.text}</p>
-                <div class="pt-4">
-                    <button onclick="closeInfoModal()" class="w-full bg-coffee-900 text-white py-3 rounded-xl font-bold text-sm">關閉閱讀</button>
-                </div>
-            `;
-            modal.classList.remove('hidden');
+            }, 1000);
         }
 
-        // Info Modal Reader (Terms, Shipping, FAQ)
-        function showInfoModal(type) {
-            const modal = document.getElementById('info-modal');
-            const content = document.getElementById('info-modal-content');
+        function seekSong(event) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const width = rect.width;
+            const percent = clickX / width;
+            currentProgressSec = Math.floor(percent * totalDurationSec);
             
-            let data = {
-                terms: {
-                    title: "隱私權與網站使用條款",
-                    text: "VIEBUCKS 非常重視您的個人隱私。本網站所蒐集的個人資料僅用於訂單配送、會員服務與行銷活動通知。我們採用 SSL 256-bit 安全加密技術，確保您的交易與資料安全無虞。"
-                },
-                shipping: {
-                    title: "購物說明與物流配送",
-                    text: "全館消費滿 $800 即享免運費優惠。現貨商品將於完成付款後 2-3 個工作天內出貨（週末與國定假日順延）。支援超商取貨、宅配到府與 LINE Pay 快速付款。"
-                },
-                faq: {
-                    title: "常見問題 FAQ",
-                    text: "Q: 咖啡豆該如何保存？\nA: 建議放置於陰涼乾燥處，開封後請使用密封罐保存並於一個月內飲用完畢以確保最佳風味。\n\nQ: 可以開立統編發票嗎？\nA: 可以，結帳時於備註欄填寫統一編號與抬頭即可。"
-                }
-            };
-
-            const item = data[type];
-            content.innerHTML = `
-                <h3 class="font-serif text-2xl font-bold text-coffee-900">${item.title}</h3>
-                <p class="text-sm text-gray-600 leading-relaxed pt-2 whitespace-pre-line">${item.text}</p>
-                <div class="pt-4">
-                    <button onclick="closeInfoModal()" class="w-full bg-coffee-900 text-white py-3 rounded-xl font-bold text-sm">了解</button>
-                </div>
-            `;
-            modal.classList.remove('hidden');
+            const min = Math.floor(currentProgressSec / 60);
+            const sec = currentProgressSec % 60;
+            document.getElementById('current-time').innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+            document.getElementById('song-progress').style.width = `${percent * 100}%`;
         }
 
-        function closeInfoModal() {
-            document.getElementById('info-modal').classList.add('hidden');
+        function playPreviousSong() {
+            showCustomModal('播放提示', '已切換至上一首單曲');
         }
 
-        function openLineModal() {
-            showInfoModal('terms');
-            // Quick override for LINE modal simulation
-            document.getElementById('info-modal-content').innerHTML = `
-                <h3 class="font-serif text-2xl font-bold text-coffee-900">加入 VIEBUCKS LINE 好友</h3>
-                <p class="text-sm text-gray-600 leading-relaxed pt-2">請使用手機掃描首頁 QR Code 或搜尋 Line ID: <span class="font-bold text-gold-600">@viebucks_coffee</span>，加入後即可自動領取 $100 折價券與新會員專屬禮遇！</p>
-                <div class="pt-4">
-                    <button onclick="closeInfoModal()" class="w-full bg-coffee-900 text-white py-3 rounded-xl font-bold text-sm">我知道了</button>
-                </div>
-            `;
+        function playNextSong() {
+            showCustomModal('播放提示', '已切換至下一首單曲');
         }
 
-        // Mobile Menu Toggle
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
+        function adjustVolume(val) {
+            // 模擬音量調節
         }
 
-        // Toast Notification Helper
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = "fixed bottom-5 right-5 z-50 bg-coffee-900 text-white text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-2xl border border-gold-500/30 transition-all transform translate-y-0 opacity-100 flex items-center space-x-2";
-            toast.innerHTML = `<i class="fa-solid fa-circle-check text-gold-500"></i><span>${message}</span>`;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(1rem)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+        function toggleLike(id) {
+            const song = musicLibrary.find(s => s.id === id);
+            if(song) {
+                song.liked = !song.liked;
+                renderLibrary();
+            }
         }
+
+        function toggleLikeCurrent() {
+            if(!currentPlayingId) return;
+            const song = musicLibrary.find(s => s.id === currentPlayingId);
+            if(song) {
+                song.liked = !song.liked;
+                const likeIcon = document.getElementById('player-like-icon');
+                likeIcon.className = song.liked ? "fa-solid fa-heart text-pink-500 text-lg" : "fa-regular fa-heart text-lg";
+                renderLibrary();
+            }
+        }
+
+        // 初始化預設頁面
+        renderExplore();
     </script>
 </body>
 </html>
